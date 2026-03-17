@@ -147,12 +147,7 @@ export default function AINegotiatorPage() {
         <div className="lg:col-span-3 glass-panel rounded-2xl flex flex-col h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
           <div className="p-4">
             <div className="flex items-center gap-2">
-              <div className="traffic-lights traffic-lights-muted">
-                <span className="dot dot-red" />
-                <span className="dot dot-yellow" />
-                <span className="dot dot-green" />
-              </div>
-              <h3 className="font-display text-base ml-1">AI Chat</h3>
+              <h3 className="font-display text-base">AI Chat</h3>
             </div>
             {selectedLoad && (
               <p className="text-[11px] text-muted-foreground mt-1.5 ml-[42px]">
