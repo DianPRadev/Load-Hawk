@@ -35,14 +35,15 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         collapsed ? "w-[68px]" : "w-[248px]"
       )}
     >
-      {/* Traffic lights + Logo */}
-      <div className="px-4 pt-4 pb-3 flex items-center gap-3">
-        <div className="traffic-lights traffic-lights-muted shrink-0">
-          <span className="dot dot-red" />
-          <span className="dot dot-yellow" />
-          <span className="dot dot-green" />
-        </div>
-        {!collapsed && <div className="cursor-pointer" onClick={() => navigate("/dashboard")}><LoadHawkLogo size="sm" /></div>}
+      {/* Logo */}
+      <div className="px-4 pt-4 pb-3 flex items-center">
+        {!collapsed ? (
+          <div className="cursor-pointer" onClick={() => navigate("/dashboard")}><LoadHawkLogo size="md" /></div>
+        ) : (
+          <div className="cursor-pointer mx-auto" onClick={() => navigate("/dashboard")}>
+            <img src="/loadhawk-logo.png" alt="LoadHawk" className="w-9 h-9 rounded-lg object-contain" />
+          </div>
+        )}
       </div>
 
       <div className="macos-separator mx-3" />

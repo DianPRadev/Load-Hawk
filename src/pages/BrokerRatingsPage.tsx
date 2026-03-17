@@ -114,14 +114,7 @@ export default function BrokerRatingsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setRatingModal(null)}>
           <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
           <div className="relative glass-panel-heavy rounded-2xl p-6 max-w-md w-full mx-4 space-y-4 window-chrome" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="traffic-lights traffic-lights-muted">
-                <span className="dot dot-red" />
-                <span className="dot dot-yellow" />
-                <span className="dot dot-green" />
-              </div>
-              <h3 className="font-display text-xl ml-1">Rate Broker</h3>
-            </div>
+            <h3 className="font-display text-xl mb-2">Rate Broker</h3>
             <p className="text-[13px] text-muted-foreground">
               {brokers.find(b => b.mc === ratingModal)?.name}
             </p>
