@@ -1,130 +1,212 @@
-import { useState } from "react";
-import { Bot, Send, MapPin, DollarSign, TrendingUp, ArrowRight } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Bot, Send, MapPin, ArrowRight } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
+import { useApp, type Load } from "@/store/AppContext";
+import { useLocation } from "react-router-dom";
 
 const templates = [
-  "Based on current spot rates, I'd like to counter at $X.XX/mile",
-  "Given fuel costs and deadhead, my minimum is $X.XX/mile",
-  "I can accept at $X.XX if pickup is flexible by 1 day",
-];
-
-const chatHistory = [
-  { role: "ai" as const, text: "I've analyzed the current spot rates on the Dallas → Atlanta lane. The market average is $3.45/mile, but rates have been trending up 8% this week. I recommend countering at $3.85/mile." },
-  { role: "user" as const, text: "What about fuel costs on this route?" },
-  { role: "ai" as const, text: "Good thinking. Current diesel average along I-20 is $3.89/gal. At 6.5 MPG, your fuel cost is roughly $0.60/mile. With a counter of $3.85/mile, your net margin would be $2.54/mile after fuel — well above the profitable threshold of $2.00/mile." },
-];
-
-const pastNegotiations = [
-  { route: "Houston → Memphis", offered: 3.20, countered: 3.85, result: "Won", saved: 380 },
-  { route: "Chicago → Nashville", offered: 3.50, countered: 4.10, result: "Won", saved: 284 },
-  { route: "Phoenix → Denver", offered: 3.10, countered: 3.60, result: "Lost", saved: 0 },
+  "What's the market rate for this lane?",
+  "Analyze fuel costs on this route",
+  "Suggest a counter-offer strategy",
+  "Tell me about this broker",
 ];
 
 export default function AINegotiatorPage() {
+  const { availableLoads, chatMessages, sendChatMessage, negotiations } = useApp();
+  const location = useLocation();
   const [message, setMessage] = useState("");
+  const [selectedLoadId, setSelectedLoadId] = useState<string | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const state = location.state as { loadId?: string } | null;
+    if (state?.loadId) {
+      setSelectedLoadId(state.loadId);
+      const load = availableLoads.find(l => l.id === state.loadId);
+      if (load) {
+        sendChatMessage(`I want to negotiate the ${load.origin} → ${load.destination} load at $${load.ratePerMile.toFixed(2)}/mi. What do you recommend?`, load);
+      }
+      window.history.replaceState({}, document.title);
+    }
+  }, []);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
+
+  const selectedLoad = selectedLoadId ? availableLoads.find(l => l.id === selectedLoadId) : null;
+
+  const handleSend = () => {
+    if (!message.trim()) return;
+    sendChatMessage(message, selectedLoad || undefined);
+    setMessage("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const winCount = negotiations.filter(n => n.result === "Won").length;
+  const totalNegs = negotiations.length;
+  const winRate = totalNegs > 0 ? Math.round((winCount / totalNegs) * 100) : 0;
+  const avgSaved = totalNegs > 0
+    ? Math.round(negotiations.reduce((s, n) => s + n.saved, 0) / totalNegs)
+    : 0;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <h1 className="font-display text-3xl tracking-wide animate-fade-up">
-        <Bot className="inline text-primary mr-2" size={28} /> AI NEGOTIATOR
+      <h1 className="font-display text-3xl tracking-tight animate-fade-up">
+        <Bot className="inline text-primary mr-2" size={26} /> AI Negotiator
       </h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Load context - left */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+        {/* Load context */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-card border border-border rounded-lg p-5 animate-fade-up" style={{animationDelay:"100ms"}}>
-            <h3 className="font-display text-lg mb-4">LOAD DETAILS</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-2">
-                <MapPin size={14} className="text-primary" />
-                <span>Dallas, TX</span>
-                <ArrowRight size={12} className="text-muted-foreground" />
-                <span>Atlanta, GA</span>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><span className="text-muted-foreground">Miles:</span> <span className="font-mono">781</span></div>
-                <div><span className="text-muted-foreground">Weight:</span> <span className="font-mono">42,000 lbs</span></div>
-                <div><span className="text-muted-foreground">Equipment:</span> Dry Van</div>
-                <div><span className="text-muted-foreground">Broker:</span> XPO Logistics</div>
-              </div>
-              <div className="border-t border-border pt-3 mt-3 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Offered Rate</span>
-                  <span className="font-mono text-destructive">$2,580 ($3.30/mi)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Market Average</span>
-                  <span className="font-mono text-info">$2,694 ($3.45/mi)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Recommended Counter</span>
-                  <span className="font-mono text-primary font-bold">$3,007 ($3.85/mi)</span>
-                </div>
-              </div>
-            </div>
+          <div className="glass-panel rounded-2xl p-5 animate-fade-up" style={{ animationDelay: "100ms" }}>
+            <h3 className="font-display text-base mb-4">Select a Load</h3>
+            <select
+              value={selectedLoadId || ""}
+              onChange={e => setSelectedLoadId(e.target.value || null)}
+              aria-label="Select a load to negotiate"
+              className="w-full glass-input rounded-lg px-3 py-2 text-[13px] focus:outline-none"
+            >
+              <option value="">Choose a load...</option>
+              {availableLoads.map(l => (
+                <option key={l.id} value={l.id}>
+                  {l.origin} → {l.destination} — ${l.rate.toLocaleString()} (${l.ratePerMile.toFixed(2)}/mi)
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Past negotiations */}
-          <div className="bg-card border border-border rounded-lg p-5 animate-fade-up" style={{animationDelay:"200ms"}}>
-            <h3 className="font-display text-lg mb-4">NEGOTIATION HISTORY</h3>
-            <div className="space-y-3">
-              {pastNegotiations.map((n, i) => (
-                <div key={i} className="flex items-center justify-between text-sm border-b border-border pb-2 last:border-0">
-                  <div>
-                    <div>{n.route}</div>
-                    <div className="text-xs text-muted-foreground font-mono">${n.offered}/mi → ${n.countered}/mi</div>
+          {selectedLoad && (
+            <div className="glass-panel rounded-2xl p-5 animate-fade-up">
+              <h3 className="font-display text-base mb-4">Load Details</h3>
+              <div className="space-y-3 text-[13px]">
+                <div className="flex items-center gap-2">
+                  <MapPin size={13} className="text-primary" />
+                  <span>{selectedLoad.origin}</span>
+                  <ArrowRight size={11} className="text-muted-foreground" />
+                  <span>{selectedLoad.destination}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><span className="text-muted-foreground">Miles:</span> <span className="font-mono">{selectedLoad.miles}</span></div>
+                  <div><span className="text-muted-foreground">Weight:</span> <span className="font-mono">{selectedLoad.weight}</span></div>
+                  <div><span className="text-muted-foreground">Equipment:</span> {selectedLoad.equipment}</div>
+                  <div><span className="text-muted-foreground">Broker:</span> {selectedLoad.broker}</div>
+                </div>
+                <div className="macos-separator my-3" />
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Current Rate</span>
+                    <span className="font-mono text-primary">${selectedLoad.rate.toLocaleString()} (${selectedLoad.ratePerMile.toFixed(2)}/mi)</span>
                   </div>
-                  <div className="text-right">
-                    <span className={`text-xs px-2 py-0.5 rounded ${n.result === "Won" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>{n.result}</span>
-                    {n.saved > 0 && <div className="text-xs text-success font-mono mt-1">+${n.saved}</div>}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Market Average</span>
+                    <span className="font-mono text-info">${(selectedLoad.ratePerMile * 0.93).toFixed(2)}/mi</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Recommended Counter</span>
+                    <span className="font-mono text-primary font-bold">${(selectedLoad.ratePerMile * 1.08).toFixed(2)}/mi</span>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-            <div className="mt-3 text-xs text-muted-foreground">Win rate: <span className="font-mono text-success">67%</span> · Avg saved: <span className="font-mono text-primary">$221/load</span></div>
-          </div>
+          )}
+
+          {negotiations.length > 0 && (
+            <div className="glass-panel rounded-2xl p-5 animate-fade-up" style={{ animationDelay: "200ms" }}>
+              <h3 className="font-display text-base mb-4">Negotiation History</h3>
+              <div className="space-y-3">
+                {negotiations.slice(0, 5).map((n, i) => (
+                  <div key={i} className="flex items-center justify-between text-[13px] pb-2 border-b border-[var(--table-border)] last:border-0">
+                    <div>
+                      <div>{n.route}</div>
+                      <div className="text-[11px] text-muted-foreground font-mono">${n.offered}/mi → ${n.countered}/mi</div>
+                    </div>
+                    <div className="text-right">
+                      <span className={`pill-badge text-[10px] ${n.result === "Won" ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"}`}>{n.result}</span>
+                      {n.saved > 0 && <div className="text-[11px] text-success font-mono mt-1">+${n.saved}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {totalNegs > 0 && (
+                <div className="mt-3 text-[11px] text-muted-foreground">
+                  Win rate: <span className="font-mono text-success">{winRate}%</span> · Avg saved: <span className="font-mono text-primary">${avgSaved}/load</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Chat - right */}
-        <div className="lg:col-span-3 bg-card border border-border rounded-lg flex flex-col h-[600px] animate-fade-up" style={{animationDelay:"150ms"}}>
-          <div className="p-4 border-b border-border">
-            <h3 className="font-display text-lg">AI CHAT</h3>
+        {/* Chat */}
+        <div className="lg:col-span-3 glass-panel rounded-2xl flex flex-col h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
+          <div className="p-4">
+            <div className="flex items-center gap-2">
+              <div className="traffic-lights traffic-lights-muted">
+                <span className="dot dot-red" />
+                <span className="dot dot-yellow" />
+                <span className="dot dot-green" />
+              </div>
+              <h3 className="font-display text-base ml-1">AI Chat</h3>
+            </div>
+            {selectedLoad && (
+              <p className="text-[11px] text-muted-foreground mt-1.5 ml-[42px]">
+                Analyzing: {selectedLoad.origin} → {selectedLoad.destination}
+              </p>
+            )}
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {chatHistory.map((msg, i) => (
+          <div className="macos-separator" />
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {chatMessages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] p-3 rounded-lg text-sm ${
-                  msg.role === "user"
-                    ? "gradient-gold text-primary-foreground"
-                    : "bg-card-elevated border border-border"
-                }`}>
-                  {msg.role === "ai" && <Bot size={14} className="text-primary mb-1" />}
+                <div className={`max-w-[80%] p-3 rounded-2xl text-[13px] whitespace-pre-wrap ${msg.role === "user"
+                  ? "gradient-gold text-primary-foreground rounded-br-md"
+                  : "bg-[var(--chat-ai-bg)] border border-[var(--chat-ai-border)] rounded-bl-md"
+                  }`}>
+                  {msg.role === "ai" && <Bot size={13} className="text-primary mb-1" />}
                   {msg.text}
                 </div>
               </div>
             ))}
+            <div ref={chatEndRef} />
           </div>
 
           {/* Templates */}
-          <div className="px-4 py-2 border-t border-border">
-            <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="px-4 py-2">
+            <div className="flex gap-2 overflow-x-auto pb-1">
               {templates.map((t, i) => (
-                <button key={i} onClick={() => setMessage(t)} className="text-xs bg-card-elevated border border-border rounded px-3 py-1.5 whitespace-nowrap hover:border-primary/30 transition-colors text-muted-foreground">
-                  {t.slice(0, 40)}...
+                <button
+                  key={i}
+                  onClick={() => setMessage(t)}
+                  className="text-[11px] bg-[var(--glass-highlight)] border border-[var(--glass-border)] rounded-full px-3 py-1.5 whitespace-nowrap hover:bg-[var(--glass-hover)] hover:border-primary/20 transition-all text-muted-foreground"
+                >
+                  {t}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="p-4 border-t border-border flex gap-2">
+          <div className="macos-separator" />
+
+          <div className="p-3 flex gap-2">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your counter-offer strategy..."
-              className="flex-1 bg-input border border-border rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+              onKeyDown={handleKeyDown}
+              placeholder={selectedLoad ? `Ask about ${selectedLoad.origin} → ${selectedLoad.destination}...` : "Select a load or ask about market trends..."}
+              aria-label="Chat message input"
+              className="flex-1 glass-input rounded-full px-4 py-2 text-[13px] focus:outline-none"
             />
-            <GoldButton size="sm"><Send size={14} /></GoldButton>
+            <GoldButton size="sm" onClick={handleSend} disabled={!message.trim()} aria-label="Send message" className="!rounded-full !px-3">
+              <Send size={14} />
+            </GoldButton>
           </div>
         </div>
       </div>

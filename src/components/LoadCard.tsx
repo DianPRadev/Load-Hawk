@@ -1,49 +1,65 @@
 import { MapPin, ArrowRight, Clock, Truck } from "lucide-react";
 import { GoldButton } from "./GoldButton";
+import { useNavigate } from "react-router-dom";
+import { useApp, type Load } from "@/store/AppContext";
+import { toast } from "sonner";
 
-interface LoadCardProps {
-  origin: string;
-  destination: string;
-  miles: number;
-  weight: string;
-  rate: number;
-  ratePerMile: number;
-  broker: string;
-  equipment: string;
-  postedAgo: string;
+interface LoadCardProps extends Load {
   delay?: number;
+  showNegotiate?: boolean;
 }
 
-export function LoadCard({ origin, destination, miles, weight, rate, ratePerMile, broker, equipment, postedAgo, delay = 0 }: LoadCardProps) {
+export function LoadCard({ id, origin, destination, miles, weight, rate, ratePerMile, broker, equipment, postedAgo, delay = 0, showNegotiate = true }: LoadCardProps) {
+  const { bookLoad, bookedLoads } = useApp();
+  const navigate = useNavigate();
+  const isBooked = bookedLoads.some(l => l.id === id);
+
+  const handleBook = () => {
+    bookLoad(id);
+    toast.success(`Load booked: ${origin} → ${destination}`, {
+      description: `$${rate.toLocaleString()} — Check My Loads for details`,
+    });
+  };
+
+  const handleNegotiate = () => {
+    navigate("/ai-negotiator", { state: { loadId: id } });
+  };
+
   return (
     <div
-      className="bg-card border border-border rounded-lg p-5 card-hover animate-fade-up"
+      className="glass-panel rounded-2xl p-5 card-hover animate-fade-up"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
             <MapPin size={14} className="text-primary shrink-0" />
-            <span className="font-display text-lg tracking-wide">{origin}</span>
-            <ArrowRight size={14} className="text-muted-foreground shrink-0" />
-            <span className="font-display text-lg tracking-wide">{destination}</span>
+            <span className="font-display text-lg tracking-tight truncate">{origin}</span>
+            <ArrowRight size={13} className="text-muted-foreground shrink-0" />
+            <span className="font-display text-lg tracking-tight truncate">{destination}</span>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
             <span className="font-mono">{miles} mi</span>
             <span className="font-mono">{weight}</span>
-            <span className="flex items-center gap-1"><Truck size={12} />{equipment}</span>
+            <span className="flex items-center gap-1"><Truck size={11} />{equipment}</span>
             <span>{broker}</span>
-            <span className="flex items-center gap-1"><Clock size={12} />{postedAgo}</span>
+            <span className="flex items-center gap-1"><Clock size={11} />{postedAgo}</span>
           </div>
         </div>
         <div className="flex items-center gap-4 shrink-0">
           <div className="text-right">
             <div className="font-display text-2xl text-primary">${rate.toLocaleString()}</div>
-            <div className="font-mono text-xs text-success">${ratePerMile.toFixed(2)}/mi</div>
+            <div className="font-mono text-[11px] text-success">${ratePerMile.toFixed(2)}/mi</div>
           </div>
           <div className="flex flex-col gap-2">
-            <GoldButton size="sm">BOOK NOW</GoldButton>
-            <GoldButton size="sm" variant="secondary">NEGOTIATE</GoldButton>
+            {isBooked ? (
+              <GoldButton size="sm" variant="secondary" disabled>Booked</GoldButton>
+            ) : (
+              <GoldButton size="sm" onClick={handleBook}>Book Now</GoldButton>
+            )}
+            {showNegotiate && !isBooked && (
+              <GoldButton size="sm" variant="secondary" onClick={handleNegotiate}>Negotiate</GoldButton>
+            )}
           </div>
         </div>
       </div>

@@ -1,19 +1,15 @@
-import { Zap } from "lucide-react";
-
 export function LoadHawkLogo({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   const sizes = {
-    sm: { text: "text-xl", icon: 16 },
-    md: { text: "text-3xl", icon: 24 },
-    lg: { text: "text-5xl", icon: 36 },
+    sm: { text: "text-lg", img: "w-8 h-8" },
+    md: { text: "text-2xl", img: "w-10 h-10" },
+    lg: { text: "text-4xl", img: "w-14 h-14" },
   };
   const s = sizes[size];
   return (
     <div className="flex items-center gap-2">
-      <div className="gradient-gold rounded-md p-1.5">
-        <Zap size={s.icon} className="text-primary-foreground fill-primary-foreground" />
-      </div>
-      <span className={`font-display ${s.text} gradient-gold-text tracking-wider`}>
-        LOADHAWK
+      <img src="/loadhawk-logo.png" alt="LoadHawk" className={`${s.img} rounded-lg object-contain`} />
+      <span className={`font-display font-bold ${s.text} gradient-gold-text tracking-tight`}>
+        LoadHawk
       </span>
     </div>
   );

@@ -2,108 +2,136 @@ import { DollarSign, Package, MapPin, TrendingUp, Clock, Star, Activity } from "
 import { StatCard } from "@/components/StatCard";
 import { LoadCard } from "@/components/LoadCard";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
-
-const earningsData = [
-  { day: "Mon", earnings: 420 },
-  { day: "Tue", earnings: 680 },
-  { day: "Wed", earnings: 590 },
-  { day: "Thu", earnings: 810 },
-  { day: "Fri", earnings: 1100 },
-  { day: "Sat", earnings: 450 },
-  { day: "Sun", earnings: 200 },
-];
-
-const hotLoads = [
-  { origin: "Dallas, TX", destination: "Atlanta, GA", miles: 781, weight: "42,000 lbs", rate: 2890, ratePerMile: 3.70, broker: "XPO Logistics", equipment: "Dry Van", postedAgo: "12 min ago" },
-  { origin: "Chicago, IL", destination: "Nashville, TN", miles: 473, weight: "38,500 lbs", rate: 1950, ratePerMile: 4.12, broker: "CH Robinson", equipment: "Reefer", postedAgo: "25 min ago" },
-  { origin: "Houston, TX", destination: "Memphis, TN", miles: 586, weight: "44,000 lbs", rate: 2340, ratePerMile: 3.99, broker: "TQL", equipment: "Flatbed", postedAgo: "38 min ago" },
-  { origin: "Phoenix, AZ", destination: "Denver, CO", miles: 602, weight: "35,000 lbs", rate: 2480, ratePerMile: 4.12, broker: "Coyote Logistics", equipment: "Dry Van", postedAgo: "1 hr ago" },
-  { origin: "Miami, FL", destination: "Charlotte, NC", miles: 651, weight: "40,000 lbs", rate: 2670, ratePerMile: 4.10, broker: "Echo Global", equipment: "Reefer", postedAgo: "1 hr ago" },
-];
-
-const topBrokers = [
-  { name: "CH Robinson", rating: 4.8, reviews: 1247, good: true },
-  { name: "TQL", rating: 4.5, reviews: 983, good: true },
-  { name: "Echo Global", rating: 4.2, reviews: 756, good: true },
-  { name: "Landstar", rating: 3.9, reviews: 612, good: true },
-  { name: "USA Truck", rating: 2.1, reviews: 89, good: false },
-];
-
-const recentActivity = [
-  { text: "Load booked: Dallas → Atlanta", time: "2 hrs ago", icon: Package },
-  { text: "Payment received: $2,340", time: "5 hrs ago", icon: DollarSign },
-  { text: "Negotiation won: +$180", time: "Yesterday", icon: TrendingUp },
-  { text: "Broker rated: CH Robinson ★★★★★", time: "Yesterday", icon: Star },
-];
+import { useApp } from "@/store/AppContext";
+import { useAuth } from "@/store/AuthContext";
+import { useProfile } from "@/hooks/useProfile";
+import { useMemo } from "react";
 
 export default function DashboardPage() {
+  const {
+    availableLoads, bookedLoads, brokers, notifications,
+    todaysEarnings, activeLoadCount, totalMilesThisWeek, avgRatePerMile,
+  } = useApp();
+  const { user } = useAuth();
+  const { data: dbProfile } = useProfile();
+
+  const userName = dbProfile?.name || user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
+  const firstName = userName.split(" ")[0];
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+  const earningsData = useMemo(() => {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const data = days.map(day => ({ day, earnings: 0 }));
+    bookedLoads.filter(l => l.status === "Delivered").forEach(l => {
+      const dayIndex = new Date(l.bookedAt).getDay();
+      data[dayIndex].earnings += l.rate;
+    });
+    if (data.every(d => d.earnings === 0)) {
+      return [
+        { day: "Mon", earnings: 420 }, { day: "Tue", earnings: 680 },
+        { day: "Wed", earnings: 590 }, { day: "Thu", earnings: 810 },
+        { day: "Fri", earnings: 1100 }, { day: "Sat", earnings: 450 },
+        { day: "Sun", earnings: 200 },
+      ];
+    }
+    return data;
+  }, [bookedLoads]);
+
+  const weeklyTotal = earningsData.reduce((s, d) => s + d.earnings, 0);
+
+  const topBrokers = useMemo(() =>
+    [...brokers].sort((a, b) => b.rating - a.rating).slice(0, 5),
+    [brokers]
+  );
+
+  const hotLoads = availableLoads.slice(0, 5);
+
+  const recentActivity = useMemo(() => {
+    if (notifications.length > 0) {
+      return notifications.slice(0, 4).map(n => ({
+        text: n.text,
+        time: n.time,
+        icon: n.type === "load" ? Package :
+          n.type === "payment" ? DollarSign :
+          n.type === "negotiation" ? TrendingUp : Star,
+      }));
+    }
+    return [
+      { text: "Welcome to LoadHawk!", time: "Just now", icon: Activity },
+      { text: "Browse loads in Find Loads", time: "Tip", icon: Package },
+      { text: "Book a load to get started", time: "Tip", icon: DollarSign },
+    ];
+  }, [notifications]);
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Welcome */}
       <div className="animate-fade-up">
-        <h1 className="font-display text-4xl tracking-wide">
-          GOOD MORNING, <span className="gradient-gold-text">MARCUS</span>
+        <h1 className="font-display text-4xl tracking-tight">
+          {greeting}, <span className="gradient-gold-text">{firstName}</span>
         </h1>
-        <p className="text-muted-foreground text-sm mt-1">March 17, 2026 · Dallas, TX · 72°F Sunny</p>
+        <p className="text-muted-foreground text-[13px] mt-1">{today}{dbProfile?.homeBase ? ` · ${dbProfile.homeBase}` : ""}</p>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Today's Earnings" value="$1,247" change="+12.3%" positive icon={<DollarSign size={18} />} delay={100} />
-        <StatCard label="Active Loads" value="3" change="+1" positive icon={<Package size={18} />} delay={200} />
-        <StatCard label="Miles This Week" value="2,847" change="+8.7%" positive icon={<MapPin size={18} />} delay={300} />
-        <StatCard label="Avg Rate/Mile" value="$3.92" change="-2.1%" positive={false} icon={<TrendingUp size={18} />} delay={400} />
+        <StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : "—"} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} />
+        <StatCard label="Active Loads" value={String(activeLoadCount)} change={activeLoadCount > 0 ? `${activeLoadCount} active` : "—"} positive={activeLoadCount > 0} icon={<Package size={16} />} delay={200} />
+        <StatCard label="Miles This Week" value={totalMilesThisWeek.toLocaleString()} icon={<MapPin size={16} />} delay={300} />
+        <StatCard label="Avg Rate/Mile" value={avgRatePerMile > 0 ? `$${avgRatePerMile.toFixed(2)}` : "—"} icon={<TrendingUp size={16} />} delay={400} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Hot loads - 2/3 */}
+        {/* Hot loads */}
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="font-display text-2xl tracking-wide flex items-center gap-2">
-            <span className="text-primary">🔥</span> HOT LOADS NEAR YOU
+          <h2 className="font-display text-2xl tracking-tight flex items-center gap-2">
+            <span className="text-primary" role="img" aria-label="fire">🔥</span> Hot Loads Near You
           </h2>
           <div className="space-y-3">
             {hotLoads.map((load, i) => (
-              <LoadCard key={i} {...load} delay={500 + i * 100} />
+              <LoadCard key={load.id} {...load} delay={500 + i * 100} />
             ))}
           </div>
         </div>
 
-        {/* Right column - 1/3 */}
-        <div className="space-y-6">
+        {/* Right column */}
+        <div className="space-y-4">
           {/* Earnings chart */}
-          <div className="bg-card border border-border rounded-lg p-5 animate-fade-up" style={{ animationDelay: "600ms" }}>
-            <h3 className="font-display text-lg tracking-wide mb-4">WEEKLY EARNINGS</h3>
+          <div className="glass-panel rounded-2xl p-5 window-chrome animate-fade-up" style={{ animationDelay: "600ms" }}>
+            <h3 className="font-display text-base tracking-tight mb-4">Weekly Earnings</h3>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={earningsData}>
                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
                 <YAxis hide />
                 <Tooltip
-                  contentStyle={{ background: "#141414", border: "1px solid #2e2e2e", borderRadius: 8, fontFamily: "JetBrains Mono", fontSize: 12 }}
-                  labelStyle={{ color: "#f0ece4" }}
-                  itemStyle={{ color: "#f5a820" }}
-                  cursor={{ fill: "rgba(245,168,32,0.05)" }}
+                  contentStyle={{ background: "var(--glass-bg-heavy)", backdropFilter: "blur(20px)", border: "1px solid var(--glass-border)", borderRadius: 12, fontFamily: "JetBrains Mono", fontSize: 11 }}
+                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                  itemStyle={{ color: "hsl(var(--primary))" }}
+                  cursor={{ fill: "hsla(var(--primary), 0.04)" }}
                 />
-                <Bar dataKey="earnings" fill="#f5a820" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="earnings" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-            <div className="flex justify-between text-xs mt-2">
+            <div className="flex justify-between text-[11px] mt-2">
               <span className="text-muted-foreground">Total</span>
-              <span className="font-mono text-primary">$4,250</span>
+              <span className="font-mono text-primary">${weeklyTotal.toLocaleString()}</span>
             </div>
           </div>
 
           {/* Top Brokers */}
-          <div className="bg-card border border-border rounded-lg p-5 animate-fade-up" style={{ animationDelay: "700ms" }}>
-            <h3 className="font-display text-lg tracking-wide mb-4">TOP BROKERS</h3>
+          <div className="glass-panel rounded-2xl p-5 window-chrome animate-fade-up" style={{ animationDelay: "700ms" }}>
+            <h3 className="font-display text-base tracking-tight mb-4">Top Brokers</h3>
             <div className="space-y-3">
               {topBrokers.map((b) => (
-                <div key={b.name} className="flex items-center justify-between">
-                  <span className="text-sm">{b.name}</span>
+                <div key={b.mc} className="flex items-center justify-between">
+                  <span className="text-[13px]">{b.name}</span>
                   <div className="flex items-center gap-2">
-                    <span className={`font-mono text-xs ${b.good ? "text-success" : "text-destructive"}`}>
+                    <span className={`font-mono text-[11px] ${b.rating >= 3.5 ? "text-success" : "text-destructive"}`}>
                       ★ {b.rating}
                     </span>
-                    <span className="text-xs text-muted-foreground">({b.reviews})</span>
+                    <span className="text-[11px] text-muted-foreground">({b.reviews})</span>
                   </div>
                 </div>
               ))}
@@ -111,18 +139,18 @@ export default function DashboardPage() {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-card border border-border rounded-lg p-5 animate-fade-up" style={{ animationDelay: "800ms" }}>
-            <h3 className="font-display text-lg tracking-wide mb-4">RECENT ACTIVITY</h3>
-            <div className="space-y-4">
+          <div className="glass-panel rounded-2xl p-5 window-chrome animate-fade-up" style={{ animationDelay: "800ms" }}>
+            <h3 className="font-display text-base tracking-tight mb-4">Recent Activity</h3>
+            <div className="space-y-3.5">
               {recentActivity.map((a, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="p-1.5 bg-card-elevated rounded">
-                    <a.icon size={14} className="text-primary" />
+                  <div className="p-1.5 bg-[var(--glass-hover)] rounded-lg">
+                    <a.icon size={13} className="text-primary" />
                   </div>
                   <div>
-                    <div className="text-sm">{a.text}</div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock size={10} />{a.time}
+                    <div className="text-[13px]">{a.text}</div>
+                    <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <Clock size={9} />{a.time}
                     </div>
                   </div>
                 </div>

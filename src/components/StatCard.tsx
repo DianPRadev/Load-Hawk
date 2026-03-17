@@ -13,17 +13,17 @@ interface StatCardProps {
 export function StatCard({ label, value, change, positive, icon, delay = 0 }: StatCardProps) {
   return (
     <div
-      className="bg-card border border-border rounded-lg p-5 card-hover animate-fade-up"
+      className="glass-panel rounded-2xl p-5 card-hover window-chrome animate-fade-up"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-muted-foreground text-sm">{label}</span>
-        <div className="text-primary">{icon}</div>
+        <span className="text-muted-foreground text-[12px] font-medium">{label}</span>
+        <div className="text-primary/70 p-1.5 rounded-lg bg-primary/[0.06]">{icon}</div>
       </div>
-      <div className="font-display text-3xl text-primary tracking-wide">{value}</div>
+      <div className="font-display text-3xl text-primary tracking-tight">{value}</div>
       {change && (
-        <div className={cn("flex items-center gap-1 mt-2 text-xs font-mono", positive ? "text-success" : "text-destructive")}>
-          {positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+        <div className={cn("flex items-center gap-1 mt-2 text-[11px] font-mono", positive ? "text-success" : "text-destructive")}>
+          {positive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
           {change} vs last week
         </div>
       )}

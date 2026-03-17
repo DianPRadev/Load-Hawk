@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Bebas Neue"', 'sans-serif'],
-        body: ['"DM Sans"', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        display: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],
+        body: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"Geist Mono"', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -74,6 +74,8 @@ export default {
         },
       },
       borderRadius: {
+        "2xl": "1rem",
+        xl: "0.875rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 4px)",
         sm: "calc(var(--radius) - 8px)",
