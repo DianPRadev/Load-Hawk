@@ -6,7 +6,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
-import { AppProvider } from "@/store/AppContext";
 import { AuthProvider } from "@/store/AuthContext";
 import { AuthGuard } from "@/components/AuthGuard";
 
@@ -35,37 +34,35 @@ const App = () => (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  {/* Public pages — viewable without login */}
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/login" element={<LoginPage />} />
+                {/* Public pages */}
+                <Route element={<AppLayout />}>
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/find-loads" element={<FindLoadsPage />} />
+                  <Route path="/broker-ratings" element={<BrokerRatingsPage />} />
+                </Route>
+                {/* Protected pages */}
+                <Route element={<AuthGuard />}>
                   <Route element={<AppLayout />}>
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/find-loads" element={<FindLoadsPage />} />
-                    <Route path="/broker-ratings" element={<BrokerRatingsPage />} />
+                    <Route path="/my-loads" element={<MyLoadsPage />} />
+                    <Route path="/ai-negotiator" element={<AINegotiatorPage />} />
+                    <Route path="/earnings" element={<EarningsPage />} />
+                    <Route path="/fleet" element={<FleetPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
                   </Route>
-                  {/* Protected pages — require login */}
-                  <Route element={<AuthGuard />}>
-                    <Route element={<AppLayout />}>
-                      <Route path="/my-loads" element={<MyLoadsPage />} />
-                      <Route path="/ai-negotiator" element={<AINegotiatorPage />} />
-                      <Route path="/earnings" element={<EarningsPage />} />
-                      <Route path="/fleet" element={<FleetPage />} />
-                      <Route path="/settings" element={<SettingsPage />} />
-                    </Route>
-                  </Route>
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AppProvider>
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
   </ThemeProvider>

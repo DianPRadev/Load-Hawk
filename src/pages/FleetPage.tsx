@@ -1,7 +1,8 @@
 import { MapPin, Truck, User, DollarSign, Package, Plus, X } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { GoldButton } from "@/components/GoldButton";
-import { useApp, type Driver } from "@/store/AppContext";
+import { useDrivers, useAddDriver, useUpdateDriverStatus, useRemoveDriver } from "@/hooks/useFleet";
+import type { Driver } from "@/types";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -12,7 +13,10 @@ const statusColors: Record<string, string> = {
 };
 
 export default function FleetPage() {
-  const { drivers, addDriver, updateDriverStatus, removeDriver } = useApp();
+  const { data: drivers = [], isLoading } = useDrivers();
+  const addDriver = useAddDriver();
+  const updateStatus = useUpdateDriverStatus();
+  const removeDriver = useRemoveDriver();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [editingDriver, setEditingDriver] = useState<string | null>(null);
@@ -24,22 +28,33 @@ export default function FleetPage() {
 
   const handleAddDriver = () => {
     if (!newName.trim()) return;
-    addDriver({ name: newName.trim(), status: "Available", route: "—", earnings: 0 });
-    toast.success(`${newName.trim()} added to fleet`);
-    setNewName("");
-    setShowAddForm(false);
+    addDriver.mutate(
+      { name: newName.trim(), status: "Available", route: "—", earnings: 0 },
+      {
+        onSuccess: () => {
+          toast.success(`${newName.trim()} added to fleet`);
+          setNewName("");
+          setShowAddForm(false);
+        },
+      }
+    );
   };
 
   const handleStatusChange = (id: string, status: Driver["status"]) => {
-    updateDriverStatus(id, status);
-    toast.success("Driver status updated");
-    setEditingDriver(null);
+    updateStatus.mutate({ id, status }, {
+      onSuccess: () => { toast.success("Driver status updated"); setEditingDriver(null); },
+    });
   };
 
   const handleRemoveDriver = (id: string, name: string) => {
-    removeDriver(id);
-    toast.success(`${name} removed from fleet`);
+    removeDriver.mutate(id, {
+      onSuccess: () => toast.success(`${name} removed from fleet`),
+    });
   };
+
+  if (isLoading) {
+    return <div className="max-w-7xl mx-auto flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-5">
@@ -57,7 +72,6 @@ export default function FleetPage() {
         <StatCard label="Top Performer" value={topPerformer?.name.split(" ").map(n => n[0]).join("") + "." || "—"} icon={<Truck size={16} />} delay={400} />
       </div>
 
-      {/* Map */}
       <div className="glass-panel rounded-2xl h-44 flex items-center justify-center relative overflow-hidden animate-fade-up" style={{ animationDelay: "500ms" }}>
         <MapPin size={18} className="text-muted-foreground mr-2" />
         <span className="font-display text-lg text-muted-foreground tracking-tight">Live Fleet Map</span>
@@ -66,73 +80,52 @@ export default function FleetPage() {
         ))}
       </div>
 
-      {/* Add form */}
       {showAddForm && (
         <div className="glass-panel rounded-2xl p-4 animate-fade-up flex items-center gap-3 border-primary/20">
-          <input
-            value={newName}
-            onChange={e => setNewName(e.target.value)}
-            placeholder="Driver full name"
-            aria-label="New driver name"
-            className="flex-1 glass-input rounded-lg px-4 py-2 text-[13px] focus:outline-none"
-            onKeyDown={e => e.key === "Enter" && handleAddDriver()}
-            autoFocus
-          />
-          <GoldButton size="sm" onClick={handleAddDriver} disabled={!newName.trim()}>Add</GoldButton>
-          <GoldButton size="sm" variant="ghost" onClick={() => setShowAddForm(false)}>
-            <X size={14} />
-          </GoldButton>
+          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Driver full name" aria-label="New driver name" className="flex-1 glass-input rounded-lg px-4 py-2 text-[13px] focus:outline-none" onKeyDown={e => e.key === "Enter" && handleAddDriver()} autoFocus />
+          <GoldButton size="sm" onClick={handleAddDriver} disabled={!newName.trim()} loading={addDriver.isPending}>Add</GoldButton>
+          <GoldButton size="sm" variant="ghost" onClick={() => setShowAddForm(false)}><X size={14} /></GoldButton>
         </div>
       )}
 
-      {/* Driver table */}
-      <div className="glass-panel rounded-2xl overflow-hidden animate-fade-up" style={{ animationDelay: "600ms" }}>
-        <table className="w-full text-[13px]">
-          <thead>
-            <tr className="border-b border-[var(--table-border)]">
-              {["Driver", "Status", "Current Route", "Monthly Earnings", "Actions"].map(h => (
-                <th key={h} className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {drivers.map((d) => (
-              <tr key={d.id} className="border-b border-[var(--table-border)] hover:bg-[var(--table-row-hover)] transition-colors">
-                <td className="px-4 py-3 font-medium">{d.name}</td>
-                <td className="px-4 py-3">
-                  {editingDriver === d.id ? (
-                    <select
-                      value={d.status}
-                      onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])}
-                      className="glass-input rounded-lg px-2 py-1 text-[12px] focus:outline-none"
-                      autoFocus
-                      onBlur={() => setEditingDriver(null)}
-                    >
-                      <option value="Available">Available</option>
-                      <option value="On Load">On Load</option>
-                      <option value="Off Duty">Off Duty</option>
-                    </select>
-                  ) : (
-                    <button
-                      onClick={() => setEditingDriver(d.id)}
-                      className={`pill-badge text-[11px] cursor-pointer hover:opacity-80 ${statusColors[d.status]}`}
-                    >
-                      {d.status}
-                    </button>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{d.route}</td>
-                <td className="px-4 py-3 font-mono text-[12px] text-primary">${d.earnings.toLocaleString()}</td>
-                <td className="px-4 py-3">
-                  <GoldButton size="sm" variant="ghost" onClick={() => handleRemoveDriver(d.id, d.name)}>
-                    <X size={13} />
-                  </GoldButton>
-                </td>
+      {drivers.length === 0 ? (
+        <div className="glass-panel rounded-2xl p-12 text-center text-muted-foreground text-[13px]">No drivers yet. Add your first driver above.</div>
+      ) : (
+        <div className="glass-panel rounded-2xl overflow-hidden animate-fade-up" style={{ animationDelay: "600ms" }}>
+          <table className="w-full text-[13px]">
+            <thead>
+              <tr className="border-b border-[var(--table-border)]">
+                {["Driver", "Status", "Current Route", "Monthly Earnings", "Actions"].map(h => (
+                  <th key={h} className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {drivers.map((d) => (
+                <tr key={d.id} className="border-b border-[var(--table-border)] hover:bg-[var(--table-row-hover)] transition-colors">
+                  <td className="px-4 py-3 font-medium">{d.name}</td>
+                  <td className="px-4 py-3">
+                    {editingDriver === d.id ? (
+                      <select value={d.status} onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])} className="glass-input rounded-lg px-2 py-1 text-[12px] focus:outline-none" autoFocus onBlur={() => setEditingDriver(null)}>
+                        <option value="Available">Available</option>
+                        <option value="On Load">On Load</option>
+                        <option value="Off Duty">Off Duty</option>
+                      </select>
+                    ) : (
+                      <button onClick={() => setEditingDriver(d.id)} className={`pill-badge text-[11px] cursor-pointer hover:opacity-80 ${statusColors[d.status]}`}>{d.status}</button>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{d.route}</td>
+                  <td className="px-4 py-3 font-mono text-[12px] text-primary">${d.earnings.toLocaleString()}</td>
+                  <td className="px-4 py-3">
+                    <GoldButton size="sm" variant="ghost" onClick={() => handleRemoveDriver(d.id, d.name)}><X size={13} /></GoldButton>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
