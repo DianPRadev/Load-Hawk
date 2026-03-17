@@ -44,15 +44,18 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/login" element={<LoginPage />} />
-                  {/* Protected routes */}
+                  {/* Public pages — viewable without login */}
+                  <Route element={<AppLayout />}>
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/find-loads" element={<FindLoadsPage />} />
+                    <Route path="/broker-ratings" element={<BrokerRatingsPage />} />
+                  </Route>
+                  {/* Protected pages — require login */}
                   <Route element={<AuthGuard />}>
                     <Route element={<AppLayout />}>
-                      <Route path="/dashboard" element={<DashboardPage />} />
-                      <Route path="/find-loads" element={<FindLoadsPage />} />
                       <Route path="/my-loads" element={<MyLoadsPage />} />
                       <Route path="/ai-negotiator" element={<AINegotiatorPage />} />
                       <Route path="/earnings" element={<EarningsPage />} />
-                      <Route path="/broker-ratings" element={<BrokerRatingsPage />} />
                       <Route path="/fleet" element={<FleetPage />} />
                       <Route path="/settings" element={<SettingsPage />} />
                     </Route>
