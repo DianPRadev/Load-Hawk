@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+  /* ═══════════════════════════════════════════
+     DARK MODE (default)
+     ═══════════════════════════════════════════ */
   :root {
     --background: 0 0% 3.1%;
     --background-secondary: 0 0% 5.9%;
@@ -42,7 +45,7 @@
     --input: 0 0% 10.2%;
     --ring: 38 91% 54.5%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 5.9%;
     --sidebar-foreground: 36 25% 92.5%;
@@ -55,8 +58,119 @@
     --sidebar-muted: 0 0% 46.7%;
 
     --gradient-gold: linear-gradient(135deg, hsl(38, 91%, 54.5%), hsl(22, 93%, 47.5%));
-    --shadow-card: 0 4px 24px -4px hsla(0, 0%, 0%, 0.5);
-    --shadow-card-hover: 0 8px 32px -4px hsla(38, 91%, 54.5%, 0.15);
+    --shadow-card: 0 2px 16px -2px hsla(0, 0%, 0%, 0.4);
+    --shadow-card-hover: 0 8px 32px -4px hsla(38, 91%, 54.5%, 0.12);
+
+    /* macOS vibrancy — dark */
+    --glass-bg: hsla(0, 0%, 8%, 0.72);
+    --glass-bg-heavy: hsla(0, 0%, 7%, 0.85);
+    --glass-border: hsla(0, 0%, 100%, 0.06);
+    --glass-border-strong: hsla(0, 0%, 100%, 0.1);
+    --glass-highlight: hsla(0, 0%, 100%, 0.03);
+    --glass-sidebar-bg: hsla(0, 0%, 5%, 0.78);
+    --glass-toolbar-bg: hsla(0, 0%, 6%, 0.72);
+    --glass-input-bg: hsla(0, 0%, 100%, 0.04);
+    --glass-input-border: hsla(0, 0%, 100%, 0.08);
+    --glass-input-focus-bg: hsla(0, 0%, 100%, 0.06);
+    --glass-hover: hsla(0, 0%, 100%, 0.04);
+    --glass-active: hsla(0, 0%, 100%, 0.08);
+    --glass-active-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.3);
+    --glass-separator: hsla(0, 0%, 100%, 0.06);
+    --glass-inset: 0 0 0 0.5px hsla(0, 0%, 100%, 0.04) inset;
+    --glass-chrome: hsla(0, 0%, 100%, 0.06);
+    --scrollbar-thumb: hsla(0, 0%, 100%, 0.1);
+    --scrollbar-thumb-hover: hsla(0, 0%, 100%, 0.18);
+    --traffic-muted: hsla(0, 0%, 100%, 0.12);
+    --table-row-alt: transparent;
+    --table-row-hover: hsla(0, 0%, 100%, 0.02);
+    --table-border: hsla(0, 0%, 100%, 0.04);
+    --chat-ai-bg: hsla(0, 0%, 100%, 0.04);
+    --chat-ai-border: hsla(0, 0%, 100%, 0.06);
+    --overlay-bg: hsla(0, 0%, 3%, 0.6);
+  }
+
+  /* ═══════════════════════════════════════════
+     LIGHT MODE — macOS Sonoma inspired
+     ═══════════════════════════════════════════ */
+  .light {
+    --background: 220 14% 92%;
+    --background-secondary: 220 13% 95%;
+    --foreground: 220 15% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 12%;
+    --card-elevated: 220 14% 96%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 12%;
+
+    --primary: 30 100% 40%;
+    --primary-foreground: 0 0% 100%;
+    --primary-highlight: 36 95% 50%;
+    --primary-deep: 24 100% 32%;
+
+    --secondary: 220 12% 90%;
+    --secondary-foreground: 220 15% 12%;
+
+    --muted: 220 12% 90%;
+    --muted-foreground: 220 8% 42%;
+    --muted-strong: 220 6% 56%;
+
+    --accent: 22 93% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 145 58% 32%;
+    --info: 217 75% 45%;
+    --premium: 263 65% 52%;
+
+    --border: 220 12% 84%;
+    --border-strong: 220 10% 76%;
+    --input: 220 12% 93%;
+    --ring: 30 100% 40%;
+
+    --sidebar-background: 220 14% 95%;
+    --sidebar-foreground: 220 15% 12%;
+    --sidebar-primary: 30 100% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 12% 90%;
+    --sidebar-accent-foreground: 220 15% 12%;
+    --sidebar-border: 220 12% 84%;
+    --sidebar-ring: 30 100% 40%;
+    --sidebar-muted: 220 8% 42%;
+
+    --gradient-gold: linear-gradient(135deg, hsl(30, 100%, 40%), hsl(20, 95%, 36%));
+    --shadow-card: 0 1px 3px hsla(220, 15%, 12%, 0.04), 0 4px 16px -2px hsla(220, 15%, 12%, 0.08);
+    --shadow-card-hover: 0 8px 32px -4px hsla(30, 100%, 40%, 0.14), 0 2px 8px hsla(220, 15%, 12%, 0.06);
+
+    /* macOS vibrancy — light: solid white panels, real shadows */
+    --glass-bg: hsla(0, 0%, 100%, 0.92);
+    --glass-bg-heavy: hsla(0, 0%, 100%, 0.96);
+    --glass-border: hsla(220, 15%, 12%, 0.1);
+    --glass-border-strong: hsla(220, 15%, 12%, 0.16);
+    --glass-highlight: hsla(220, 15%, 12%, 0.03);
+    --glass-sidebar-bg: hsla(220, 14%, 96%, 0.92);
+    --glass-toolbar-bg: hsla(0, 0%, 100%, 0.88);
+    --glass-input-bg: hsla(220, 15%, 12%, 0.05);
+    --glass-input-border: hsla(220, 15%, 12%, 0.14);
+    --glass-input-focus-bg: hsla(0, 0%, 100%, 0.8);
+    --glass-hover: hsla(220, 15%, 12%, 0.05);
+    --glass-active: hsla(220, 15%, 12%, 0.08);
+    --glass-active-shadow: 0 1px 3px hsla(220, 15%, 12%, 0.12);
+    --glass-separator: hsla(220, 15%, 12%, 0.1);
+    --glass-inset: 0 0.5px 0 0 hsla(0, 0%, 100%, 0.8) inset;
+    --glass-chrome: hsla(0, 0%, 100%, 0.6);
+    --scrollbar-thumb: hsla(220, 15%, 12%, 0.15);
+    --scrollbar-thumb-hover: hsla(220, 15%, 12%, 0.25);
+    --traffic-muted: hsla(220, 15%, 12%, 0.14);
+    --table-row-alt: transparent;
+    --table-row-hover: hsla(220, 15%, 12%, 0.04);
+    --table-border: hsla(220, 15%, 12%, 0.08);
+    --chat-ai-bg: hsla(220, 14%, 96%, 0.8);
+    --chat-ai-border: hsla(220, 15%, 12%, 0.08);
+    --overlay-bg: hsla(220, 15%, 12%, 0.3);
   }
 }
 
@@ -67,50 +181,185 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+  }
+
+  /* macOS-style thin scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 100px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
   .font-body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
   }
   .font-mono-data {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Geist Mono', monospace;
   }
   .gradient-gold {
-    background: linear-gradient(135deg, hsl(38, 91%, 54.5%), hsl(22, 93%, 47.5%));
+    background: var(--gradient-gold);
   }
   .gradient-gold-text {
-    background: linear-gradient(135deg, hsl(38, 91%, 54.5%), hsl(42, 100%, 69%));
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-highlight)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  /* ---- macOS Glass Panels ---- */
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      var(--glass-inset),
+      var(--shadow-card);
+  }
+  .glass-panel-heavy {
+    background: var(--glass-bg-heavy);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      var(--glass-inset),
+      var(--shadow-card);
+  }
+  .glass-sidebar {
+    background: var(--glass-sidebar-bg);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    border-right: 1px solid var(--glass-border);
+  }
+  .glass-toolbar {
+    background: var(--glass-toolbar-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .glass-input {
+    background: var(--glass-input-bg);
+    border: 1px solid var(--glass-input-border);
+    transition: all 0.2s ease;
+  }
+  .glass-input:focus {
+    background: var(--glass-input-focus-bg);
+    border-color: hsla(var(--ring), 0.4);
+    box-shadow: 0 0 0 3px hsla(var(--ring), 0.08);
+  }
+
+  /* ---- macOS window chrome ---- */
+  .window-chrome {
+    @apply relative;
+  }
+  .window-chrome::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-chrome), transparent);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  /* ---- Card interactions ---- */
   .card-hover {
-    @apply transition-all duration-200;
+    @apply transition-all duration-300 ease-out;
   }
   .card-hover:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--border-strong));
+    border-color: var(--glass-border-strong);
   }
+
+  /* ---- Animations ---- */
   .animate-fade-up {
-    animation: fadeUp 0.5s ease-out forwards;
+    animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     opacity: 0;
   }
   .gold-glow {
-    box-shadow: 0 0 60px 20px hsla(38, 91%, 54.5%, 0.08);
+    box-shadow: 0 0 60px 20px hsla(38, 91%, 54.5%, 0.06);
+  }
+
+  /* ---- Traffic light dots ---- */
+  .traffic-lights {
+    @apply flex items-center gap-1.5;
+  }
+  .traffic-lights .dot {
+    @apply w-[10px] h-[10px] rounded-full;
+  }
+  .traffic-lights .dot-red { background: #ff5f57; }
+  .traffic-lights .dot-yellow { background: #febc2e; }
+  .traffic-lights .dot-green { background: #28c840; }
+  .traffic-lights-muted .dot-red { background: var(--traffic-muted); }
+  .traffic-lights-muted .dot-yellow { background: var(--traffic-muted); }
+  .traffic-lights-muted .dot-green { background: var(--traffic-muted); }
+
+  /* ---- macOS segmented control ---- */
+  .segmented-control {
+    @apply flex p-0.5 rounded-lg;
+    background: var(--glass-input-bg);
+    border: 1px solid var(--glass-border);
+  }
+  .segmented-control button {
+    @apply px-4 py-1.5 text-sm rounded-md transition-all duration-200;
+  }
+  .segmented-control button.active {
+    background: var(--glass-active);
+    box-shadow: var(--glass-active-shadow);
+  }
+
+  /* ---- macOS pill badge ---- */
+  .pill-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  /* ---- Recharts tooltip (theme-aware) ---- */
+  .recharts-tooltip-wrapper .recharts-default-tooltip {
+    background: var(--glass-bg-heavy) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+  }
+
+  /* ---- Separator ---- */
+  .macos-separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-separator), transparent);
   }
 }
 
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
