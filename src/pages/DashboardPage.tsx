@@ -15,8 +15,8 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { data: dbProfile } = useProfile();
 
-  const userName = dbProfile?.name || user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
-  const firstName = userName.split(" ")[0];
+  const userName = dbProfile?.name || user?.user_metadata?.name || user?.email?.split("@")[0] || "";
+  const firstName = userName ? userName.split(" ")[0] : "";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -70,7 +70,7 @@ export default function DashboardPage() {
       {/* Welcome */}
       <div className="animate-fade-up">
         <h1 className="font-display text-4xl tracking-tight">
-          {greeting}, <span className="gradient-gold-text">{firstName}</span>
+          {greeting}{firstName ? <>, <span className="gradient-gold-text">{firstName}</span></> : ""}
         </h1>
         <p className="text-muted-foreground text-[13px] mt-1">{today}{dbProfile?.homeBase ? ` · ${dbProfile.homeBase}` : ""}</p>
       </div>
