@@ -1,15 +1,40 @@
 import { User, CreditCard, Bell, Gift } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
-import { useState } from "react";
-import { useApp } from "@/store/AppContext";
+import { useState, useEffect } from "react";
+import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
+import { useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/useNotifications";
 import { toast } from "sonner";
 
 export default function SettingsPage() {
-  const { profile, updateProfile, notificationSettings, updateNotificationSettings } = useApp();
+  const { data: profile, isLoading: profileLoading } = useProfile();
+  const updateProfile = useUpdateProfile();
+  const { data: notifSettings } = useNotificationSettings();
+  const updateNotifSettings = useUpdateNotificationSettings();
+
   const [tab, setTab] = useState("profile");
-  const [formData, setFormData] = useState({ ...profile });
-  const [notifSettings, setNotifSettings] = useState({ ...notificationSettings });
-  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "", email: "", phone: "", cdlClass: "", homeBase: "", preferredLanes: "", role: "",
+  });
+  const [localNotifSettings, setLocalNotifSettings] = useState<Record<string, boolean>>({});
+
+  // Sync profile data to form
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.name,
+        email: profile.email,
+        phone: profile.phone,
+        cdlClass: profile.cdlClass,
+        homeBase: profile.homeBase,
+        preferredLanes: profile.preferredLanes,
+        role: profile.role,
+      });
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    if (notifSettings) setLocalNotifSettings({ ...notifSettings });
+  }, [notifSettings]);
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
@@ -21,23 +46,22 @@ export default function SettingsPage() {
   const inputClass = "w-full glass-input rounded-lg px-4 py-2.5 text-[13px] text-foreground focus:outline-none";
 
   const handleSaveProfile = () => {
-    setSaving(true);
-    setTimeout(() => {
-      updateProfile(formData);
-      setSaving(false);
-      toast.success("Profile saved successfully!");
-    }, 500);
+    updateProfile.mutate(formData, {
+      onSuccess: () => toast.success("Profile saved successfully!"),
+      onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to save"),
+    });
   };
 
   const handleToggleNotif = (key: string) => {
-    const updated = { ...notifSettings, [key]: !notifSettings[key] };
-    setNotifSettings(updated);
-    updateNotificationSettings(updated);
-    toast.success(`${key}: ${updated[key] ? "enabled" : "disabled"}`);
+    const updated = { ...localNotifSettings, [key]: !localNotifSettings[key] };
+    setLocalNotifSettings(updated);
+    updateNotifSettings.mutate(updated, {
+      onSuccess: () => toast.success(`${key}: ${updated[key] ? "enabled" : "disabled"}`),
+    });
   };
 
   const handleCopyLink = () => {
-    const link = `loadhawk.com/ref/${profile.name.replace(/\s/g, "-").toUpperCase()}`;
+    const link = `loadhawk.com/ref/${(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}`;
     navigator.clipboard.writeText(link).then(() => {
       toast.success("Referral link copied to clipboard!");
     }).catch(() => {
@@ -49,11 +73,14 @@ export default function SettingsPage() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  if (profileLoading) {
+    return <div className="max-w-4xl mx-auto flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-5">
       <h1 className="font-display text-3xl tracking-tight animate-fade-up">Settings</h1>
 
-      {/* Segmented control tabs */}
       <div className="segmented-control animate-fade-up flex-wrap" style={{ animationDelay: "100ms" }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-2 font-display tracking-tight ${tab === t.id ? "active text-foreground" : "text-muted-foreground"}`}>
@@ -81,6 +108,7 @@ export default function SettingsPage() {
               <div>
                 <label htmlFor="cdl" className="text-[11px] text-muted-foreground mb-1.5 block">CDL Class</label>
                 <select id="cdl" value={formData.cdlClass} onChange={e => handleInputChange("cdlClass", e.target.value)} className={inputClass}>
+                  <option value="">Select...</option>
                   <option>Class A</option>
                   <option>Class B</option>
                   <option>Class C</option>
@@ -95,7 +123,7 @@ export default function SettingsPage() {
                 <input id="lanes" value={formData.preferredLanes} onChange={e => handleInputChange("preferredLanes", e.target.value)} className={inputClass} />
               </div>
             </div>
-            <GoldButton onClick={handleSaveProfile} loading={saving} loadingText="Saving...">Save Changes</GoldButton>
+            <GoldButton onClick={handleSaveProfile} loading={updateProfile.isPending} loadingText="Saving...">Save Changes</GoldButton>
           </div>
         )}
 
@@ -122,21 +150,19 @@ export default function SettingsPage() {
 
         {tab === "notifications" && (
           <div className="space-y-1">
-            {Object.keys(notifSettings).map(n => (
-              <div key={n} className="flex items-center justify-between py-3 border-b border-[var(--table-border)] last:border-0">
-                <span className="text-[13px]">{n}</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={notifSettings[n]}
-                    onChange={() => handleToggleNotif(n)}
-                    className="sr-only peer"
-                    aria-label={`Toggle ${n}`}
-                  />
-                  <div className="w-9 h-5 bg-[var(--glass-active)] rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-foreground after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
-                </label>
-              </div>
-            ))}
+            {Object.keys(localNotifSettings).length === 0 ? (
+              <div className="text-center text-muted-foreground text-[13px] py-8">Loading notification settings...</div>
+            ) : (
+              Object.keys(localNotifSettings).map(n => (
+                <div key={n} className="flex items-center justify-between py-3 border-b border-[var(--table-border)] last:border-0">
+                  <span className="text-[13px]">{n}</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked={localNotifSettings[n]} onChange={() => handleToggleNotif(n)} className="sr-only peer" aria-label={`Toggle ${n}`} />
+                    <div className="w-9 h-5 bg-[var(--glass-active)] rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-foreground after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
+                  </label>
+                </div>
+              ))
+            )}
           </div>
         )}
 
@@ -145,7 +171,7 @@ export default function SettingsPage() {
             <h3 className="font-display text-2xl">Refer & Earn</h3>
             <p className="text-muted-foreground text-[13px]">Earn $25 for every trucker who signs up with your link</p>
             <div className="glass-input rounded-xl px-4 py-3 font-mono text-[13px] text-primary inline-block">
-              loadhawk.com/ref/{profile.name.replace(/\s/g, "-").toUpperCase()}
+              loadhawk.com/ref/{(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}
             </div>
             <div>
               <GoldButton variant="secondary" onClick={handleCopyLink}>Copy Link</GoldButton>

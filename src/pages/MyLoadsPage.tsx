@@ -1,6 +1,7 @@
-import { Package, MapPin, ArrowRight, Clock, AlertCircle } from "lucide-react";
+import { MapPin, ArrowRight, Clock, AlertCircle } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
-import { useApp, type LoadStatus } from "@/store/AppContext";
+import { useBookedLoads, useUpdateLoadStatus } from "@/hooks/useLoads";
+import type { LoadStatus } from "@/types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -13,15 +14,18 @@ const statusColors: Record<string, string> = {
 const STATUS_FLOW: LoadStatus[] = ["Picked Up", "In Transit", "Delivered"];
 
 export default function MyLoadsPage() {
-  const { bookedLoads, updateLoadStatus } = useApp();
+  const { data: bookedLoads = [], isLoading } = useBookedLoads();
+  const updateStatus = useUpdateLoadStatus();
   const navigate = useNavigate();
 
   const handleAdvanceStatus = (loadId: string, currentStatus: LoadStatus) => {
     const currentIdx = STATUS_FLOW.indexOf(currentStatus);
     if (currentIdx < STATUS_FLOW.length - 1) {
       const nextStatus = STATUS_FLOW[currentIdx + 1];
-      updateLoadStatus(loadId, nextStatus);
-      toast.success(`Status updated to: ${nextStatus}`);
+      updateStatus.mutate(
+        { bookedLoadId: "", loadId, newStatus: nextStatus },
+        { onSuccess: () => toast.success(`Status updated to: ${nextStatus}`) }
+      );
     }
   };
 
@@ -33,6 +37,14 @@ export default function MyLoadsPage() {
     }
     return null;
   };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (bookedLoads.length === 0) {
     return (
@@ -78,7 +90,7 @@ export default function MyLoadsPage() {
                   <span className={`pill-badge text-[11px] ${statusColors[l.status]}`}>{l.status}</span>
                   <span className="font-mono text-primary font-bold">${l.rate.toLocaleString()}</span>
                   {nextLabel && (
-                    <GoldButton size="sm" onClick={() => handleAdvanceStatus(l.id, l.status)}>
+                    <GoldButton size="sm" onClick={() => handleAdvanceStatus(l.id, l.status)} loading={updateStatus.isPending}>
                       {nextLabel}
                     </GoldButton>
                   )}

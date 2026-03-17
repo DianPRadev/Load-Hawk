@@ -1,7 +1,9 @@
 import { MapPin, ArrowRight, Clock, Truck } from "lucide-react";
 import { GoldButton } from "./GoldButton";
 import { useNavigate } from "react-router-dom";
-import { useApp, type Load } from "@/store/AppContext";
+import { useAuth } from "@/store/AuthContext";
+import { useBookLoad, useBookedLoads } from "@/hooks/useLoads";
+import type { Load } from "@/types";
 import { toast } from "sonner";
 
 interface LoadCardProps extends Load {
@@ -10,18 +12,34 @@ interface LoadCardProps extends Load {
 }
 
 export function LoadCard({ id, origin, destination, miles, weight, rate, ratePerMile, broker, equipment, postedAgo, delay = 0, showNegotiate = true }: LoadCardProps) {
-  const { bookLoad, bookedLoads } = useApp();
+  const { user } = useAuth();
+  const { data: bookedLoads = [] } = useBookedLoads();
+  const bookMutation = useBookLoad();
   const navigate = useNavigate();
   const isBooked = bookedLoads.some(l => l.id === id);
 
   const handleBook = () => {
-    bookLoad(id);
-    toast.success(`Load booked: ${origin} → ${destination}`, {
-      description: `$${rate.toLocaleString()} — Check My Loads for details`,
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    bookMutation.mutate(id, {
+      onSuccess: () => {
+        toast.success(`Load booked: ${origin} → ${destination}`, {
+          description: `$${rate.toLocaleString()} — Check My Loads for details`,
+        });
+      },
+      onError: (err) => {
+        toast.error(err instanceof Error ? err.message : "Failed to book load");
+      },
     });
   };
 
   const handleNegotiate = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
     navigate("/ai-negotiator", { state: { loadId: id } });
   };
 
@@ -55,7 +73,7 @@ export function LoadCard({ id, origin, destination, miles, weight, rate, ratePer
             {isBooked ? (
               <GoldButton size="sm" variant="secondary" disabled>Booked</GoldButton>
             ) : (
-              <GoldButton size="sm" onClick={handleBook}>Book Now</GoldButton>
+              <GoldButton size="sm" onClick={handleBook} loading={bookMutation.isPending}>Book Now</GoldButton>
             )}
             {showNegotiate && !isBooked && (
               <GoldButton size="sm" variant="secondary" onClick={handleNegotiate}>Negotiate</GoldButton>
