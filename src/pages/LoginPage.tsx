@@ -54,6 +54,17 @@ const css = `
     --fd:"Bebas Neue",sans-serif;--fb:"DM Sans",sans-serif;--fm:"JetBrains Mono",monospace;
     background:var(--bg);color:var(--white);font-family:var(--fb);min-height:100vh;
   }
+  :root:not(.dark) .lh-login{
+    --bg:#f5f5f7;--card:#ffffff;--border:#e0e0e0;--border2:#d1d1d6;
+    --white:#1d1d1f;--muted:#a1a1a6;--muted2:#6e6e73;
+  }
+  :root:not(.dark) .lh-login .lb{background:#fff}
+  :root:not(.dark) .lh-login .li{mix-blend-mode:multiply}
+  :root:not(.dark) .lh-login .bgd{background-image:radial-gradient(circle,rgba(0,0,0,.04) 1px,transparent 1px)}
+  :root:not(.dark) .lh-login input:-webkit-autofill,:root:not(.dark) .lh-login input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #f5f5f7 inset;-webkit-text-fill-color:#1d1d1f}
+  :root:not(.dark) .lh-login .inp:focus,:root:not(.dark) .lh-login .sel:focus{background:#fff}
+  :root:not(.dark) .lh-login .cd{box-shadow:0 0 0 1px rgba(245,168,32,.06),0 8px 30px rgba(0,0,0,.08)}
+  :root:not(.dark) .lh-login .success-box .s-text strong{color:#333}
   .lh-login .shell{width:100%;max-width:420px;min-height:100vh;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden}
   .lh-login .bgl{position:absolute;inset:0;pointer-events:none;z-index:0}
   .lh-login .bgc{position:absolute;bottom:25%;left:50%;transform:translateX(-50%);width:340px;height:340px;background:radial-gradient(ellipse,rgba(245,168,32,.11) 0%,transparent 65%);animation:lh-bgp 7s ease-in-out infinite}
@@ -137,6 +148,9 @@ const css = `
   .lh-login .rcta{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#f5a820,#d97706);color:#000;font-size:14px;font-weight:800;font-family:var(--fm);letter-spacing:2px;cursor:pointer;margin-top:16px;transition:all .2s;box-shadow:0 4px 24px rgba(245,168,32,.35)}
   .lh-login .rcta:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(245,168,32,.55)}
   .lh-login .rcta:disabled{opacity:.4;pointer-events:none}
+  :root:not(.dark) .lh-login .rov{background:rgba(255,255,255,.85)}
+  :root:not(.dark) .lh-login .rsh{background:var(--card);border-top:1px solid var(--border2);box-shadow:0 -8px 30px rgba(0,0,0,.08)}
+  :root:not(.dark) .lh-login .rc:hover{background:#f9f9f9}
   .lh-login .succ{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;padding:40px;animation:lh-fi2 .4s ease;max-width:420px;margin:0 auto}
   .lh-login .slw{position:relative;width:200px;height:96px;margin-bottom:24px}
   .lh-login .slb{position:absolute;inset:0;background:#000;border-radius:8px}

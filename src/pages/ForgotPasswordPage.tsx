@@ -14,6 +14,17 @@ const css = `
     --fd:"Bebas Neue",sans-serif;--fb:"DM Sans",sans-serif;--fm:"JetBrains Mono",monospace;
     background:var(--bg);color:var(--white);font-family:var(--fb);min-height:100vh;
   }
+  :root:not(.dark) .lh-forgot{
+    --bg:#f5f5f7;--card:#ffffff;--border:#e0e0e0;--border2:#d1d1d6;
+    --white:#1d1d1f;--muted:#a1a1a6;--muted2:#6e6e73;
+  }
+  :root:not(.dark) .lh-forgot .lb{background:#fff}
+  :root:not(.dark) .lh-forgot .li{mix-blend-mode:multiply}
+  :root:not(.dark) .lh-forgot .bgd{background-image:radial-gradient(circle,rgba(0,0,0,.04) 1px,transparent 1px)}
+  :root:not(.dark) .lh-forgot input:-webkit-autofill,:root:not(.dark) .lh-forgot input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #f5f5f7 inset;-webkit-text-fill-color:#1d1d1f}
+  :root:not(.dark) .lh-forgot .inp:focus{background:#fff}
+  :root:not(.dark) .lh-forgot .cd{box-shadow:0 0 0 1px rgba(245,168,32,.06),0 8px 30px rgba(0,0,0,.08)}
+  :root:not(.dark) .lh-forgot .success-box .s-text strong{color:#333}
   .lh-forgot .shell{width:100%;max-width:420px;min-height:100vh;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden}
   .lh-forgot .bgl{position:absolute;inset:0;pointer-events:none;z-index:0}
   .lh-forgot .bgc{position:absolute;bottom:25%;left:50%;transform:translateX(-50%);width:340px;height:340px;background:radial-gradient(ellipse,rgba(245,168,32,.11) 0%,transparent 65%);animation:lh-bgp 7s ease-in-out infinite}
