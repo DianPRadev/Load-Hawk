@@ -12,13 +12,16 @@ import { useMemo } from "react";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { data: dbProfile } = useProfile();
-  const { data: availableLoads = [] } = useAvailableLoads();
+  const { data: dbProfile, isLoading: profileLoading } = useProfile();
+  const { data: availableLoads = [], isLoading: loadsLoading } = useAvailableLoads();
   const { data: bookedLoads = [] } = useBookedLoads();
   const { data: brokers = [] } = useBrokers();
   const { data: notifications = [] } = useNotifications();
-  const { data: earnings } = useEarningsSummary();
+  const { data: earnings, isLoading: earningsLoading } = useEarningsSummary();
 
+  const isInitialLoad = profileLoading && loadsLoading && earningsLoading;
+
+  const isLoggedIn = !!user;
   const userName = dbProfile?.name || user?.user_metadata?.name || user?.email?.split("@")[0] || "";
   const firstName = userName ? userName.split(" ")[0] : "";
   const hour = new Date().getHours();
@@ -61,27 +64,61 @@ export default function DashboardPage() {
           n.type === "negotiation" ? TrendingUp : Star,
       }));
     }
+    if (!isLoggedIn) {
+      return [
+        { text: `${availableLoads.length} loads available now`, time: "Live", icon: Package },
+        { text: `${brokers.length} brokers rated & reviewed`, time: "Live", icon: Star },
+        { text: "Sign up to book loads and track earnings", time: "Free", icon: Activity },
+      ];
+    }
     return [
       { text: "Welcome to LoadHawk!", time: "Just now", icon: Activity },
       { text: "Browse loads in Find Loads", time: "Tip", icon: Package },
       { text: "Book a load to get started", time: "Tip", icon: DollarSign },
     ];
-  }, [notifications]);
+  }, [notifications, isLoggedIn, availableLoads.length, brokers.length]);
+
+  if (isInitialLoad) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="animate-fade-up">
         <h1 className="font-display text-4xl tracking-tight">
-          {greeting}{firstName ? <>, <span className="gradient-gold-text">{firstName}</span></> : ""}
+          {isLoggedIn
+            ? <>{greeting}{firstName ? <>, <span className="gradient-gold-text">{firstName}</span></> : ""}</>
+            : <>Find Your Next <span className="gradient-gold-text">Load</span></>
+          }
         </h1>
-        <p className="text-muted-foreground text-[13px] mt-1">{today}{dbProfile?.homeBase ? ` · ${dbProfile.homeBase}` : ""}</p>
+        <p className="text-muted-foreground text-[13px] mt-1">
+          {isLoggedIn
+            ? <>{today}{dbProfile?.homeBase ? ` · ${dbProfile.homeBase}` : ""}</>
+            : <>Browse available freight, check broker ratings, and book loads faster</>
+          }
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : "—"} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} />
-        <StatCard label="Active Loads" value={String(activeLoadCount)} change={activeLoadCount > 0 ? `${activeLoadCount} active` : "—"} positive={activeLoadCount > 0} icon={<Package size={16} />} delay={200} />
-        <StatCard label="Miles This Week" value={totalMilesThisWeek.toLocaleString()} icon={<MapPin size={16} />} delay={300} />
-        <StatCard label="Avg Rate/Mile" value={avgRatePerMile > 0 ? `$${avgRatePerMile.toFixed(2)}` : "—"} icon={<TrendingUp size={16} />} delay={400} />
+        {isLoggedIn ? (
+          <>
+            <StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : "—"} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} />
+            <StatCard label="Active Loads" value={String(activeLoadCount)} change={activeLoadCount > 0 ? `${activeLoadCount} active` : "—"} positive={activeLoadCount > 0} icon={<Package size={16} />} delay={200} />
+            <StatCard label="Miles This Week" value={totalMilesThisWeek.toLocaleString()} icon={<MapPin size={16} />} delay={300} />
+            <StatCard label="Avg Rate/Mile" value={avgRatePerMile > 0 ? `$${avgRatePerMile.toFixed(2)}` : "—"} icon={<TrendingUp size={16} />} delay={400} />
+          </>
+        ) : (
+          <>
+            <StatCard label="Available Loads" value={String(availableLoads.length)} change={`${availableLoads.length} posted`} positive={availableLoads.length > 0} icon={<Package size={16} />} delay={100} />
+            <StatCard label="Verified Brokers" value={String(brokers.length)} change="rated & reviewed" positive icon={<Star size={16} />} delay={200} />
+            <StatCard label="Avg Rate/Mile" value={availableLoads.length > 0 ? `$${(availableLoads.reduce((s, l) => s + l.ratePerMile, 0) / availableLoads.length).toFixed(2)}` : "—"} icon={<TrendingUp size={16} />} delay={300} />
+            <StatCard label="Top Lane" value={availableLoads.length > 0 ? `${availableLoads[0].origin.split(",")[0]}` : "—"} icon={<MapPin size={16} />} delay={400} />
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -102,8 +139,15 @@ export default function DashboardPage() {
 
         <div className="space-y-4">
           <div className="glass-panel rounded-2xl p-5 window-chrome animate-fade-up" style={{ animationDelay: "600ms" }}>
-            <h3 className="font-display text-base tracking-tight mb-4">Weekly Earnings</h3>
-            {earningsData.length > 0 ? (
+            <h3 className="font-display text-base tracking-tight mb-4">{isLoggedIn ? "Weekly Earnings" : "Why LoadHawk?"}</h3>
+            {!isLoggedIn ? (
+              <div className="space-y-3 text-[13px]">
+                <div className="flex items-start gap-3"><span className="text-primary">$</span><span className="text-muted-foreground">See true profit per load — not just rate</span></div>
+                <div className="flex items-start gap-3"><span className="text-primary">★</span><span className="text-muted-foreground">Verified broker ratings with payment history</span></div>
+                <div className="flex items-start gap-3"><span className="text-primary">⚡</span><span className="text-muted-foreground">AI-powered negotiation assistant</span></div>
+                <div className="flex items-start gap-3"><span className="text-primary">📊</span><span className="text-muted-foreground">Track earnings, miles, and performance</span></div>
+              </div>
+            ) : earningsData.length > 0 ? (
               <>
                 <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={earningsData}>

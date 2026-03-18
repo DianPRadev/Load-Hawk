@@ -52,11 +52,20 @@ export default function SettingsPage() {
     });
   };
 
+  const notifLabelMap: Record<string, string> = {
+    load_alerts_email: "Load Alerts (Email)",
+    load_alerts_sms: "Load Alerts (SMS)",
+    payment_received: "Payment Received",
+    rate_changes: "Rate Changes",
+    negotiation_updates: "Negotiation Updates",
+  };
+
   const handleToggleNotif = (key: string) => {
     const updated = { ...localNotifSettings, [key]: !localNotifSettings[key] };
     setLocalNotifSettings(updated);
+    const label = notifLabelMap[key] || key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
     updateNotifSettings.mutate(updated, {
-      onSuccess: () => toast.success(`${key}: ${updated[key] ? "enabled" : "disabled"}`),
+      onSuccess: () => toast.success(`${label}: ${updated[key] ? "enabled" : "disabled"}`),
     });
   };
 
@@ -134,7 +143,7 @@ export default function SettingsPage() {
                 <div className="font-display text-xl tracking-tight">Free Plan</div>
                 <p className="text-[13px] text-muted-foreground">Basic load board access</p>
               </div>
-              <GoldButton onClick={() => toast.info("Pro upgrade coming soon!")}>Upgrade to Pro</GoldButton>
+              <GoldButton onClick={() => toast.info("Pro plan launching soon. You'll be notified when it's available.")}>Upgrade to Pro</GoldButton>
             </div>
             <div className="p-4 bg-[var(--glass-highlight)] rounded-xl border border-[var(--glass-border)]">
               <div className="font-display text-lg mb-2 gradient-gold-text">Pro — $49/mo</div>
@@ -153,15 +162,17 @@ export default function SettingsPage() {
             {Object.keys(localNotifSettings).length === 0 ? (
               <div className="text-center text-muted-foreground text-[13px] py-8">Loading notification settings...</div>
             ) : (
-              Object.keys(localNotifSettings).map(n => (
+              Object.keys(localNotifSettings).map(n => {
+                return (
                 <div key={n} className="flex items-center justify-between py-3 border-b border-[var(--table-border)] last:border-0">
-                  <span className="text-[13px]">{n}</span>
+                  <span className="text-[13px]">{notifLabelMap[n] || n.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked={localNotifSettings[n]} onChange={() => handleToggleNotif(n)} className="sr-only peer" aria-label={`Toggle ${n}`} />
                     <div className="w-9 h-5 bg-[var(--glass-active)] rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-foreground after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
                   </label>
                 </div>
-              ))
+                );
+              })
             )}
           </div>
         )}
@@ -173,8 +184,11 @@ export default function SettingsPage() {
             <div className="glass-input rounded-xl px-4 py-3 font-mono text-[13px] text-primary inline-block">
               loadhawk.com/ref/{(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}
             </div>
-            <div>
+            <div className="flex items-center justify-center gap-3">
               <GoldButton variant="secondary" onClick={handleCopyLink}>Copy Link</GoldButton>
+            </div>
+            <div className="bg-[var(--glass-highlight)] rounded-lg px-4 py-2.5 inline-block">
+              <p className="text-[11px] text-muted-foreground">Referral tracking is coming soon. Your link has been reserved.</p>
             </div>
           </div>
         )}
