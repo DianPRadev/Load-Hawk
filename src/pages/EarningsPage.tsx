@@ -35,9 +35,10 @@ export default function EarningsPage() {
 
   const handleExport = () => {
     if (bookedLoads.length === 0) return;
+    const esc = (s: string) => `"${s.replace(/"/g, '""')}"`;
     const csv = ["Route,Rate,Rate/Mile,Miles,Equipment,Broker,Status,Booked Date"];
     bookedLoads.forEach(l => {
-      csv.push(`"${l.origin} → ${l.destination}",${l.rate},${l.ratePerMile.toFixed(2)},${l.miles},"${l.equipment}","${l.broker}",${l.status},${new Date(l.bookedAt).toLocaleDateString()}`);
+      csv.push(`${esc(l.origin + " → " + l.destination)},${l.rate},${l.ratePerMile.toFixed(2)},${l.miles},${esc(l.equipment)},${esc(l.broker)},${l.status},${new Date(l.bookedAt).toLocaleDateString()}`);
     });
     csv.push("");
     csv.push("Summary");
