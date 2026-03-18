@@ -27,6 +27,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://loadhawk.ai/compare</loc>
+    <lastmod>2026-03-18</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://loadhawk.ai/resources</loc>
+    <lastmod>2026-03-18</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://loadhawk.ai/terms</loc>
     <lastmod>2026-03-18</lastmod>
     <priority>0.3</priority>

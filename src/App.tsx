@@ -26,6 +26,8 @@ const TermsPage = lazy(() => import("./pages/TermsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const HomePage = lazy(() => import("./pages/HomePage"));
 const PricingPage = lazy(() => import("./pages/PricingPage"));
+const ComparePage = lazy(() => import("./pages/ComparePage"));
+const ResourcesPage = lazy(() => import("./pages/ResourcesPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -58,6 +60,8 @@ const App = () => (
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/compare" element={<ComparePage />} />
+                <Route path="/resources" element={<ResourcesPage />} />
                 {/* Public pages */}
                 <Route element={<AppLayout />}>
                   <Route path="/dashboard" element={<DashboardPage />} />
