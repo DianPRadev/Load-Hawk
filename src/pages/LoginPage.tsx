@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/store/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { useTheme } from "next-themes";
 
 type Mode = "login" | "signup";
 type RoleId = "driver" | "dispatch" | "carrier";
@@ -161,6 +162,8 @@ const css = `
   .lh-login .ssb{font-size:14px;color:var(--muted2);text-align:center;line-height:1.6;margin-bottom:28px}
   .lh-login .sbt{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000;border:none;border-radius:12px;padding:14px 34px;font-size:14px;font-weight:800;font-family:var(--fm);letter-spacing:2px;cursor:pointer;box-shadow:0 4px 24px rgba(245,168,32,.4);transition:all .2s}
   .lh-login .sbt:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(245,168,32,.6)}
+  .lh-login .theme-toggle{position:fixed;top:16px;right:16px;z-index:100;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border2);background:var(--card);color:var(--muted2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .lh-login .theme-toggle:hover{border-color:var(--gold);color:var(--gold);transform:scale(1.1)}
   .lh-login input:-webkit-autofill,.lh-login input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #0d0d0d inset;-webkit-text-fill-color:#f0ece4}
 `;
 
@@ -195,6 +198,7 @@ function RolePicker({ onConfirm }: { onConfirm: (role: RoleId) => void }) {
 export default function LoginPage() {
   const navigate = useNavigate();
   const { signIn, signUp, user, updateUserRole } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [authError, setAuthError] = useState("");
   const [mode, setMode]         = useState<Mode>("login");
   const [showPass, setShowPass] = useState(false);
@@ -307,6 +311,7 @@ export default function LoginPage() {
     <div className="lh-login">
       <style dangerouslySetInnerHTML={{__html: css}}/>
       <div className="shell">
+        <button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme">{theme === "dark" ? "\u2600\uFE0F" : "\uD83C\uDF19"}</button>
         <div className="bgl"><div className="bgc"/><div className="bgd"/></div>
         {showRole && <RolePicker onConfirm={handleRoleConfirm}/>}
 
