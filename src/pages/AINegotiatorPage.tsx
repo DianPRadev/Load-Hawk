@@ -6,6 +6,7 @@ import { useAvailableLoads } from "@/hooks/useLoads";
 import { useChatMessages, useCreateChatSession, useSendMessage } from "@/hooks/useChat";
 import { useNegotiations } from "@/hooks/useNegotiations";
 import { useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 const templates = [
   "What's the market rate for this lane?",
@@ -51,6 +52,8 @@ export default function AINegotiatorPage() {
               message: `I want to negotiate the ${load.origin} → ${load.destination} load at $${load.ratePerMile.toFixed(2)}/mi. What do you recommend?`,
               load,
               history: [],
+            }, {
+              onError: (err) => toast.error(err instanceof Error ? err.message : "AI service unavailable. Try again."),
             });
           }
         },
@@ -71,7 +74,9 @@ export default function AINegotiatorPage() {
       sid = await createSession.mutateAsync(selectedLoadId || undefined);
       setSessionId(sid);
     }
-    sendMsg.mutate({ sessionId: sid, message, load: selectedLoad || undefined, history: chatMessages });
+    sendMsg.mutate({ sessionId: sid, message, load: selectedLoad || undefined, history: chatMessages }, {
+      onError: (err) => toast.error(err instanceof Error ? err.message : "AI service unavailable. Try again."),
+    });
     setMessage("");
   };
 

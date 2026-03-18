@@ -3,7 +3,7 @@ import { GoldButton } from "@/components/GoldButton";
 import { useAuth } from "@/store/AuthContext";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { useBrokers, useRateBroker } from "@/hooks/useBrokers";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { PageMeta } from "@/components/PageMeta";
@@ -13,7 +13,12 @@ export default function BrokerRatingsPage() {
   const { openAuthModal } = useAuthModal();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const { data: brokers = [], isLoading } = useBrokers(search || undefined);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+  const { data: brokers = [], isLoading } = useBrokers(debouncedSearch || undefined);
   const rateMutation = useRateBroker();
   const [ratingModal, setRatingModal] = useState<string | null>(null);
   const [userRating, setUserRating] = useState(5);

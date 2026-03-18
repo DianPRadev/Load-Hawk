@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { authFetch } from "@/lib/api";
 import { useAuth } from "@/store/AuthContext";
 import type { ChatMessage, Load } from "@/types";
 
@@ -45,9 +46,8 @@ export function useCreateChatSession() {
 
 // Call the server-side AI negotiation endpoint (DeepSeek V3 via HF)
 async function callNegotiateAPI(message: string, load?: Load, history?: ChatMessage[]): Promise<string> {
-  const res = await fetch("/api/negotiate", {
+  const res = await authFetch("/api/negotiate", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message,
       load: load ? {

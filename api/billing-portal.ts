@@ -1,16 +1,24 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import Stripe from "stripe";
+import { verifyAuth, rateLimit } from "./_auth";
+
+if (!process.env.STRIPE_SECRET_KEY) console.error("MISSING ENV: STRIPE_SECRET_KEY");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { email } = req.body as { email: string };
-  if (!email) return res.status(400).json({ error: "email required" });
+  // Auth check — use verified user's email, not request body
+  const user = await verifyAuth(req);
+  if (!user) return res.status(401).json({ error: "Authentication required" });
+
+  // Rate limit: 5 portal requests per minute
+  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0] || "unknown";
+  if (!rateLimit(ip, 5, 60_000)) return res.status(429).json({ error: "Too many requests" });
 
   try {
-    const customers = await stripe.customers.list({ email, limit: 1 });
+    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     if (customers.data.length === 0) {
       return res.status(404).json({ error: "No billing account found" });
     }

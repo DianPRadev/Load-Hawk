@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { useAuth } from "@/store/AuthContext";
 import { toast } from "sonner";
+import { authFetch } from "@/lib/api";
 import { PageMeta } from "@/components/PageMeta";
 
 const freeFeatures = [
@@ -63,10 +64,9 @@ export default function PricingPage() {
     }
     setUpgrading(true);
     try {
-      const res = await fetch("/api/create-checkout", {
+      const res = await authFetch("/api/create-checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, email: user.email }),
+        body: JSON.stringify({}),
       });
       const data = await res.json();
       if (data.url) {

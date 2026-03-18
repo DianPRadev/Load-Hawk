@@ -32,7 +32,7 @@ export default function MyLoadsPage() {
   const confirmStatusChange = () => {
     if (!confirmAction) return;
     updateStatus.mutate(
-      { bookedLoadId: "", loadId: confirmAction.loadId, newStatus: confirmAction.nextStatus },
+      { bookedLoadId: confirmAction.loadId, loadId: confirmAction.loadId, newStatus: confirmAction.nextStatus },
       {
         onSuccess: () => {
           toast.success(`Status updated to: ${confirmAction.nextStatus}`);

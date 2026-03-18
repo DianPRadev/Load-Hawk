@@ -7,6 +7,7 @@ import { useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/
 import { toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
 import { PageMeta } from "@/components/PageMeta";
+import { authFetch } from "@/lib/api";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -29,10 +30,10 @@ export default function SettingsPage() {
     if (!user) return;
     setUpgrading(true);
     try {
-      const res = await fetch("/api/create-checkout", {
+      const res = await authFetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, email: user.email }),
+        body: JSON.stringify({}),
       });
       const data = await res.json();
       if (data.url) {
@@ -50,10 +51,10 @@ export default function SettingsPage() {
     if (!user) return;
     setManagingBilling(true);
     try {
-      const res = await fetch("/api/billing-portal", {
+      const res = await authFetch("/api/billing-portal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user.email }),
+        body: JSON.stringify({}),
       });
       const data = await res.json();
       if (data.url) {
