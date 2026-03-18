@@ -1,5 +1,6 @@
 import { Search, Bell, ChevronDown, Sun, Moon, LogIn } from "lucide-react";
 import { useAuth } from "@/store/AuthContext";
+import { useAuthModal } from "@/store/AuthModalContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useNotifications, useUnreadCount, useMarkNotificationRead, useClearNotifications } from "@/hooks/useNotifications";
 import { useEarningsSummary } from "@/hooks/useEarnings";
@@ -9,6 +10,7 @@ import { useTheme } from "next-themes";
 
 export function TopBar({ sidebarCollapsed }: { sidebarCollapsed: boolean }) {
   const { user, signOut } = useAuth();
+  const { openAuthModal } = useAuthModal();
   const { data: dbProfile } = useProfile();
   const { data: notifications = [] } = useNotifications();
   const unreadCount = useUnreadCount();
@@ -28,12 +30,15 @@ export function TopBar({ sidebarCollapsed }: { sidebarCollapsed: boolean }) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) navigate("/find-loads");
+    if (searchQuery.trim()) {
+      navigate(`/find-loads?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
   };
 
   return (
-    <header className={`sticky top-0 z-30 h-12 glass-toolbar flex items-center px-5 gap-4 transition-all duration-300 ease-out ${sidebarCollapsed ? "md:ml-[68px]" : "md:ml-[248px]"}`}>
-      <form onSubmit={handleSearch} className="flex-1 max-w-lg mx-auto">
+    <header className={`sticky top-0 z-30 h-12 glass-toolbar flex items-center pl-14 pr-5 md:px-5 gap-4 transition-all duration-300 ease-out ${sidebarCollapsed ? "md:ml-[68px]" : "md:ml-[248px]"}`}>
+      <form onSubmit={handleSearch} className="flex-1 max-w-lg mx-auto hidden sm:block">
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search loads..." aria-label="Search loads" className="w-full glass-input rounded-lg pl-9 pr-4 py-1.5 text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none" />
@@ -41,8 +46,9 @@ export function TopBar({ sidebarCollapsed }: { sidebarCollapsed: boolean }) {
       </form>
 
       <div className="flex items-center gap-2">
-        <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-[var(--glass-hover)] transition-all" aria-label="Toggle theme">
+        <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-[var(--glass-hover)] transition-all flex items-center gap-1.5" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
           {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+          <span className="text-[10px] font-mono hidden lg:inline">{theme === "dark" ? "Light" : "Dark"}</span>
         </button>
 
         {isLoggedIn ? (
@@ -111,14 +117,14 @@ export function TopBar({ sidebarCollapsed }: { sidebarCollapsed: boolean }) {
                     <button onClick={() => { setShowUserMenu(false); navigate("/settings"); }} className="w-full text-left px-3 py-2 text-[13px] hover:bg-[var(--glass-hover)] transition-colors">Settings</button>
                     <button onClick={() => { setShowUserMenu(false); navigate("/earnings"); }} className="w-full text-left px-3 py-2 text-[13px] hover:bg-[var(--glass-hover)] transition-colors">Earnings</button>
                     <div className="macos-separator" />
-                    <button onClick={async () => { setShowUserMenu(false); await signOut(); navigate("/login", { replace: true }); }} className="w-full text-left px-3 py-2 text-[13px] text-destructive hover:bg-[var(--glass-hover)] transition-colors">Log Out</button>
+                    <button onClick={async () => { setShowUserMenu(false); await signOut(); navigate("/dashboard", { replace: true }); }} className="w-full text-left px-3 py-2 text-[13px] text-destructive hover:bg-[var(--glass-hover)] transition-colors">Log Out</button>
                   </div>
                 </>
               )}
             </div>
           </>
         ) : (
-          <button onClick={() => navigate("/login")} className="flex items-center gap-2 gradient-gold text-primary-foreground font-display text-[12px] tracking-normal px-4 py-1.5 rounded-full hover:brightness-110 transition-all">
+          <button onClick={() => openAuthModal("login")} className="flex items-center gap-2 gradient-gold text-primary-foreground font-display text-[12px] tracking-normal px-4 py-1.5 rounded-full hover:brightness-110 transition-all">
             <LogIn size={14} /> Sign In
           </button>
         )}
