@@ -94,7 +94,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
                   <span className="font-medium">{item.title}</span>
                   {locked && <Lock size={12} className="ml-auto text-muted-foreground/40" />}
                   {item.pro && !locked && (
-                    <span className="ml-auto text-[9px] font-mono tracking-tight bg-[#f5a820]/10 text-[#f5a820] px-1.5 py-0.5 rounded-full">
+                    <span className="ml-auto text-[9px] font-mono tracking-tight bg-[#f5a820]/10 text-[#f5a820] px-1.5 py-0.5 rounded-full" title="Included with LoadHawk Pro ($49/mo)">
                       PRO
                     </span>
                   )}

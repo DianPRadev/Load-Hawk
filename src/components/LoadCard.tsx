@@ -73,7 +73,7 @@ export function LoadCard({ id, origin, destination, miles, weight, rate, ratePer
           </div>
           <div className="flex flex-col gap-2">
             {isBooked ? (
-              <GoldButton size="sm" variant="secondary" disabled>Booked</GoldButton>
+              <GoldButton size="sm" variant="secondary" disabled title="Already booked">Booked</GoldButton>
             ) : (
               <GoldButton size="sm" onClick={handleBook} loading={bookMutation.isPending}>Book Now</GoldButton>
             )}
