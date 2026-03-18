@@ -13,7 +13,7 @@ const freeFeatures = [
   "Community broker ratings",
   "Book loads and track status",
   "Basic earnings overview",
-  "AI negotiation (limited)",
+  "AI negotiation (5 per day)",
 ];
 
 const proFeatures = [

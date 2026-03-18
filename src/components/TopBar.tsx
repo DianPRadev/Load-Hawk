@@ -25,7 +25,7 @@ export function TopBar({ sidebarCollapsed }: { sidebarCollapsed: boolean }) {
 
   const isLoggedIn = !!user;
   const userName = dbProfile?.name || user?.user_metadata?.name || user?.email?.split("@")[0] || "";
-  const userInitials = userName ? userName.split(" ").map((n: string) => n[0]).join("").toUpperCase() : "";
+  const userInitials = userName ? (userName.includes(" ") ? userName.split(" ").map((n: string) => n[0]).join("").toUpperCase() : userName.slice(0, 2).toUpperCase()) : "";
   const todaysEarnings = earnings?.todayEarnings ?? 0;
 
   const handleSearch = (e: React.FormEvent) => {
