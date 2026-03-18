@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { useAuth } from "@/store/AuthContext";
 import { toast } from "sonner";
+import { PageMeta } from "@/components/PageMeta";
 
 const freeFeatures = [
   "Browse available loads",
@@ -81,6 +82,7 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta title="Pricing" />
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
         <button

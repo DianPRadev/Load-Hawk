@@ -5,6 +5,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianG
 import { useEarningsSummary, useEarningsChart } from "@/hooks/useEarnings";
 import { useBookedLoads } from "@/hooks/useLoads";
 import { toast } from "sonner";
+import { PageMeta } from "@/components/PageMeta";
 
 export default function EarningsPage() {
   const [view, setView] = useState<"weekly" | "monthly" | "yearly">("monthly");
@@ -60,6 +61,7 @@ export default function EarningsPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-5">
+      <PageMeta title="Earnings" />
       <div className="flex items-center justify-between animate-fade-up">
         <div>
           <h1 className="font-display text-3xl tracking-tight">Earnings</h1>

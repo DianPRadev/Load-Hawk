@@ -6,6 +6,7 @@ import { useAuth } from "@/store/AuthContext";
 import { useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/useNotifications";
 import { toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
+import { PageMeta } from "@/components/PageMeta";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -145,6 +146,7 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-5">
+      <PageMeta title="Settings" />
       <h1 className="font-display text-3xl tracking-tight animate-fade-up">Settings</h1>
 
       <div className="segmented-control animate-fade-up flex-wrap" style={{ animationDelay: "100ms" }}>
