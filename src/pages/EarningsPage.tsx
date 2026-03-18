@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download } from "lucide-react";
+import { Download, DollarSign } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { useEarningsSummary, useEarningsChart } from "@/hooks/useEarnings";
@@ -17,31 +17,43 @@ export default function EarningsPage() {
   const deliveredCount = earnings?.deliveredCount ?? 0;
   const hasRealData = deliveredCount > 0;
 
-  const fuelCosts = Math.round(totalMiles * 0.60);
-  const tollsFees = Math.round(grossEarnings * 0.033);
+  // Cost estimates — national averages (diesel ~$3.89/gal at 6.5 MPG = ~$0.60/mi; tolls avg ~3.3% of gross)
+  // TODO: Make configurable per-user in Settings when cost profile fields are added
+  const FUEL_COST_PER_MILE = 0.60;
+  const TOLLS_FEE_RATE = 0.033;
+  const fuelCosts = Math.round(totalMiles * FUEL_COST_PER_MILE);
+  const tollsFees = Math.round(grossEarnings * TOLLS_FEE_RATE);
   const netProfit = grossEarnings - fuelCosts - tollsFees;
 
   const breakdown = [
     { label: "Gross Earnings", value: `$${grossEarnings.toLocaleString()}`, color: "text-primary" },
-    { label: "Fuel Costs", value: `-$${fuelCosts.toLocaleString()}`, color: "text-destructive" },
-    { label: "Tolls & Fees", value: `-$${tollsFees.toLocaleString()}`, color: "text-destructive" },
-    { label: "Net Profit", value: `$${netProfit.toLocaleString()}`, color: "text-success" },
+    { label: "Fuel Costs (est.)", value: `-$${fuelCosts.toLocaleString()}`, color: "text-destructive" },
+    { label: "Tolls & Fees (est.)", value: `-$${tollsFees.toLocaleString()}`, color: "text-destructive" },
+    { label: "Net Profit (est.)", value: `$${netProfit.toLocaleString()}`, color: "text-success" },
   ];
 
   const handleExport = () => {
     if (bookedLoads.length === 0) return;
-    const csv = ["Route,Rate,Miles,Status,Booked Date"];
+    const csv = ["Route,Rate,Rate/Mile,Miles,Equipment,Broker,Status,Booked Date"];
     bookedLoads.forEach(l => {
-      csv.push(`"${l.origin} → ${l.destination}",${l.rate},${l.miles},${l.status},${new Date(l.bookedAt).toLocaleDateString()}`);
+      csv.push(`"${l.origin} → ${l.destination}",${l.rate},${l.ratePerMile.toFixed(2)},${l.miles},"${l.equipment}","${l.broker}",${l.status},${new Date(l.bookedAt).toLocaleDateString()}`);
     });
+    csv.push("");
+    csv.push("Summary");
+    csv.push(`Gross Earnings,$${grossEarnings.toLocaleString()}`);
+    csv.push(`Fuel Costs (est.),-$${fuelCosts.toLocaleString()}`);
+    csv.push(`Tolls & Fees (est.),-$${tollsFees.toLocaleString()}`);
+    csv.push(`Net Profit,$${netProfit.toLocaleString()}`);
+    csv.push(`Total Miles,${totalMiles.toLocaleString()}`);
+    csv.push(`Delivered Loads,${deliveredCount}`);
     const blob = new Blob([csv.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "loadhawk-earnings.csv";
+    a.download = `loadhawk-earnings-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("CSV exported!");
+    toast.success("CSV exported with full breakdown!");
   };
 
   const dataKey = view === "weekly" ? "day" : view === "monthly" ? "week" : "month";
@@ -64,10 +76,17 @@ export default function EarningsPage() {
       </div>
 
       <div className="glass-panel rounded-2xl p-8 text-center window-chrome animate-fade-up" style={{ animationDelay: "100ms" }}>
-        <p className="text-muted-foreground text-[12px] mb-2">{hasRealData ? "Total Earnings" : "No earnings yet"}</p>
-        <h2 className="font-display text-6xl gradient-gold-text">${grossEarnings.toLocaleString()}</h2>
-        {!hasRealData && (
-          <p className="text-muted-foreground text-[11px] mt-2">Book loads and mark them delivered to track real earnings</p>
+        {hasRealData ? (
+          <>
+            <p className="text-muted-foreground text-[12px] mb-2">Total Earnings</p>
+            <h2 className="font-display text-6xl gradient-gold-text">${grossEarnings.toLocaleString()}</h2>
+          </>
+        ) : (
+          <>
+            <DollarSign size={36} className="text-muted-foreground/30 mx-auto mb-3" />
+            <p className="font-display text-xl text-muted-foreground mb-1">No earnings yet</p>
+            <p className="text-muted-foreground text-[13px]">Book loads and mark them delivered to start tracking earnings</p>
+          </>
         )}
       </div>
 
@@ -106,6 +125,9 @@ export default function EarningsPage() {
               </div>
             ))}
           </div>
+          <p className="text-[11px] text-muted-foreground mt-4 pt-3 border-t border-[var(--table-border)]">
+            Fuel and toll estimates use national averages (~$0.60/mi fuel, ~3.3% tolls). Actual costs may vary based on your equipment, route, and fuel prices.
+          </p>
         </div>
       )}
     </div>
