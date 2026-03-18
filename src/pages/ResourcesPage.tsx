@@ -116,7 +116,7 @@ export default function ResourcesPage() {
         {/* Guide Cards */}
         <div className="space-y-4 mb-24 animate-fade-up">
           {guides.map((guide, i) => (
-            <div key={i} className="glass-panel rounded-2xl overflow-hidden">
+            <div key={i} className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm overflow-hidden">
               <button
                 onClick={() => setOpenGuide(openGuide === i ? null : i)}
                 className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 bg-transparent border-none cursor-pointer"
@@ -163,7 +163,7 @@ export default function ResourcesPage() {
               <button
                 key={tool.title}
                 onClick={() => navigate(tool.link)}
-                className="glass-panel rounded-2xl p-6 text-left hover:border-[#f5a820]/40 transition-colors cursor-pointer border border-transparent"
+                className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 text-left hover:border-[#f5a820]/40 transition-colors cursor-pointer"
               >
                 <div className="mb-3">{tool.icon}</div>
                 <h3 className="font-display font-semibold text-foreground mb-1">

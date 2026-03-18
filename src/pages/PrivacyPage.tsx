@@ -165,7 +165,7 @@ To submit a CCPA request, email privacy@loadhawk.ai with the subject line "CCPA 
           </p>
         </div>
 
-        <div className="glass-panel rounded-2xl p-6 sm:p-8 animate-fade-up" style={{ animationDelay: "100ms" }}>
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 sm:p-8 animate-fade-up" style={{ animationDelay: "100ms" }}>
           <p className="text-muted-foreground text-[13px] leading-relaxed mb-6">
             This Privacy Policy describes how LoadHawk collects, uses, and protects your personal information when you use our
             freight load board and management platform. We are committed to transparency and to safeguarding your data.

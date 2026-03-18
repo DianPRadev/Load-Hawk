@@ -121,7 +121,7 @@ export default function SettingsPage() {
     { id: "referral", label: "Referral", icon: Gift },
   ];
 
-  const inputClass = "w-full glass-input rounded-lg px-4 py-2.5 text-[13px] text-foreground focus:outline-none";
+  const inputClass = "w-full bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-4 py-2.5 text-[13px] text-foreground focus:outline-none";
 
   const handleSaveProfile = () => {
     updateProfile.mutate(formData, {
@@ -182,7 +182,7 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      <div className="glass-panel rounded-2xl p-6 window-chrome animate-fade-up" style={{ animationDelay: "200ms" }}>
+      <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 animate-fade-up" style={{ animationDelay: "200ms" }}>
         {tab === "profile" && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -222,7 +222,7 @@ export default function SettingsPage() {
 
         {tab === "subscription" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-[var(--glass-highlight)] rounded-xl border border-primary/15">
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0c0c0c] rounded-xl border border-primary/15">
               <div>
                 <div className="font-display text-xl tracking-tight">{isPro ? "Pro Plan" : "Free Plan"}</div>
                 <p className="text-[13px] text-muted-foreground">{isPro ? "Full access to all LoadHawk features" : "Basic load board access"}</p>
@@ -234,7 +234,7 @@ export default function SettingsPage() {
               )}
             </div>
             {!isPro && (
-              <div className="p-4 bg-[var(--glass-highlight)] rounded-xl border border-[var(--glass-border)]">
+              <div className="p-4 bg-gray-50 dark:bg-[#0c0c0c] rounded-xl border border-gray-200 dark:border-[#1f1f1f]">
                 <div className="font-display text-lg mb-2 gradient-gold-text">Pro — $49/mo</div>
                 <ul className="text-[13px] text-muted-foreground space-y-1.5">
                   <li>Unlimited AI negotiations</li>
@@ -257,11 +257,11 @@ export default function SettingsPage() {
             ) : (
               Object.keys(localNotifSettings).map(n => {
                 return (
-                <div key={n} className="flex items-center justify-between py-3 border-b border-[var(--table-border)] last:border-0">
+                <div key={n} className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-[#1f1f1f] last:border-0">
                   <span className="text-[13px]">{notifLabelMap[n] || n.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked={localNotifSettings[n]} onChange={() => handleToggleNotif(n)} className="sr-only peer" aria-label={`Toggle ${n}`} />
-                    <div className="w-9 h-5 bg-[var(--glass-active)] rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-foreground after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
+                    <div className="w-9 h-5 bg-gray-200 dark:bg-[#2a2a2a] rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-foreground after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
                   </label>
                 </div>
                 );
@@ -274,13 +274,13 @@ export default function SettingsPage() {
           <div className="space-y-4 text-center">
             <h3 className="font-display text-2xl">Refer & Earn</h3>
             <p className="text-muted-foreground text-[13px]">Earn $25 for every trucker who signs up with your link</p>
-            <div className="glass-input rounded-xl px-4 py-3 font-mono text-[13px] text-primary inline-block">
+            <div className="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] rounded-xl px-4 py-3 font-mono text-[13px] text-primary inline-block">
               loadhawk.com/ref/{(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}
             </div>
             <div className="flex items-center justify-center gap-3">
               <GoldButton variant="secondary" onClick={handleCopyLink}>Copy Link</GoldButton>
             </div>
-            <div className="bg-[var(--glass-highlight)] rounded-lg px-4 py-2.5 inline-block">
+            <div className="bg-gray-50 dark:bg-[#0c0c0c] rounded-lg px-4 py-2.5 inline-block">
               <p className="text-[11px] text-muted-foreground">Referral tracking launching soon. Your link has been reserved.</p>
             </div>
           </div>

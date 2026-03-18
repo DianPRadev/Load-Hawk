@@ -103,7 +103,7 @@ export default function TermsPage() {
           </p>
         </div>
 
-        <div className="glass-panel rounded-2xl p-6 sm:p-8 animate-fade-up" style={{ animationDelay: "100ms" }}>
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 sm:p-8 animate-fade-up" style={{ animationDelay: "100ms" }}>
           <p className="text-muted-foreground text-[13px] leading-relaxed mb-6">
             Welcome to LoadHawk. These Terms of Service govern your access to and use of the LoadHawk platform and services.
             Please read these Terms carefully before using the Service. By creating an account or using LoadHawk, you agree to

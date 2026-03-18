@@ -107,9 +107,9 @@ export default function AINegotiatorPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
         <div className="lg:col-span-2 space-y-4">
-          <div className="glass-panel rounded-2xl p-5 animate-fade-up" style={{ animationDelay: "100ms" }}>
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-5 animate-fade-up" style={{ animationDelay: "100ms" }}>
             <h3 className="font-display text-base mb-4">Select a Load</h3>
-            <select value={selectedLoadId || ""} onChange={e => handleLoadChange(e.target.value || null)} aria-label="Select a load to negotiate" className="w-full glass-input rounded-lg px-3 py-2 text-[13px] focus:outline-none">
+            <select value={selectedLoadId || ""} onChange={e => handleLoadChange(e.target.value || null)} aria-label="Select a load to negotiate" className="w-full bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-3 py-2 text-[13px] focus:outline-none">
               <option value="">Choose a load...</option>
               {availableLoads.map(l => (
                 <option key={l.id} value={l.id}>{l.origin} → {l.destination} — ${l.rate.toLocaleString()} (${l.ratePerMile.toFixed(2)}/mi)</option>
@@ -118,7 +118,7 @@ export default function AINegotiatorPage() {
           </div>
 
           {selectedLoad && (
-            <div className="glass-panel rounded-2xl p-5 animate-fade-up">
+            <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-5 animate-fade-up">
               <h3 className="font-display text-base mb-4">Load Details</h3>
               <div className="space-y-3 text-[13px]">
                 <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function AINegotiatorPage() {
                   <div><span className="text-muted-foreground">Equipment:</span> {selectedLoad.equipment}</div>
                   <div><span className="text-muted-foreground">Broker:</span> {selectedLoad.broker}</div>
                 </div>
-                <div className="macos-separator my-3" />
+                <div className="border-t border-gray-200 dark:border-[#1f1f1f] my-3" />
                 <div className="space-y-2">
                   <div className="flex justify-between"><span className="text-muted-foreground">Current Rate</span><span className="font-mono text-primary">${selectedLoad.rate.toLocaleString()} (${selectedLoad.ratePerMile.toFixed(2)}/mi)</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Market Average</span><span className="font-mono text-info">${(selectedLoad.ratePerMile * 0.93).toFixed(2)}/mi</span></div>
@@ -145,11 +145,11 @@ export default function AINegotiatorPage() {
           )}
 
           {negotiations.length > 0 && (
-            <div className="glass-panel rounded-2xl p-5 animate-fade-up" style={{ animationDelay: "200ms" }}>
+            <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-5 animate-fade-up" style={{ animationDelay: "200ms" }}>
               <h3 className="font-display text-base mb-4">Negotiation History</h3>
               <div className="space-y-3">
                 {negotiations.slice(0, 5).map((n, i) => (
-                  <div key={i} className="flex items-center justify-between text-[13px] pb-2 border-b border-[var(--table-border)] last:border-0">
+                  <div key={i} className="flex items-center justify-between text-[13px] pb-2 border-b border-gray-200 dark:border-[#1f1f1f] last:border-0">
                     <div>
                       <div>{n.route}</div>
                       <div className="text-[11px] text-muted-foreground font-mono">${n.offered}/mi → ${n.countered}/mi</div>
@@ -171,19 +171,19 @@ export default function AINegotiatorPage() {
         </div>
 
         {/* Chat */}
-        <div className="lg:col-span-3 glass-panel rounded-2xl flex flex-col h-[calc(100vh-12rem)] sm:h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
+        <div className="lg:col-span-3 bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm flex flex-col h-[calc(100vh-12rem)] sm:h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
           <div className="p-4">
             <h3 className="font-display text-base">AI Chat</h3>
             {selectedLoad && <p className="text-[11px] text-muted-foreground mt-1.5">Analyzing: {selectedLoad.origin} → {selectedLoad.destination}</p>}
           </div>
-          <div className="macos-separator" />
+          <div className="border-t border-gray-200 dark:border-[#1f1f1f]" />
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {chatMessages.length === 0 && (
               <div className="text-center py-8 space-y-3">
                 <Bot size={32} className="text-primary/30 mx-auto" />
                 <div className="text-muted-foreground text-[13px]">Select a load and start chatting to get AI-powered negotiation advice.</div>
-                <div className="text-[11px] text-muted-foreground/60 bg-[var(--glass-highlight)] rounded-lg px-3 py-2 inline-block">AI responses are generated suggestions — always verify rates with your broker</div>
+                <div className="text-[11px] text-muted-foreground/60 bg-gray-50 dark:bg-[#0c0c0c] rounded-lg px-3 py-2 inline-block">AI responses are generated suggestions — always verify rates with your broker</div>
               </div>
             )}
             {chatMessages.map((msg, i) => (
@@ -217,13 +217,13 @@ export default function AINegotiatorPage() {
           <div className="px-4 py-2">
             <div className="flex gap-2 overflow-x-auto pb-1">
               {templates.map((t, i) => (
-                <button key={i} onClick={() => setMessage(t)} className="text-[11px] bg-[var(--glass-highlight)] border border-[var(--glass-border)] rounded-full px-3 py-1.5 whitespace-nowrap hover:bg-[var(--glass-hover)] hover:border-primary/20 transition-all text-muted-foreground">{t}</button>
+                <button key={i} onClick={() => setMessage(t)} className="text-[11px] bg-gray-50 dark:bg-[#0c0c0c] border border-gray-200 dark:border-[#1f1f1f] rounded-full px-3 py-1.5 whitespace-nowrap hover:bg-gray-100 dark:hover:bg-[#1a1a1a] hover:border-primary/20 transition-all text-muted-foreground">{t}</button>
               ))}
             </div>
           </div>
-          <div className="macos-separator" />
+          <div className="border-t border-gray-200 dark:border-[#1f1f1f]" />
           <div className="p-3 flex gap-2 items-center">
-            <input value={message} onChange={e => setMessage(e.target.value)} onKeyDown={handleKeyDown} placeholder={selectedLoad ? `Ask about ${selectedLoad.origin} → ${selectedLoad.destination}...` : "Select a load or ask about market trends..."} aria-label="Chat message input" className="flex-1 glass-input rounded-full px-4 py-2 text-[13px] focus:outline-none" />
+            <input value={message} onChange={e => setMessage(e.target.value)} onKeyDown={handleKeyDown} placeholder={selectedLoad ? `Ask about ${selectedLoad.origin} → ${selectedLoad.destination}...` : "Select a load or ask about market trends..."} aria-label="Chat message input" className="flex-1 bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-full px-4 py-2 text-[13px] focus:outline-none" />
             <GoldButton size="sm" onClick={handleSend} disabled={!message.trim() || sendMsg.isPending} aria-label="Send message" className="!rounded-full !px-3"><Send size={14} /></GoldButton>
           </div>
           <div className="text-center text-[10px] text-muted-foreground/40 pb-2">Press Enter to send</div>

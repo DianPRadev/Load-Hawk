@@ -10,7 +10,7 @@ import { toast } from "sonner";
 const statusColors: Record<string, string> = {
   "On Load": "bg-primary/15 text-primary",
   "Available": "bg-success/15 text-success",
-  "Off Duty": "bg-[var(--glass-hover)] text-muted-foreground",
+  "Off Duty": "bg-gray-100 dark:bg-[#1a1a1a] text-muted-foreground",
 };
 
 export default function FleetPage() {
@@ -88,7 +88,7 @@ export default function FleetPage() {
         <StatCard label="Top Performer" value={topPerformer?.name.split(" ")[0] || "—"} icon={<Truck size={16} />} delay={400} />
       </div>
 
-      <div className="glass-panel rounded-2xl p-5 animate-fade-up" style={{ animationDelay: "500ms" }}>
+      <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-5 animate-fade-up" style={{ animationDelay: "500ms" }}>
         <div className="flex items-center gap-2 mb-3">
           <Truck size={15} className="text-primary" />
           <span className="font-display text-base tracking-tight">Fleet Overview</span>
@@ -96,7 +96,7 @@ export default function FleetPage() {
         {drivers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {drivers.map(d => (
-              <div key={d.id} className="flex items-center gap-3 bg-[var(--glass-highlight)] rounded-xl p-3">
+              <div key={d.id} className="flex items-center gap-3 bg-gray-50 dark:bg-[#0c0c0c] rounded-xl p-3">
                 <div className={`w-2 h-2 rounded-full shrink-0 ${d.status === "On Load" ? "bg-primary animate-pulse" : d.status === "Available" ? "bg-success" : "bg-muted-foreground/30"}`} />
                 <div className="min-w-0">
                   <div className="text-[13px] font-medium truncate">{d.name}</div>
@@ -111,21 +111,21 @@ export default function FleetPage() {
       </div>
 
       {showAddForm && (
-        <div className="glass-panel rounded-2xl p-4 animate-fade-up flex flex-wrap items-center gap-3 border-primary/20">
-          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Driver full name" aria-label="New driver name" className="flex-1 glass-input rounded-lg px-4 py-2 text-[13px] focus:outline-none" onKeyDown={e => e.key === "Enter" && handleAddDriver()} autoFocus />
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-4 animate-fade-up flex flex-wrap items-center gap-3 border-primary/20">
+          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Driver full name" aria-label="New driver name" className="flex-1 bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-4 py-2 text-[13px] focus:outline-none" onKeyDown={e => e.key === "Enter" && handleAddDriver()} autoFocus />
           <GoldButton size="sm" onClick={handleAddDriver} disabled={!newName.trim()} loading={addDriver.isPending}>Add</GoldButton>
           <GoldButton size="sm" variant="ghost" onClick={() => setShowAddForm(false)}><X size={14} /></GoldButton>
         </div>
       )}
 
       {drivers.length === 0 ? (
-        <div className="glass-panel rounded-2xl p-12 text-center text-muted-foreground text-[13px]">No drivers yet. Add your first driver above.</div>
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-12 text-center text-muted-foreground text-[13px]">No drivers yet. Add your first driver above.</div>
       ) : (
-        <div className="glass-panel rounded-2xl overflow-hidden animate-fade-up" style={{ animationDelay: "600ms" }}>
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm overflow-hidden animate-fade-up" style={{ animationDelay: "600ms" }}>
           <div className="overflow-x-auto">
           <table className="w-full text-[13px] min-w-[600px]">
             <thead>
-              <tr className="border-b border-[var(--table-border)]">
+              <tr className="border-b border-gray-200 dark:border-[#1f1f1f]">
                 {["Driver", "Status", "Current Route", "Monthly Earnings", "Actions"].map(h => (
                   <th key={h} scope="col" className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
                 ))}
@@ -133,11 +133,11 @@ export default function FleetPage() {
             </thead>
             <tbody>
               {drivers.map((d) => (
-                <tr key={d.id} className="border-b border-[var(--table-border)] hover:bg-[var(--table-row-hover)] transition-colors">
+                <tr key={d.id} className="border-b border-gray-200 dark:border-[#1f1f1f] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors">
                   <td className="px-4 py-3 font-medium">{d.name}</td>
                   <td className="px-4 py-3">
                     {editingDriver === d.id ? (
-                      <select value={d.status} onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])} className="glass-input rounded-lg px-2 py-1 text-[12px] focus:outline-none">
+                      <select value={d.status} onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])} className="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-2 py-1 text-[12px] focus:outline-none">
                         <option value="Available">Available</option>
                         <option value="On Load">On Load</option>
                         <option value="Off Duty">Off Duty</option>
@@ -162,7 +162,7 @@ export default function FleetPage() {
       {confirmRemove && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setConfirmRemove(null)}>
           <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
-          <div className="relative glass-panel-heavy rounded-2xl p-6 max-w-sm w-full mx-4 space-y-4 window-chrome" onClick={e => e.stopPropagation()}>
+          <div className="relative bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#1f1f1f] shadow-md rounded-2xl p-6 max-w-sm w-full mx-4 space-y-4" onClick={e => e.stopPropagation()}>
             <h3 className="font-display text-xl">Remove Driver</h3>
             <p className="text-[13px] text-muted-foreground">
               Are you sure you want to remove <span className="font-medium text-foreground">{confirmRemove.name}</span> from your fleet? This cannot be undone.

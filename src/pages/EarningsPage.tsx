@@ -78,7 +78,7 @@ export default function EarningsPage() {
         </GoldButton>
       </div>
 
-      <div className="glass-panel rounded-2xl p-8 text-center window-chrome animate-fade-up" style={{ animationDelay: "100ms" }}>
+      <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-8 text-center animate-fade-up" style={{ animationDelay: "100ms" }}>
         {hasRealData ? (
           <>
             <p className="text-muted-foreground text-[12px] mb-2">Total Earnings</p>
@@ -101,14 +101,14 @@ export default function EarningsPage() {
         ))}
       </div>
 
-      <div className="glass-panel rounded-2xl p-6 animate-fade-up" style={{ animationDelay: "200ms" }}>
+      <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 animate-fade-up" style={{ animationDelay: "200ms" }}>
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey={dataKey} axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: "var(--glass-bg-heavy)", backdropFilter: "blur(20px)", border: "1px solid var(--glass-border)", borderRadius: 12, fontFamily: "Geist Mono", fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, fontFamily: "Geist Mono", fontSize: 11 }} />
               <Line type="monotone" dataKey="earnings" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ fill: "hsl(var(--primary))", r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
@@ -118,21 +118,21 @@ export default function EarningsPage() {
       </div>
 
       {hasRealData && (
-        <div className="glass-panel rounded-2xl p-6 animate-fade-up" style={{ animationDelay: "300ms" }}>
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 animate-fade-up" style={{ animationDelay: "300ms" }}>
           <h3 className="font-display text-base mb-4">Breakdown</h3>
-          <div className="flex items-center gap-2 text-[12px] text-muted-foreground bg-[var(--glass-highlight)] rounded-lg px-3 py-2 mb-3">
+          <div className="flex items-center gap-2 text-[12px] text-muted-foreground bg-gray-50 dark:bg-[#0c0c0c] rounded-lg px-3 py-2 mb-3">
             <Info size={14} className="shrink-0" />
             <span>Costs are estimated using national averages. Customize your cost profile in Settings for accurate numbers.</span>
           </div>
           <div className="space-y-3">
             {breakdown.map(b => (
-              <div key={b.label} className="flex justify-between items-center py-2 border-b border-[var(--table-border)] last:border-0">
+              <div key={b.label} className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-[#1f1f1f] last:border-0">
                 <span className="text-[13px]">{b.label}</span>
                 <span className={`font-mono font-bold text-[13px] ${b.color}`}>{b.value}</span>
               </div>
             ))}
           </div>
-          <p className="text-[11px] text-muted-foreground mt-4 pt-3 border-t border-[var(--table-border)]">
+          <p className="text-[11px] text-muted-foreground mt-4 pt-3 border-t border-gray-200 dark:border-[#1f1f1f]">
             Fuel and toll estimates use national averages (~$0.60/mi fuel, ~3.3% tolls). Actual costs may vary based on your equipment, route, and fuel prices.
           </p>
         </div>
