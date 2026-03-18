@@ -43,37 +43,34 @@ export function useCreateChatSession() {
   });
 }
 
-// Simple AI response generator (runs client-side for now — will be replaced with server-side LLM)
-function generateAIResponse(message: string, load?: Load): string {
-  const lower = message.toLowerCase();
+// Call the server-side AI negotiation endpoint (DeepSeek V3 via HF)
+async function callNegotiateAPI(message: string, load?: Load, history?: ChatMessage[]): Promise<string> {
+  const res = await fetch("/api/negotiate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message,
+      load: load ? {
+        origin: load.origin,
+        destination: load.destination,
+        miles: load.miles,
+        rate: load.rate,
+        ratePerMile: load.ratePerMile,
+        equipment: load.equipment,
+        broker: load.broker,
+        brokerRating: load.brokerRating,
+      } : undefined,
+      history: history?.map(m => ({ role: m.role, content: m.text })),
+    }),
+  });
 
-  if (load) {
-    if (lower.includes("market rate") || lower.includes("lane")) {
-      const marketAvg = (load.ratePerMile * 0.93).toFixed(2);
-      return `Based on current market data for the ${load.origin} → ${load.destination} lane:\n\n• Current offer: $${load.ratePerMile.toFixed(2)}/mi ($${load.rate.toLocaleString()} total)\n• Market average: $${marketAvg}/mi\n• Your offer is ${((load.ratePerMile / Number(marketAvg) - 1) * 100).toFixed(0)}% above market\n\nThis is a competitive rate. The ${load.equipment} market on this lane has been steady.`;
-    }
-    if (lower.includes("fuel") || lower.includes("cost")) {
-      const fuelCost = (load.miles * 0.60).toFixed(0);
-      const tollEst = (load.rate * 0.033).toFixed(0);
-      const net = load.rate - Number(fuelCost) - Number(tollEst);
-      return `Cost breakdown for ${load.origin} → ${load.destination} (${load.miles} mi):\n\n• Fuel estimate: $${Number(fuelCost).toLocaleString()} (~$3.89/gal, 6.5 MPG)\n• Tolls & fees: ~$${Number(tollEst).toLocaleString()}\n• Net after costs: $${net.toLocaleString()}\n• Effective rate: $${(net / load.miles).toFixed(2)}/mi\n\nAt current diesel prices, this load nets you a solid margin.`;
-    }
-    if (lower.includes("counter") || lower.includes("offer") || lower.includes("strategy")) {
-      const counter = (load.ratePerMile * 1.08).toFixed(2);
-      return `Counter-offer strategy for ${load.broker}:\n\n• Current: $${load.ratePerMile.toFixed(2)}/mi\n• Recommended counter: $${counter}/mi (+8%)\n• Total ask: $${Math.round(Number(counter) * load.miles).toLocaleString()}\n\nTip: ${load.broker} has a ${load.brokerRating}/5 rating. Lead with your on-time delivery record and equipment availability. Don't go below $${(load.ratePerMile * 1.03).toFixed(2)}/mi.`;
-    }
-    if (lower.includes("broker")) {
-      return `Broker analysis: ${load.broker}\n\n• Rating: ${load.brokerRating}/5 stars\n• Equipment: ${load.equipment}\n• Route: ${load.origin} → ${load.destination}\n\n${load.brokerRating >= 4.5 ? "This is a highly-rated broker. Expect reliable payment and fair dealing." : load.brokerRating >= 4.0 ? "Solid broker with good track record. Standard terms should apply." : "Mid-range rating. Consider requesting quick-pay or factoring options."}`;
-    }
-
-    return `I'm analyzing the ${load.origin} → ${load.destination} load ($${load.rate.toLocaleString()}, ${load.miles} mi, ${load.equipment}).\n\nYou can ask me about:\n• Market rates for this lane\n• Fuel costs and net profit\n• Counter-offer strategies\n• Broker reputation\n\nWhat would you like to know?`;
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "AI service unavailable" }));
+    throw new Error(err.error || "Failed to get AI response");
   }
 
-  if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey")) {
-    return "Hey! I'm your LoadHawk AI negotiation assistant. Select a load from the dropdown and I can help you analyze rates, calculate costs, and build counter-offer strategies.";
-  }
-
-  return "Select a load from the dropdown above to get started. I can analyze market rates, calculate your net profit after fuel and tolls, suggest counter-offers, and give you broker intelligence for any lane.";
+  const data = await res.json();
+  return data.response;
 }
 
 export function useSendMessage() {
@@ -81,7 +78,7 @@ export function useSendMessage() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ sessionId, message, load }: { sessionId: string; message: string; load?: Load }) => {
+    mutationFn: async ({ sessionId, message, load, history }: { sessionId: string; message: string; load?: Load; history?: ChatMessage[] }) => {
       if (!user) throw new Error("Not authenticated");
 
       // Save user message
@@ -91,8 +88,8 @@ export function useSendMessage() {
         content: message,
       });
 
-      // Generate AI response (client-side for now)
-      const aiResponse = generateAIResponse(message, load);
+      // Call server-side AI
+      const aiResponse = await callNegotiateAPI(message, load, history);
 
       // Save AI response
       await supabase.from("chat_messages").insert({

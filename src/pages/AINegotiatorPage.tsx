@@ -49,6 +49,7 @@ export default function AINegotiatorPage() {
               sessionId: id,
               message: `I want to negotiate the ${load.origin} → ${load.destination} load at $${load.ratePerMile.toFixed(2)}/mi. What do you recommend?`,
               load,
+              history: [],
             });
           }
         },
@@ -69,7 +70,7 @@ export default function AINegotiatorPage() {
       sid = await createSession.mutateAsync(selectedLoadId || undefined);
       setSessionId(sid);
     }
-    sendMsg.mutate({ sessionId: sid, message, load: selectedLoad || undefined });
+    sendMsg.mutate({ sessionId: sid, message, load: selectedLoad || undefined, history: chatMessages });
     setMessage("");
   };
 
@@ -168,7 +169,11 @@ export default function AINegotiatorPage() {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {chatMessages.length === 0 && (
-              <div className="text-center text-muted-foreground text-[13px] py-8">Select a load and start chatting to get AI-powered negotiation advice.</div>
+              <div className="text-center py-8 space-y-3">
+                <Bot size={32} className="text-primary/30 mx-auto" />
+                <div className="text-muted-foreground text-[13px]">Select a load and start chatting to get AI-powered negotiation advice.</div>
+                <div className="text-[11px] text-muted-foreground/60 bg-[var(--glass-highlight)] rounded-lg px-3 py-2 inline-block">AI responses are generated suggestions — always verify rates with your broker</div>
+              </div>
             )}
             {chatMessages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -199,10 +204,11 @@ export default function AINegotiatorPage() {
             </div>
           </div>
           <div className="macos-separator" />
-          <div className="p-3 flex gap-2">
+          <div className="p-3 flex gap-2 items-center">
             <input value={message} onChange={e => setMessage(e.target.value)} onKeyDown={handleKeyDown} placeholder={selectedLoad ? `Ask about ${selectedLoad.origin} → ${selectedLoad.destination}...` : "Select a load or ask about market trends..."} aria-label="Chat message input" className="flex-1 glass-input rounded-full px-4 py-2 text-[13px] focus:outline-none" />
             <GoldButton size="sm" onClick={handleSend} disabled={!message.trim() || sendMsg.isPending} aria-label="Send message" className="!rounded-full !px-3"><Send size={14} /></GoldButton>
           </div>
+          <div className="text-center text-[10px] text-muted-foreground/40 pb-2">Press Enter to send</div>
         </div>
       </div>
     </div>
