@@ -94,6 +94,10 @@ export function TopBar({ sidebarCollapsed }: { sidebarCollapsed: boolean }) {
                         ))
                       )}
                     </div>
+                    <div className="macos-separator" />
+                    <button onClick={() => { setShowNotifs(false); navigate("/settings"); }} className="w-full text-center py-2 text-[11px] text-primary hover:bg-[var(--glass-hover)] transition-colors">
+                      View notification settings
+                    </button>
                   </div>
                 </>
               )}

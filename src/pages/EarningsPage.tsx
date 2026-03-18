@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, DollarSign } from "lucide-react";
+import { Download, DollarSign, Info } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { useEarningsSummary, useEarningsChart } from "@/hooks/useEarnings";
@@ -120,6 +120,10 @@ export default function EarningsPage() {
       {hasRealData && (
         <div className="glass-panel rounded-2xl p-6 animate-fade-up" style={{ animationDelay: "300ms" }}>
           <h3 className="font-display text-base mb-4">Breakdown</h3>
+          <div className="flex items-center gap-2 text-[12px] text-muted-foreground bg-[var(--glass-highlight)] rounded-lg px-3 py-2 mb-3">
+            <Info size={14} className="shrink-0" />
+            <span>Costs are estimated using national averages. Customize your cost profile in Settings for accurate numbers.</span>
+          </div>
           <div className="space-y-3">
             {breakdown.map(b => (
               <div key={b.label} className="flex justify-between items-center py-2 border-b border-[var(--table-border)] last:border-0">

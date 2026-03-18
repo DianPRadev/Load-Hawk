@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/AuthContext";
+import { toast } from "sonner";
 
 export interface SavedSearch {
   id: string;
@@ -64,6 +65,9 @@ export function useSaveSearch() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["saved_searches"] });
     },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
+    },
   });
 }
 
@@ -84,6 +88,9 @@ export function useDeleteSavedSearch() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["saved_searches"] });
     },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
+    },
   });
 }
 
@@ -103,6 +110,9 @@ export function useToggleSearchAlerts() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["saved_searches"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     },
   });
 }

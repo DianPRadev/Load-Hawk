@@ -3,7 +3,7 @@ import { useAuth } from "@/store/AuthContext";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
-import { X } from "lucide-react";
+import { X, User, Mail, Phone, FileText, Lock, Eye, EyeOff } from "lucide-react";
 
 type Mode = "login" | "signup";
 type RoleId = "driver" | "dispatch" | "carrier";
@@ -41,13 +41,14 @@ const css = `
   .lh-modal .fi{margin-bottom:12px}
   .lh-modal .fl{display:block;font-family:var(--fm);font-size:9.5px;font-weight:700;letter-spacing:2.5px;color:var(--muted2);margin-bottom:5px}
   .lh-modal .fw{position:relative;display:flex;align-items:center}
-  .lh-modal .fic{position:absolute;left:12px;font-size:16px;pointer-events:none;z-index:2;opacity:.45;line-height:1;display:flex;align-items:center}
+  .lh-modal .fic{position:absolute;left:12px;pointer-events:none;z-index:2;opacity:.45;line-height:1;display:flex;align-items:center}
   .lh-modal .inp,.lh-modal .sel{width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:12px 13px 12px 40px;font-size:14px;font-weight:500;color:var(--white);font-family:var(--fb);outline:none;transition:all .18s;-webkit-appearance:none}
   .lh-modal .inp::placeholder{color:var(--muted)}
   .lh-modal .inp:focus,.lh-modal .sel:focus{border-color:var(--gold3);background:#111;box-shadow:0 0 0 3px rgba(245,168,32,.1)}
   .lh-modal .inp.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,85,85,.1)}
   .lh-modal .sel{cursor:pointer}
   .lh-modal .sel option{background:#111;color:var(--white)}
+  :root:not(.dark) .lh-modal .sel option{background:#fff;color:#1d1d1f}
   .lh-modal .eye{position:absolute;right:11px;background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted2);padding:4px;z-index:2;transition:color .15s}
   .lh-modal .eye:hover{color:var(--gold)}
   .lh-modal .em{font-family:var(--fm);font-size:10px;color:var(--red);margin-top:4px;padding-left:2px;display:flex;align-items:center;gap:4px;animation:lhm-sk .3s ease}
@@ -89,6 +90,8 @@ const css = `
   .lh-modal .rcta{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#f5a820,#d97706);color:#000;font-size:14px;font-weight:800;font-family:var(--fm);letter-spacing:2px;cursor:pointer;margin-top:16px;transition:all .2s;box-shadow:0 4px 24px rgba(245,168,32,.35)}
   .lh-modal .rcta:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(245,168,32,.55)}
   .lh-modal .rcta:disabled{opacity:.4;pointer-events:none}
+  .lh-modal .tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .lh-modal .inp:focus-visible,.lh-modal .sel:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
   :root:not(.dark) .lh-modal .rov{background:rgba(255,255,255,.85)}
   :root:not(.dark) .lh-modal .rsh{background:var(--card);box-shadow:0 -8px 30px rgba(0,0,0,.08)}
   :root:not(.dark) .lh-modal .rc:hover{background:#f9f9f9}
@@ -253,28 +256,28 @@ export function AuthModal() {
             {mode === "signup" && (
               <div className="fi">
                 <label className="fl">FULL NAME</label>
-                <div className="fw"><span className="fic">{"\u{1F464}"}</span><input className={"inp" + (errors.name ? " err" : "")} placeholder="Marcus Davis" value={name} onChange={e => setName(e.target.value)} /></div>
+                <div className="fw"><span className="fic"><User size={16} /></span><input className={"inp" + (errors.name ? " err" : "")} placeholder="Marcus Davis" value={name} onChange={e => setName(e.target.value)} /></div>
                 {errors.name && <div className="em">{"\u26A0"} {errors.name}</div>}
               </div>
             )}
 
             <div className="fi">
               <label className="fl">EMAIL</label>
-              <div className="fw"><span className="fic">{"\u{1F4E7}"}</span><input className={"inp" + (errors.email ? " err" : "")} placeholder="driver@loadhawk.io" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
+              <div className="fw"><span className="fic"><Mail size={16} /></span><input className={"inp" + (errors.email ? " err" : "")} placeholder="driver@loadhawk.io" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
               {errors.email && <div className="em">{"\u26A0"} {errors.email}</div>}
             </div>
 
             {mode === "signup" && (
               <div className="fi">
                 <label className="fl">PHONE</label>
-                <div className="fw"><span className="fic">{"\u{1F4F1}"}</span><input className="inp" placeholder="+1 (555) 000-0000" type="tel" value={phone} onChange={e => setPhone(e.target.value)} /></div>
+                <div className="fw"><span className="fic"><Phone size={16} /></span><input className="inp" placeholder="+1 (555) 000-0000" type="tel" value={phone} onChange={e => setPhone(e.target.value)} /></div>
               </div>
             )}
 
             {mode === "signup" && (
               <div className="fi">
                 <label className="fl">CDL CLASS</label>
-                <div className="fw"><span className="fic">{"\u{1F4CB}"}</span>
+                <div className="fw"><span className="fic"><FileText size={16} /></span>
                   <select className={"sel" + (errors.cdl ? " err" : "")} value={cdl} onChange={e => setCdl(e.target.value)}>
                     <option value="" disabled>Select your CDL class...</option>
                     <option value="Class A">Class A {"\u00B7"} Tractor-Trailer</option>
@@ -289,10 +292,15 @@ export function AuthModal() {
             <div className="fi">
               <label className="fl">PASSWORD</label>
               <div className="fw">
-                <span className="fic">{"\u{1F512}"}</span>
+                <span className="fic"><Lock size={16} /></span>
                 <input className={"inp" + (errors.password ? " err" : "")} placeholder={mode === "signup" ? "Min 6 characters" : "Your password"} type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} />
-                <button className="eye" onClick={() => setShowPass(!showPass)} type="button">{showPass ? "\u{1F441}" : "\u{1F441}\uFE0F"}</button>
+                <button className="eye" onClick={() => setShowPass(!showPass)} type="button">{showPass ? <EyeOff size={16} /> : <Eye size={16} />}</button>
               </div>
+              {mode === "signup" && (
+                <div style={{ fontFamily: "var(--fm)", fontSize: 9, color: "var(--muted)", marginTop: 3, paddingLeft: 2 }}>
+                  Minimum 6 characters
+                </div>
+              )}
               {errors.password && <div className="em">{"\u26A0"} {errors.password}</div>}
             </div>
 
@@ -300,9 +308,9 @@ export function AuthModal() {
               <div className="fi">
                 <label className="fl">CONFIRM PASSWORD</label>
                 <div className="fw">
-                  <span className="fic">{"\u{1F512}"}</span>
+                  <span className="fic"><Lock size={16} /></span>
                   <input className={"inp" + (errors.confirm ? " err" : "")} placeholder="Repeat password" type={showConf ? "text" : "password"} value={confirm} onChange={e => setConfirm(e.target.value)} />
-                  <button className="eye" onClick={() => setShowConf(!showConf)} type="button">{showConf ? "\u{1F441}" : "\u{1F441}\uFE0F"}</button>
+                  <button className="eye" onClick={() => setShowConf(!showConf)} type="button">{showConf ? <EyeOff size={16} /> : <Eye size={16} />}</button>
                 </div>
                 {errors.confirm && <div className="em">{"\u26A0"} {errors.confirm}</div>}
               </div>

@@ -66,7 +66,7 @@ export default function MyLoadsPage() {
         <div className="glass-panel rounded-2xl p-12 text-center animate-fade-up" style={{ animationDelay: "100ms" }}>
           <AlertCircle size={44} className="text-muted-foreground mx-auto mb-4 opacity-50" />
           <h2 className="font-display text-xl mb-2">No Loads Booked Yet</h2>
-          <p className="text-muted-foreground text-[13px] mb-6">Head to Find Loads to book your first load</p>
+          <p className="text-muted-foreground text-[13px] mb-6">Browse available freight, compare rates, and book loads. Your booked loads will appear here with status tracking.</p>
           <GoldButton onClick={() => navigate("/find-loads")}>Find Loads</GoldButton>
         </div>
       </div>

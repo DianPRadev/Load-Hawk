@@ -22,6 +22,7 @@ export default function AINegotiatorPage() {
   const [message, setMessage] = useState("");
   const [selectedLoadId, setSelectedLoadId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
 
@@ -63,7 +64,7 @@ export default function AINegotiatorPage() {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatMessages]);
+  }, [chatMessages, pendingMessage]);
 
   const selectedLoad = selectedLoadId ? availableLoads.find(l => l.id === selectedLoadId) : null;
 
@@ -74,8 +75,10 @@ export default function AINegotiatorPage() {
       sid = await createSession.mutateAsync(selectedLoadId || undefined);
       setSessionId(sid);
     }
+    setPendingMessage(message);
     sendMsg.mutate({ sessionId: sid, message, load: selectedLoad || undefined, history: chatMessages }, {
       onError: (err) => toast.error(err instanceof Error ? err.message : "AI service unavailable. Try again."),
+      onSettled: () => setPendingMessage(null),
     });
     setMessage("");
   };
@@ -135,6 +138,7 @@ export default function AINegotiatorPage() {
                   <div className="flex justify-between"><span className="text-muted-foreground">Current Rate</span><span className="font-mono text-primary">${selectedLoad.rate.toLocaleString()} (${selectedLoad.ratePerMile.toFixed(2)}/mi)</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Market Average</span><span className="font-mono text-info">${(selectedLoad.ratePerMile * 0.93).toFixed(2)}/mi</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Recommended Counter</span><span className="font-mono text-primary font-bold">${(selectedLoad.ratePerMile * 1.08).toFixed(2)}/mi</span></div>
+                  <div className="text-[10px] text-muted-foreground mt-1">Based on 8% above current offer</div>
                 </div>
               </div>
             </div>
@@ -190,6 +194,13 @@ export default function AINegotiatorPage() {
                 </div>
               </div>
             ))}
+            {pendingMessage && (
+              <div className="flex justify-end">
+                <div className="max-w-[80%] p-3 rounded-2xl rounded-br-md text-[13px] whitespace-pre-wrap gradient-gold text-primary-foreground opacity-70">
+                  {pendingMessage}
+                </div>
+              </div>
+            )}
             {sendMsg.isPending && (
               <div className="flex justify-start">
                 <div className="bg-[var(--chat-ai-bg)] border border-[var(--chat-ai-border)] rounded-2xl rounded-bl-md p-3">

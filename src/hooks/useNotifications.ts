@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/AuthContext";
+import { toast } from "sonner";
 import type { NotificationItem, DbNotification } from "@/types";
 import { mapDbNotification } from "@/types";
 
@@ -60,6 +61,9 @@ export function useMarkNotificationRead() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
+    },
   });
 }
 
@@ -79,6 +83,9 @@ export function useClearNotifications() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     },
   });
 }

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/AuthContext";
+import { toast } from "sonner";
 import type { Broker, DbBroker } from "@/types";
 
 function mapDbBroker(db: DbBroker, userRatings: { rating: number; comment: string; date: string }[] = []): Broker {
@@ -80,6 +81,9 @@ export function useRateBroker() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["brokers"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     },
   });
 }

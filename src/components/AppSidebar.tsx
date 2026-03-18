@@ -59,6 +59,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
             <NavLink
               key={item.path}
               to={locked ? "#" : item.path}
+              title={locked ? "Sign in to access" : undefined}
               onClick={locked ? (e) => { e.preventDefault(); openAuthModal("login"); } : undefined}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-200 relative group",

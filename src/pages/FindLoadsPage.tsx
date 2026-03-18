@@ -233,7 +233,7 @@ export default function FindLoadsPage() {
                   </button>
                   <button
                     onClick={(e) => handleDeleteSearch(e, s.id)}
-                    className="text-muted-foreground hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                    className="text-muted-foreground hover:text-red-400 transition-colors opacity-60 sm:opacity-0 sm:group-hover:opacity-100"
                     title="Delete saved search"
                   >
                     <X size={12} />
@@ -248,6 +248,21 @@ export default function FindLoadsPage() {
       <div className="text-[12px] text-muted-foreground">
         Showing {Math.min((page - 1) * PAGE_SIZE + 1, totalCount)}–{Math.min(page * PAGE_SIZE, totalCount)} of {totalCount} loads{aiHighlight && " — sorted by best $/mile"}
       </div>
+
+      {/* Top pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3">
+          <GoldButton size="sm" variant="secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+            <ChevronLeft size={14} /> Prev
+          </GoldButton>
+          <span className="text-[13px] font-mono text-muted-foreground">
+            Page {page} of {totalPages}
+          </span>
+          <GoldButton size="sm" variant="secondary" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+            Next <ChevronRight size={14} />
+          </GoldButton>
+        </div>
+      )}
 
       {/* Mobile card layout */}
       <div className="md:hidden space-y-3 animate-fade-up" style={{ animationDelay: "200ms" }}>
@@ -267,7 +282,7 @@ export default function FindLoadsPage() {
             <thead>
               <tr className="border-b border-[var(--table-border)]">
                 {["Origin", "Destination", "Miles", "Rate", "$/Mile", "Equipment", "Broker", "Rating", "Posted", "Action"].map(h => (
-                  <th key={h} className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
+                  <th key={h} scope="col" className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
                 ))}
               </tr>
             </thead>
