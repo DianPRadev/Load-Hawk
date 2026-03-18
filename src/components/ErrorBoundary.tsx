@@ -36,7 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-muted-foreground text-[14px] mb-6">
               An unexpected error occurred. Try refreshing the page.
             </p>
-            <GoldButton onClick={() => { this.setState({ hasError: false }); window.location.href = "/dashboard"; }}>
+            <GoldButton onClick={() => { this.setState({ hasError: false }); window.location.href = "/"; }}>
               Back to Dashboard
             </GoldButton>
           </div>

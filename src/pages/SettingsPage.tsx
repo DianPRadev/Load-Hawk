@@ -29,11 +29,14 @@ export default function SettingsPage() {
   const handleUpgrade = async () => {
     if (!user) return;
     setUpgrading(true);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try {
       const res = await authFetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
+        signal: controller.signal,
       });
       const data = await res.json();
       if (data.url) {
@@ -43,6 +46,8 @@ export default function SettingsPage() {
       }
     } catch {
       toast.error("Request timed out. Please try again.");
+    } finally {
+      clearTimeout(timeout);
     }
     setUpgrading(false);
   };
@@ -50,11 +55,14 @@ export default function SettingsPage() {
   const handleManageBilling = async () => {
     if (!user) return;
     setManagingBilling(true);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try {
       const res = await authFetch("/api/billing-portal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
+        signal: controller.signal,
       });
       const data = await res.json();
       if (data.url) {
@@ -64,6 +72,8 @@ export default function SettingsPage() {
       }
     } catch {
       toast.error("Failed to connect to billing service");
+    } finally {
+      clearTimeout(timeout);
     }
     setManagingBilling(false);
   };
@@ -75,6 +85,7 @@ export default function SettingsPage() {
     name: "", email: "", phone: "", cdlClass: "", homeBase: "", preferredLanes: "", role: "",
   });
   const [localNotifSettings, setLocalNotifSettings] = useState<Record<string, boolean>>({});
+  const [isDirty, setIsDirty] = useState(false);
 
   // Sync profile data to form
   useEffect(() => {
@@ -88,8 +99,16 @@ export default function SettingsPage() {
         preferredLanes: profile.preferredLanes,
         role: profile.role,
       });
+      setIsDirty(false);
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
 
   useEffect(() => {
     if (notifSettings) setLocalNotifSettings({ ...notifSettings });
@@ -106,7 +125,7 @@ export default function SettingsPage() {
 
   const handleSaveProfile = () => {
     updateProfile.mutate(formData, {
-      onSuccess: () => toast.success("Profile saved successfully!"),
+      onSuccess: () => { setIsDirty(false); toast.success("Profile saved successfully!"); },
       onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to save"),
     });
   };
@@ -143,6 +162,7 @@ export default function SettingsPage() {
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    setIsDirty(true);
   };
 
   if (profileLoading) {

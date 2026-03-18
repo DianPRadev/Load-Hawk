@@ -4,7 +4,7 @@ import { useBookedLoads, useUpdateLoadStatus } from "@/hooks/useLoads";
 import type { LoadStatus } from "@/types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageMeta } from "@/components/PageMeta";
 
 const statusColors: Record<string, string> = {
@@ -20,6 +20,15 @@ export default function MyLoadsPage() {
   const updateStatus = useUpdateLoadStatus();
   const navigate = useNavigate();
   const [confirmAction, setConfirmAction] = useState<{ loadId: string; currentStatus: LoadStatus; nextStatus: LoadStatus } | null>(null);
+
+  useEffect(() => {
+    if (!confirmAction) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirmAction(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [confirmAction]);
 
   const handleAdvanceStatus = (loadId: string, currentStatus: LoadStatus) => {
     const currentIdx = STATUS_FLOW.indexOf(currentStatus);
