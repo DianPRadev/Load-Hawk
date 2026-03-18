@@ -2,12 +2,69 @@ import { User, CreditCard, Bell, Gift } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
 import { useState, useEffect } from "react";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/store/AuthContext";
 import { useNotificationSettings, useUpdateNotificationSettings } from "@/hooks/useNotifications";
 import { toast } from "sonner";
+import { useSearchParams } from "react-router-dom";
 
 export default function SettingsPage() {
+  const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const updateProfile = useUpdateProfile();
+  const [searchParams] = useSearchParams();
+  const [upgrading, setUpgrading] = useState(false);
+  const [managingBilling, setManagingBilling] = useState(false);
+
+  const isPro = profile?.role === "pro" || false; // TODO: use subscription_tier from profile when exposed
+
+  // Show success toast if redirected from Stripe checkout
+  useEffect(() => {
+    if (searchParams.get("upgraded") === "true") {
+      toast.success("Welcome to LoadHawk Pro!");
+    }
+  }, [searchParams]);
+
+  const handleUpgrade = async () => {
+    if (!user) return;
+    setUpgrading(true);
+    try {
+      const res = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, email: user.email }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast.error(data.error || "Failed to start checkout");
+      }
+    } catch {
+      toast.error("Failed to connect to billing service");
+    }
+    setUpgrading(false);
+  };
+
+  const handleManageBilling = async () => {
+    if (!user) return;
+    setManagingBilling(true);
+    try {
+      const res = await fetch("/api/billing-portal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast.error(data.error || "No billing account found");
+      }
+    } catch {
+      toast.error("Failed to connect to billing service");
+    }
+    setManagingBilling(false);
+  };
   const { data: notifSettings } = useNotificationSettings();
   const updateNotifSettings = useUpdateNotificationSettings();
 
@@ -140,20 +197,29 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-[var(--glass-highlight)] rounded-xl border border-primary/15">
               <div>
-                <div className="font-display text-xl tracking-tight">Free Plan</div>
-                <p className="text-[13px] text-muted-foreground">Basic load board access</p>
+                <div className="font-display text-xl tracking-tight">{isPro ? "Pro Plan" : "Free Plan"}</div>
+                <p className="text-[13px] text-muted-foreground">{isPro ? "Full access to all LoadHawk features" : "Basic load board access"}</p>
               </div>
-              <GoldButton onClick={() => toast.info("Pro plan launching soon. You'll be notified when it's available.")}>Upgrade to Pro</GoldButton>
+              {isPro ? (
+                <GoldButton variant="secondary" onClick={handleManageBilling} loading={managingBilling} loadingText="Loading...">Manage Billing</GoldButton>
+              ) : (
+                <GoldButton onClick={handleUpgrade} loading={upgrading} loadingText="Loading...">Upgrade to Pro</GoldButton>
+              )}
             </div>
-            <div className="p-4 bg-[var(--glass-highlight)] rounded-xl border border-[var(--glass-border)]">
-              <div className="font-display text-lg mb-2 gradient-gold-text">Pro — $49/mo</div>
-              <ul className="text-[13px] text-muted-foreground space-y-1.5">
-                <li>✓ AI Negotiator unlimited access</li>
-                <li>✓ Advanced analytics & earnings insights</li>
-                <li>✓ Priority load alerts</li>
-                <li>✓ Broker intelligence reports</li>
-              </ul>
-            </div>
+            {!isPro && (
+              <div className="p-4 bg-[var(--glass-highlight)] rounded-xl border border-[var(--glass-border)]">
+                <div className="font-display text-lg mb-2 gradient-gold-text">Pro — $49/mo</div>
+                <ul className="text-[13px] text-muted-foreground space-y-1.5">
+                  <li>Unlimited AI negotiations</li>
+                  <li>Advanced profit analytics</li>
+                  <li>Priority load alerts</li>
+                  <li>Saved searches and lane watchlists</li>
+                  <li>Fleet management tools</li>
+                  <li>CSV/PDF export</li>
+                  <li>Dedicated support</li>
+                </ul>
+              </div>
+            )}
           </div>
         )}
 
