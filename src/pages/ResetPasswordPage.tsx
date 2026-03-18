@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { useTheme } from "next-themes";
 
 const LOGO = "/loadhawk-logo.png";
 
@@ -64,11 +65,14 @@ const css = `
   .lh-reset .success-box .s-text{font-size:12px;color:var(--muted2);line-height:1.6}
   .lh-reset .back{display:block;text-align:center;margin-top:18px;font-family:var(--fm);font-size:12px;color:var(--gold);cursor:pointer;opacity:.85;font-weight:600;text-decoration:none;letter-spacing:1px}
   .lh-reset .back:hover{opacity:1}
+  .lh-reset .theme-toggle{position:fixed;top:16px;right:16px;z-index:100;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border2);background:var(--card);color:var(--muted2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .lh-reset .theme-toggle:hover{border-color:var(--gold);color:var(--gold);transform:scale(1.1)}
   .lh-reset input:-webkit-autofill,.lh-reset input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #0d0d0d inset;-webkit-text-fill-color:#f0ece4}
 `;
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -108,6 +112,7 @@ export default function ResetPasswordPage() {
     <div className="lh-reset">
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div className="shell">
+        <button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme">{theme === "dark" ? "\u2600\uFE0F" : "\uD83C\uDF19"}</button>
         <div className="bgl">
           <div className="bgc" />
           <div className="bgd" />
