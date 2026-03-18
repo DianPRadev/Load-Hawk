@@ -21,8 +21,8 @@ const NotFound = () => {
         <p className="text-muted-foreground text-[14px] mb-6">
           This route doesn't exist. Looks like you took a wrong turn.
         </p>
-        <GoldButton onClick={() => navigate("/dashboard")}>
-          Back to Dashboard
+        <GoldButton onClick={() => navigate("/")}>
+          Back to Home
         </GoldButton>
       </div>
     </div>

@@ -84,7 +84,7 @@ export default function BrokerRatingsPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right shrink-0">
-                    <div className="flex items-center gap-0.5 justify-end">
+                    <div className="flex items-center gap-0.5 justify-end" aria-label={`Rating: ${b.rating} out of 5`}>
                       {Array.from({ length: 5 }).map((_, s) => (
                         <Star key={s} size={15} className={s < Math.round(b.rating) ? "text-primary fill-primary" : "text-muted-foreground/30"} />
                       ))}
@@ -107,7 +107,7 @@ export default function BrokerRatingsPage() {
                   {b.userRatings.map((r, ri) => (
                     <div key={ri} className="text-[12px] bg-[var(--glass-highlight)] rounded-xl p-3 flex justify-between items-start">
                       <div>
-                        <div className="flex gap-0.5 mb-1">
+                        <div className="flex gap-0.5 mb-1" aria-label={`Rating: ${r.rating} out of 5`}>
                           {Array.from({ length: 5 }).map((_, s) => (
                             <Star key={s} size={10} className={s < r.rating ? "text-primary fill-primary" : "text-muted-foreground/30"} />
                           ))}
@@ -138,7 +138,7 @@ export default function BrokerRatingsPage() {
 
             <div>
               <label className="text-[11px] text-muted-foreground block mb-2">Rating</label>
-              <div className="flex gap-1">
+              <div className="flex gap-1" role="radiogroup" aria-label="Select rating">
                 {[1, 2, 3, 4, 5].map(s => (
                   <button key={s} onClick={() => setUserRating(s)} aria-label={`Rate ${s} stars`} className="hover:scale-110 transition-transform">
                     <Star size={24} className={s <= userRating ? "text-primary fill-primary" : "text-muted-foreground/30"} />

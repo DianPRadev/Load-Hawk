@@ -118,7 +118,7 @@ export default function FleetPage() {
             <thead>
               <tr className="border-b border-[var(--table-border)]">
                 {["Driver", "Status", "Current Route", "Monthly Earnings", "Actions"].map(h => (
-                  <th key={h} className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
+                  <th key={h} scope="col" className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -128,7 +128,7 @@ export default function FleetPage() {
                   <td className="px-4 py-3 font-medium">{d.name}</td>
                   <td className="px-4 py-3">
                     {editingDriver === d.id ? (
-                      <select value={d.status} onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])} className="glass-input rounded-lg px-2 py-1 text-[12px] focus:outline-none" autoFocus onBlur={() => setEditingDriver(null)}>
+                      <select value={d.status} onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])} className="glass-input rounded-lg px-2 py-1 text-[12px] focus:outline-none">
                         <option value="Available">Available</option>
                         <option value="On Load">On Load</option>
                         <option value="Off Duty">Off Duty</option>

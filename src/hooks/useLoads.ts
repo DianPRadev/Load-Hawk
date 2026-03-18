@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/AuthContext";
+import { toast } from "sonner";
 import type { Load, BookedLoad, DbLoad, DbBookedLoad } from "@/types";
 import { mapDbLoad } from "@/types";
 
@@ -140,6 +141,9 @@ export function useBookLoad() {
       qc.invalidateQueries({ queryKey: ["loads"] });
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
+    },
   });
 }
 
@@ -178,6 +182,9 @@ export function useUpdateLoadStatus() {
       qc.invalidateQueries({ queryKey: ["loads"] });
       qc.invalidateQueries({ queryKey: ["notifications"] });
       qc.invalidateQueries({ queryKey: ["earnings"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     },
   });
 }

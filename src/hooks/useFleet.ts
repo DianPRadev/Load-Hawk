@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/AuthContext";
+import { toast } from "sonner";
 import type { Driver, DbDriver } from "@/types";
 import { mapDbDriver } from "@/types";
 
@@ -42,6 +43,9 @@ export function useAddDriver() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["drivers"] });
     },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
+    },
   });
 }
 
@@ -59,6 +63,9 @@ export function useUpdateDriverStatus() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["drivers"] });
     },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
+    },
   });
 }
 
@@ -72,6 +79,9 @@ export function useRemoveDriver() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["drivers"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     },
   });
 }

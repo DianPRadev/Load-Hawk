@@ -154,7 +154,7 @@ export default function SettingsPage() {
       <PageMeta title="Settings" />
       <h1 className="font-display text-3xl tracking-tight animate-fade-up">Settings</h1>
 
-      <div className="segmented-control animate-fade-up flex-wrap" style={{ animationDelay: "100ms" }}>
+      <div className="segmented-control animate-fade-up overflow-x-auto flex-nowrap" style={{ animationDelay: "100ms" }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-2 font-display tracking-tight ${tab === t.id ? "active text-foreground" : "text-muted-foreground"}`}>
             <t.icon size={13} /> {t.label}
