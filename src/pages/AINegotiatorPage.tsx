@@ -160,7 +160,7 @@ export default function AINegotiatorPage() {
         </div>
 
         {/* Chat */}
-        <div className="lg:col-span-3 glass-panel rounded-2xl flex flex-col h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
+        <div className="lg:col-span-3 glass-panel rounded-2xl flex flex-col h-[calc(100vh-12rem)] sm:h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
           <div className="p-4">
             <h3 className="font-display text-base">AI Chat</h3>
             {selectedLoad && <p className="text-[11px] text-muted-foreground mt-1.5">Analyzing: {selectedLoad.origin} → {selectedLoad.destination}</p>}

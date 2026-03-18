@@ -20,6 +20,7 @@ export default function FleetPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [editingDriver, setEditingDriver] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState<{ id: string; name: string } | null>(null);
 
   const totalRevenue = drivers.reduce((s, d) => s + d.earnings, 0);
   const activeDrivers = drivers.filter(d => d.status !== "Off Duty").length;
@@ -46,9 +47,13 @@ export default function FleetPage() {
     });
   };
 
-  const handleRemoveDriver = (id: string, name: string) => {
-    removeDriver.mutate(id, {
-      onSuccess: () => toast.success(`${name} removed from fleet`),
+  const handleRemoveDriver = () => {
+    if (!confirmRemove) return;
+    removeDriver.mutate(confirmRemove.id, {
+      onSuccess: () => {
+        toast.success(`${confirmRemove.name} removed from fleet`);
+        setConfirmRemove(null);
+      },
     });
   };
 
@@ -69,19 +74,33 @@ export default function FleetPage() {
         <StatCard label="Fleet Revenue" value={`$${totalRevenue.toLocaleString()}`} icon={<DollarSign size={16} />} delay={100} />
         <StatCard label="Active Drivers" value={String(activeDrivers)} change={`${drivers.length} total`} positive icon={<User size={16} />} delay={200} />
         <StatCard label="On Load" value={String(onLoadCount)} icon={<Package size={16} />} delay={300} />
-        <StatCard label="Top Performer" value={topPerformer?.name.split(" ").map(n => n[0]).join("") + "." || "—"} icon={<Truck size={16} />} delay={400} />
+        <StatCard label="Top Performer" value={topPerformer?.name.split(" ")[0] || "—"} icon={<Truck size={16} />} delay={400} />
       </div>
 
-      <div className="glass-panel rounded-2xl h-44 flex items-center justify-center relative overflow-hidden animate-fade-up" style={{ animationDelay: "500ms" }}>
-        <MapPin size={18} className="text-muted-foreground mr-2" />
-        <span className="font-display text-lg text-muted-foreground tracking-tight">Live Fleet Map</span>
-        {drivers.filter(d => d.status === "On Load").map((_, i) => (
-          <div key={i} className="absolute w-3 h-3 rounded-full gradient-gold animate-pulse shadow-[0_0_8px_hsla(38,91%,54%,0.4)]" style={{ left: `${20 + i * 15}%`, top: `${30 + Math.sin(i) * 20}%`, animationDelay: `${i * 300}ms` }} />
-        ))}
+      <div className="glass-panel rounded-2xl p-5 animate-fade-up" style={{ animationDelay: "500ms" }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Truck size={15} className="text-primary" />
+          <span className="font-display text-base tracking-tight">Fleet Overview</span>
+        </div>
+        {drivers.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {drivers.map(d => (
+              <div key={d.id} className="flex items-center gap-3 bg-[var(--glass-highlight)] rounded-xl p-3">
+                <div className={`w-2 h-2 rounded-full shrink-0 ${d.status === "On Load" ? "bg-primary animate-pulse" : d.status === "Available" ? "bg-success" : "bg-muted-foreground/30"}`} />
+                <div className="min-w-0">
+                  <div className="text-[13px] font-medium truncate">{d.name}</div>
+                  <div className="text-[11px] text-muted-foreground">{d.status}{d.route !== "—" ? ` · ${d.route}` : ""}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-muted-foreground text-[13px] py-4">Add drivers to see fleet overview</div>
+        )}
       </div>
 
       {showAddForm && (
-        <div className="glass-panel rounded-2xl p-4 animate-fade-up flex items-center gap-3 border-primary/20">
+        <div className="glass-panel rounded-2xl p-4 animate-fade-up flex flex-wrap items-center gap-3 border-primary/20">
           <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Driver full name" aria-label="New driver name" className="flex-1 glass-input rounded-lg px-4 py-2 text-[13px] focus:outline-none" onKeyDown={e => e.key === "Enter" && handleAddDriver()} autoFocus />
           <GoldButton size="sm" onClick={handleAddDriver} disabled={!newName.trim()} loading={addDriver.isPending}>Add</GoldButton>
           <GoldButton size="sm" variant="ghost" onClick={() => setShowAddForm(false)}><X size={14} /></GoldButton>
@@ -92,7 +111,8 @@ export default function FleetPage() {
         <div className="glass-panel rounded-2xl p-12 text-center text-muted-foreground text-[13px]">No drivers yet. Add your first driver above.</div>
       ) : (
         <div className="glass-panel rounded-2xl overflow-hidden animate-fade-up" style={{ animationDelay: "600ms" }}>
-          <table className="w-full text-[13px]">
+          <div className="overflow-x-auto">
+          <table className="w-full text-[13px] min-w-[600px]">
             <thead>
               <tr className="border-b border-[var(--table-border)]">
                 {["Driver", "Status", "Current Route", "Monthly Earnings", "Actions"].map(h => (
@@ -118,12 +138,29 @@ export default function FleetPage() {
                   <td className="px-4 py-3 text-muted-foreground">{d.route}</td>
                   <td className="px-4 py-3 font-mono text-[12px] text-primary">${d.earnings.toLocaleString()}</td>
                   <td className="px-4 py-3">
-                    <GoldButton size="sm" variant="ghost" onClick={() => handleRemoveDriver(d.id, d.name)}><X size={13} /></GoldButton>
+                    <GoldButton size="sm" variant="ghost" onClick={() => setConfirmRemove({ id: d.id, name: d.name })}><X size={13} /></GoldButton>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
+        </div>
+      )}
+
+      {confirmRemove && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setConfirmRemove(null)}>
+          <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
+          <div className="relative glass-panel-heavy rounded-2xl p-6 max-w-sm w-full mx-4 space-y-4 window-chrome" onClick={e => e.stopPropagation()}>
+            <h3 className="font-display text-xl">Remove Driver</h3>
+            <p className="text-[13px] text-muted-foreground">
+              Are you sure you want to remove <span className="font-medium text-foreground">{confirmRemove.name}</span> from your fleet? This cannot be undone.
+            </p>
+            <div className="flex gap-2 justify-end pt-1">
+              <GoldButton variant="secondary" onClick={() => setConfirmRemove(null)}>Cancel</GoldButton>
+              <GoldButton onClick={handleRemoveDriver} loading={removeDriver.isPending}>Remove</GoldButton>
+            </div>
+          </div>
         </div>
       )}
     </div>

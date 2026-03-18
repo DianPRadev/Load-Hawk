@@ -8,6 +8,7 @@ import { useSavedSearches, useSaveSearch, useDeleteSavedSearch, useToggleSearchA
 import { useAuthModal } from "@/store/AuthModalContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { PageMeta } from "@/components/PageMeta";
 
 const PAGE_SIZE = 20;
 
@@ -128,6 +129,7 @@ export default function FindLoadsPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-5">
+      <PageMeta title="Find Loads" />
       <div className="glass-panel rounded-2xl p-5 animate-fade-up">
         <div className="flex items-center gap-2 mb-3">
           <MapPin size={15} className="text-primary" />

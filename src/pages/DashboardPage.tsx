@@ -9,6 +9,7 @@ import { useBrokers } from "@/hooks/useBrokers";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEarningsSummary } from "@/hooks/useEarnings";
 import { useMemo } from "react";
+import { PageMeta } from "@/components/PageMeta";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -88,8 +89,9 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <PageMeta title="Dashboard" />
       <div className="animate-fade-up">
-        <h1 className="font-display text-4xl tracking-tight">
+        <h1 className="font-display text-2xl sm:text-4xl tracking-tight">
           {isLoggedIn
             ? <>{greeting}{firstName ? <>, <span className="gradient-gold-text">{firstName}</span></> : ""}</>
             : <>Find Your Next <span className="gradient-gold-text">Load</span></>

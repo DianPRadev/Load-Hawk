@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { PageMeta } from "@/components/PageMeta";
 
 export default function PrivacyPage() {
   const navigate = useNavigate();
@@ -147,6 +148,7 @@ To submit a CCPA request, email privacy@loadhawk.ai with the subject line "CCPA 
 
   return (
     <div className="min-h-screen bg-background">
+      <PageMeta title="Privacy Policy" />
       <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
         <button
           onClick={() => navigate(-1)}

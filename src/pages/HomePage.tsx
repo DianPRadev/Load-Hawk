@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { useTheme } from "next-themes";
+import { PageMeta } from "@/components/PageMeta";
 import {
   Search,
   Bot,
@@ -82,6 +83,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground scroll-smooth">
+      <PageMeta title="AI-Powered Freight Operating System" description="Find verified loads, negotiate smarter rates, and track real profit. The freight OS for owner-operators, dispatchers, and small fleets." />
       {/* ── Navigation ── */}
       <nav className="sticky top-0 z-50 glass-panel border-b border-border/40">
         <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">

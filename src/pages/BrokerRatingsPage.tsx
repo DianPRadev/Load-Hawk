@@ -1,13 +1,16 @@
 import { Search, Star, Clock } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
 import { useAuth } from "@/store/AuthContext";
+import { useAuthModal } from "@/store/AuthModalContext";
 import { useBrokers, useRateBroker } from "@/hooks/useBrokers";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { PageMeta } from "@/components/PageMeta";
 
 export default function BrokerRatingsPage() {
   const { user } = useAuth();
+  const { openAuthModal } = useAuthModal();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const { data: brokers = [], isLoading } = useBrokers(search || undefined);
@@ -17,7 +20,7 @@ export default function BrokerRatingsPage() {
   const [userComment, setUserComment] = useState("");
 
   const handleRate = () => {
-    if (!ratingModal || !user) return;
+    if (!ratingModal || ratingModal === "pick" || !user) return;
     rateMutation.mutate(
       { brokerId: ratingModal, rating: userRating, comment: userComment },
       {
@@ -34,11 +37,14 @@ export default function BrokerRatingsPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-5">
+      <PageMeta title="Broker Ratings" />
       <div className="flex items-center justify-between animate-fade-up">
         <h1 className="font-display text-3xl tracking-tight">Broker Ratings</h1>
         <GoldButton size="sm" onClick={() => {
-          if (!user) { navigate("/login"); return; }
-          setRatingModal(brokers[0]?.id || null);
+          if (!user) { openAuthModal("login"); return; }
+          setRatingModal("pick");
+          setUserRating(5);
+          setUserComment("");
         }}>Rate a Broker</GoldButton>
       </div>
 
@@ -82,7 +88,7 @@ export default function BrokerRatingsPage() {
                     <div className="text-[11px] text-muted-foreground">{b.reviews} reviews</div>
                   </div>
                   <GoldButton size="sm" variant="secondary" onClick={() => {
-                    if (!user) { navigate("/login"); return; }
+                    if (!user) { openAuthModal("login"); return; }
                     setRatingModal(b.id);
                     setUserRating(5);
                     setUserComment("");
@@ -118,9 +124,10 @@ export default function BrokerRatingsPage() {
           <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
           <div className="relative glass-panel-heavy rounded-2xl p-6 max-w-md w-full mx-4 space-y-4 window-chrome" onClick={e => e.stopPropagation()}>
             <h3 className="font-display text-xl mb-2">Rate Broker</h3>
-            <p className="text-[13px] text-muted-foreground">{brokers.find(b => b.id === ratingModal)?.name}</p>
+            <p className="text-[13px] text-muted-foreground">{ratingModal !== "pick" ? brokers.find(b => b.id === ratingModal)?.name : "Select a broker below"}</p>
 
-            <select value={ratingModal} onChange={e => setRatingModal(e.target.value)} aria-label="Select broker to rate" className="w-full glass-input rounded-lg px-3 py-2 text-[13px] focus:outline-none">
+            <select value={ratingModal === "pick" ? "" : ratingModal} onChange={e => setRatingModal(e.target.value)} aria-label="Select broker to rate" className="w-full glass-input rounded-lg px-3 py-2 text-[13px] focus:outline-none">
+              <option value="" disabled>Select a broker...</option>
               {brokers.map(b => (<option key={b.id} value={b.id}>{b.name} ({b.mc})</option>))}
             </select>
 
@@ -142,7 +149,7 @@ export default function BrokerRatingsPage() {
 
             <div className="flex gap-2 justify-end pt-1">
               <GoldButton variant="secondary" onClick={() => setRatingModal(null)}>Cancel</GoldButton>
-              <GoldButton onClick={handleRate} loading={rateMutation.isPending}>Submit Rating</GoldButton>
+              <GoldButton onClick={handleRate} loading={rateMutation.isPending} disabled={ratingModal === "pick"}>Submit Rating</GoldButton>
             </div>
           </div>
         </div>
