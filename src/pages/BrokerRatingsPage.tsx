@@ -244,8 +244,10 @@ export default function BrokerRatingsPage() {
                 value={userComment}
                 onChange={e => setUserComment(e.target.value)}
                 placeholder="How was your experience?"
+                maxLength={500}
                 className="w-full bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-lg px-4 py-2.5 text-[13px] focus:outline-none focus:ring-1 focus:ring-primary/40 resize-none h-20"
               />
+              <div className="text-[11px] text-muted-foreground text-right mt-1">{userComment.length}/500</div>
             </div>
 
             <div className="flex gap-2 justify-end pt-1">

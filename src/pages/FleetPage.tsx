@@ -4,7 +4,7 @@ import { GoldButton } from "@/components/GoldButton";
 import { PageMeta } from "@/components/PageMeta";
 import { useDrivers, useAddDriver, useUpdateDriverStatus, useRemoveDriver } from "@/hooks/useFleet";
 import type { Driver } from "@/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const statusColors: Record<string, string> = {
@@ -22,6 +22,15 @@ export default function FleetPage() {
   const [newName, setNewName] = useState("");
   const [editingDriver, setEditingDriver] = useState<string | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<{ id: string; name: string } | null>(null);
+
+  useEffect(() => {
+    if (!confirmRemove) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirmRemove(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [confirmRemove]);
 
   const totalRevenue = drivers.reduce((s, d) => s + d.earnings, 0);
   const activeDrivers = drivers.filter(d => d.status !== "Off Duty").length;
