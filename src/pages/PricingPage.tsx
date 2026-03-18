@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ArrowLeft, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthModal } from "@/store/AuthModalContext";
+import { useAuth } from "@/store/AuthContext";
+import { toast } from "sonner";
 
 const freeFeatures = [
   "Browse available loads",
@@ -49,7 +51,33 @@ const faqs = [
 export default function PricingPage() {
   const navigate = useNavigate();
   const { openAuthModal } = useAuthModal();
+  const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [upgrading, setUpgrading] = useState(false);
+
+  const handleUpgrade = async () => {
+    if (!user) {
+      openAuthModal("signup");
+      return;
+    }
+    setUpgrading(true);
+    try {
+      const res = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, email: user.email }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast.error(data.error || "Failed to start checkout");
+      }
+    } catch {
+      toast.error("Failed to connect to billing service");
+    }
+    setUpgrading(false);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -148,16 +176,11 @@ export default function PricingPage() {
               ))}
             </ul>
             <button
-              disabled
-              className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-white/10 text-muted-foreground cursor-not-allowed"
+              onClick={handleUpgrade}
+              disabled={upgrading}
+              className="w-full py-3 px-6 rounded-xl font-semibold text-sm gradient-gold text-primary-foreground hover:brightness-110 transition-all disabled:opacity-60"
             >
-              Coming Soon
-            </button>
-            <button
-              onClick={() => openAuthModal("signup")}
-              className="mt-2 text-center text-xs text-[#f5a820] hover:text-[#d97706] transition-colors cursor-pointer bg-transparent border-none"
-            >
-              Join the waitlist
+              {upgrading ? "Loading..." : "Upgrade to Pro"}
             </button>
           </div>
         </div>
