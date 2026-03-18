@@ -1,4 +1,4 @@
-import { DollarSign, Package, MapPin, TrendingUp, Clock, Star, Activity } from "lucide-react";
+import { DollarSign, Package, MapPin, TrendingUp, Clock, Star, Activity, Zap, BarChart3 } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { LoadCard } from "@/components/LoadCard";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
@@ -27,7 +27,6 @@ export default function DashboardPage() {
   const firstName = userName ? userName.split(" ")[0] : "";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-  const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
   const todaysEarnings = earnings?.todayEarnings ?? 0;
   const activeLoadCount = earnings?.activeCount ?? 0;
@@ -85,7 +84,7 @@ export default function DashboardPage() {
         <div className="h-10 w-64 bg-[var(--glass-hover)] rounded-lg animate-pulse" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1,2,3,4].map(i => (
-            <div key={i} className="glass-panel rounded-2xl p-5 h-24 animate-pulse">
+            <div key={i} className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 h-24 animate-pulse">
               <div className="h-3 w-20 bg-[var(--glass-hover)] rounded mb-3" />
               <div className="h-8 w-24 bg-[var(--glass-hover)] rounded" />
             </div>
@@ -94,13 +93,13 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-3">
             {[1,2,3].map(i => (
-              <div key={i} className="glass-panel rounded-2xl p-5 h-28 animate-pulse">
+              <div key={i} className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 h-28 animate-pulse">
                 <div className="h-4 w-48 bg-[var(--glass-hover)] rounded mb-3" />
                 <div className="h-3 w-32 bg-[var(--glass-hover)] rounded" />
               </div>
             ))}
           </div>
-          <div className="glass-panel rounded-2xl p-5 h-64 animate-pulse" />
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 h-64 animate-pulse" />
         </div>
       </div>
     );
@@ -116,39 +115,44 @@ export default function DashboardPage() {
             : <>Find Your Next <span className="gradient-gold-text">Load</span></>
           }
         </h1>
-        <p className="text-muted-foreground text-[13px] mt-1">
-          {isLoggedIn
-            ? <>{today}{dbProfile?.homeBase ? ` · ${dbProfile.homeBase}` : ""}</>
-            : <>Browse available freight, check broker ratings, and book loads faster</>
-          }
-        </p>
+        {!isLoggedIn && (
+          <p className="text-muted-foreground text-[13px] mt-1">
+            Browse available freight, check broker ratings, and book loads faster
+          </p>
+        )}
+        {isLoggedIn && dbProfile?.homeBase && (
+          <p className="text-muted-foreground text-[13px] mt-1">{dbProfile.homeBase}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {isLoggedIn ? (
           <>
-            <StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : "—"} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} />
-            <StatCard label="Active Loads" value={String(activeLoadCount)} change={activeLoadCount > 0 ? `${activeLoadCount} active` : "—"} positive={activeLoadCount > 0} icon={<Package size={16} />} delay={200} />
+            <StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : undefined} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} />
+            <StatCard label="Active Loads" value={String(activeLoadCount)} change={activeLoadCount > 0 ? `${activeLoadCount} active` : undefined} positive={activeLoadCount > 0} icon={<Package size={16} />} delay={200} />
             <StatCard label="Miles This Week" value={totalMilesThisWeek.toLocaleString()} icon={<MapPin size={16} />} delay={300} />
-            <StatCard label="Avg Rate/Mile" value={avgRatePerMile > 0 ? `$${avgRatePerMile.toFixed(2)}` : "—"} icon={<TrendingUp size={16} />} delay={400} />
+            <StatCard label="Avg Rate/Mile" value={avgRatePerMile > 0 ? `$${avgRatePerMile.toFixed(2)}` : "\u2014"} icon={<TrendingUp size={16} />} delay={400} />
           </>
         ) : (
           <>
             <StatCard label="Available Loads" value={String(availableLoads.length)} change={`${availableLoads.length} posted`} positive={availableLoads.length > 0} icon={<Package size={16} />} delay={100} />
             <StatCard label="Rated Brokers" value={String(brokers.length)} change="rated & reviewed" positive icon={<Star size={16} />} delay={200} />
-            <StatCard label="Avg Rate/Mile" value={availableLoads.length > 0 ? `$${(availableLoads.reduce((s, l) => s + l.ratePerMile, 0) / availableLoads.length).toFixed(2)}` : "—"} icon={<TrendingUp size={16} />} delay={300} />
-            <StatCard label="Top Lane" value={availableLoads.length > 0 ? `${availableLoads[0].origin.split(",")[0]}` : "—"} icon={<MapPin size={16} />} delay={400} />
+            <StatCard label="Avg Rate/Mile" value={availableLoads.length > 0 ? `$${(availableLoads.reduce((s, l) => s + l.ratePerMile, 0) / availableLoads.length).toFixed(2)}` : "\u2014"} icon={<TrendingUp size={16} />} delay={300} />
+            <StatCard label="Top Lane" value={availableLoads.length > 0 ? `${availableLoads[0].origin.split(",")[0]}` : "\u2014"} icon={<MapPin size={16} />} delay={400} />
           </>
         )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="font-display text-2xl tracking-tight flex items-center gap-2">
-            <span className="text-primary" role="img" aria-label="fire">🔥</span> Hot Loads Near You
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="font-display text-2xl tracking-tight">Available Loads</h2>
+            <span className="text-[11px] font-mono text-muted-foreground bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-full px-2.5 py-0.5">
+              {hotLoads.length}
+            </span>
+          </div>
           {hotLoads.length === 0 ? (
-            <div className="glass-panel rounded-2xl p-8 text-center text-muted-foreground text-[13px]">No loads available right now.</div>
+            <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-8 text-center text-muted-foreground text-[13px]">No loads available right now.</div>
           ) : (
             <div className="space-y-3">
               {hotLoads.map((load, i) => (
@@ -159,14 +163,17 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-4">
-          <div className="glass-panel rounded-2xl p-5 window-chrome animate-fade-up" style={{ animationDelay: "600ms" }}>
-            <h3 className="font-display text-base tracking-tight mb-4">{isLoggedIn ? "Weekly Earnings" : "Why LoadHawk?"}</h3>
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 animate-fade-up" style={{ animationDelay: "600ms" }}>
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart3 size={14} className="text-[#f5a820]" />
+              <h3 className="font-display text-base tracking-tight">{isLoggedIn ? "Weekly Earnings" : "Why LoadHawk?"}</h3>
+            </div>
             {!isLoggedIn ? (
               <div className="space-y-3 text-[13px]">
-                <div className="flex items-start gap-3"><span className="text-primary">$</span><span className="text-muted-foreground">See true profit per load — not just rate</span></div>
-                <div className="flex items-start gap-3"><span className="text-primary">★</span><span className="text-muted-foreground">Community broker ratings and reviews</span></div>
-                <div className="flex items-start gap-3"><span className="text-primary">⚡</span><span className="text-muted-foreground">AI-powered negotiation assistant</span></div>
-                <div className="flex items-start gap-3"><span className="text-primary">📊</span><span className="text-muted-foreground">Track earnings, miles, and performance</span></div>
+                <div className="flex items-start gap-3"><DollarSign size={14} className="text-[#f5a820] shrink-0 mt-0.5" /><span className="text-muted-foreground">See true profit per load -- not just rate</span></div>
+                <div className="flex items-start gap-3"><Star size={14} className="text-[#f5a820] shrink-0 mt-0.5" /><span className="text-muted-foreground">Community broker ratings and reviews</span></div>
+                <div className="flex items-start gap-3"><Zap size={14} className="text-[#f5a820] shrink-0 mt-0.5" /><span className="text-muted-foreground">AI-powered negotiation assistant</span></div>
+                <div className="flex items-start gap-3"><TrendingUp size={14} className="text-[#f5a820] shrink-0 mt-0.5" /><span className="text-muted-foreground">Track earnings, miles, and performance</span></div>
               </div>
             ) : earningsData.length > 0 ? (
               <>
@@ -193,14 +200,19 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="glass-panel rounded-2xl p-5 window-chrome animate-fade-up" style={{ animationDelay: "700ms" }}>
-            <h3 className="font-display text-base tracking-tight mb-4">Top Brokers</h3>
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 animate-fade-up" style={{ animationDelay: "700ms" }}>
+            <div className="flex items-center gap-2 mb-4">
+              <Star size={14} className="text-[#f5a820]" />
+              <h3 className="font-display text-base tracking-tight">Top Brokers</h3>
+            </div>
             <div className="space-y-3">
               {topBrokers.map((b) => (
                 <div key={b.mc} className="flex items-center justify-between">
                   <span className="text-[13px]">{b.name}</span>
                   <div className="flex items-center gap-2">
-                    <span className={`font-mono text-[11px] ${b.rating >= 3.5 ? "text-success" : "text-destructive"}`}>★ {b.rating}</span>
+                    <span className={`font-mono text-[11px] ${b.rating >= 3.5 ? "text-success" : "text-destructive"}`}>
+                      <Star size={10} className="inline-block mb-0.5 mr-0.5" />{b.rating}
+                    </span>
                     <span className="text-[11px] text-muted-foreground">({b.reviews})</span>
                   </div>
                 </div>
@@ -208,13 +220,16 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="glass-panel rounded-2xl p-5 window-chrome animate-fade-up" style={{ animationDelay: "800ms" }}>
-            <h3 className="font-display text-base tracking-tight mb-4">Recent Activity</h3>
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 animate-fade-up" style={{ animationDelay: "800ms" }}>
+            <div className="flex items-center gap-2 mb-4">
+              <Activity size={14} className="text-[#f5a820]" />
+              <h3 className="font-display text-base tracking-tight">Recent Activity</h3>
+            </div>
             <div className="space-y-3.5">
               {recentActivity.map((a, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="p-1.5 bg-[var(--glass-hover)] rounded-lg">
-                    <a.icon size={13} className="text-primary" />
+                  <div className="p-1.5 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg">
+                    <a.icon size={13} className="text-[#f5a820]" />
                   </div>
                   <div>
                     <div className="text-[13px]">{a.text}</div>

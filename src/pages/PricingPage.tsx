@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { useAuth } from "@/store/AuthContext";
@@ -8,23 +8,21 @@ import { authFetch } from "@/lib/api";
 import { PageMeta } from "@/components/PageMeta";
 
 const freeFeatures = [
-  "Browse available loads",
-  "Basic load search & filters",
-  "Broker ratings & reviews",
-  "Book loads",
-  "Basic earnings tracking",
+  "Browse and search available loads",
+  "Basic load filters (lane, equipment, rate)",
+  "Community broker ratings",
+  "Book loads and track status",
+  "Basic earnings overview",
   "AI negotiation (limited)",
 ];
 
 const proFeatures = [
-  "Everything in Free, plus:",
   "Unlimited AI negotiations",
-  "Advanced profit analytics",
-  "Priority load alerts",
-  "Saved searches & lane watchlists",
-  "Fleet management tools",
-  "CSV export",
-  "Dedicated support",
+  "Advanced profit analytics per load",
+  "Saved searches and lane alerts",
+  "Fleet management dashboard",
+  "CSV export for settlements",
+  "Priority support",
 ];
 
 const faqs = [
@@ -42,7 +40,7 @@ const faqs = [
   },
   {
     q: "What equipment types are supported?",
-    a: "We currently support Dry Van, Reefer, and Flatbed, with more equipment types coming soon.",
+    a: "We currently support Dry Van, Reefer, and Flatbed, with more equipment types on the roadmap.",
   },
   {
     q: "How does AI negotiation work?",
@@ -83,8 +81,9 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta title="Pricing" />
+
       {/* Header */}
-      <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-4">
         <button
           onClick={() => navigate("/")}
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
@@ -93,21 +92,21 @@ export default function PricingPage() {
           Back to Home
         </button>
 
-        <div className="text-center mb-16 animate-fade-up">
-          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-gold-text">Pricing</span>
+        <div className="text-center mb-12 sm:mb-16">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4">
+            Simple, honest pricing
           </h1>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Simple, transparent pricing. Start free, upgrade when you're ready.
+            Start free. Upgrade when LoadHawk is making you money.
           </p>
         </div>
       </div>
 
       {/* Pricing Cards */}
-      <div className="max-w-5xl mx-auto px-4 pb-20">
-        <div className="grid md:grid-cols-2 gap-8 mb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-20 sm:mb-24">
           {/* Free Tier */}
-          <div className="glass-panel rounded-2xl p-8 flex flex-col animate-fade-up">
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-8 flex flex-col">
             <div className="mb-6">
               <h2 className="font-display text-2xl font-bold text-foreground mb-1">
                 Free
@@ -118,69 +117,53 @@ export default function PricingPage() {
               <span className="font-display text-5xl font-bold text-foreground">
                 $0
               </span>
-              <span className="text-muted-foreground ml-1">/mo</span>
+              <span className="text-muted-foreground ml-1 text-sm">/month</span>
             </div>
             <ul className="space-y-3 mb-8 flex-1">
               {freeFeatures.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-[#f5a820] shrink-0 mt-0.5" />
-                  <span className="text-muted-foreground">{feature}</span>
+                  <Check className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                  <span className="text-muted-foreground text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
             <button
               onClick={() => openAuthModal("signup")}
-              className="w-full py-3 px-6 rounded-xl font-semibold text-sm transition-all gradient-gold text-black hover:opacity-90"
+              className="w-full py-3 px-6 rounded-xl font-semibold text-sm transition-opacity bg-gradient-to-r from-[#f5a820] to-[#d97706] text-black hover:opacity-90"
             >
               Get Started Free
             </button>
           </div>
 
           {/* Pro Tier */}
-          <div className="glass-panel rounded-2xl p-8 flex flex-col animate-fade-up border-2 border-[#f5a820]/60 relative">
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="gradient-gold text-black text-xs font-bold px-4 py-1 rounded-full">
-                RECOMMENDED
-              </span>
-            </div>
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] border-l-4 border-l-[#f5a820] rounded-2xl p-8 flex flex-col">
             <div className="mb-6">
               <h2 className="font-display text-2xl font-bold text-foreground mb-1">
                 Pro
               </h2>
-              <p className="text-muted-foreground text-sm">
-                For serious operators
-              </p>
+              <p className="text-muted-foreground text-sm">For serious operators</p>
             </div>
             <div className="mb-8">
-              <span className="font-display text-5xl font-bold gradient-gold-text">
+              <span className="font-display text-5xl font-bold text-foreground">
                 $49
               </span>
-              <span className="text-muted-foreground ml-1">/mo</span>
+              <span className="text-muted-foreground ml-1 text-sm">/month</span>
             </div>
+            <p className="text-sm text-muted-foreground italic mb-4">
+              Everything in Free, plus:
+            </p>
             <ul className="space-y-3 mb-8 flex-1">
-              {proFeatures.map((feature, i) => (
+              {proFeatures.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
-                  <Check
-                    className={`w-5 h-5 shrink-0 mt-0.5 ${
-                      i === 0 ? "text-muted-foreground" : "text-[#f5a820]"
-                    }`}
-                  />
-                  <span
-                    className={
-                      i === 0
-                        ? "text-muted-foreground italic"
-                        : "text-muted-foreground"
-                    }
-                  >
-                    {feature}
-                  </span>
+                  <Check className="w-5 h-5 text-[#f5a820] shrink-0 mt-0.5" />
+                  <span className="text-muted-foreground text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
             <button
               onClick={handleUpgrade}
               disabled={upgrading}
-              className="w-full py-3 px-6 rounded-xl font-semibold text-sm gradient-gold text-primary-foreground hover:brightness-110 transition-all disabled:opacity-60"
+              className="w-full py-3 px-6 rounded-xl font-semibold text-sm transition-opacity bg-gradient-to-r from-[#f5a820] to-[#d97706] text-black hover:opacity-90 disabled:opacity-60"
             >
               {upgrading ? "Loading..." : "Upgrade to Pro"}
             </button>
@@ -188,28 +171,35 @@ export default function PricingPage() {
         </div>
 
         {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto mb-24 animate-fade-up">
-          <h2 className="font-display text-3xl font-bold text-center mb-10">
-            <span className="gradient-gold-text">
-              Frequently Asked Questions
-            </span>
+        <div className="max-w-3xl mx-auto mb-20 sm:mb-24">
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-center mb-10">
+            Frequently asked questions
           </h2>
-          <div className="space-y-3">
+          <div>
             {faqs.map((faq, i) => (
-              <div key={i} className="glass-panel rounded-2xl overflow-hidden">
+              <div
+                key={i}
+                className={
+                  i < faqs.length - 1
+                    ? "border-b border-gray-200 dark:border-[#1f1f1f]"
+                    : ""
+                }
+              >
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full text-left px-6 py-4 flex items-center justify-between gap-4 bg-transparent border-none cursor-pointer"
+                  className="w-full text-left py-5 flex items-center justify-between gap-4 bg-transparent border-none cursor-pointer"
                 >
-                  <span className="font-semibold text-foreground">
+                  <span className="font-semibold text-foreground text-sm sm:text-base">
                     {faq.q}
                   </span>
-                  <span className="text-muted-foreground text-xl shrink-0">
-                    {openFaq === i ? "\u2212" : "+"}
-                  </span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-200 ${
+                      openFaq === i ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-4 text-muted-foreground text-sm leading-relaxed">
+                  <div className="pb-5 text-muted-foreground text-sm leading-relaxed">
                     {faq.a}
                   </div>
                 )}
@@ -219,16 +209,16 @@ export default function PricingPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center animate-fade-up">
-          <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-            Ready to start?
-          </h2>
-          <button
-            onClick={() => openAuthModal("signup")}
-            className="py-3 px-8 rounded-xl font-semibold text-sm transition-all gradient-gold text-black hover:opacity-90"
-          >
-            Create Free Account
-          </button>
+        <div className="text-center">
+          <p className="text-muted-foreground text-sm">
+            Questions? Reach out at{" "}
+            <a
+              href="mailto:support@loadhawk.ai"
+              className="text-foreground hover:text-[#f5a820] transition-colors underline underline-offset-4"
+            >
+              support@loadhawk.ai
+            </a>
+          </p>
         </div>
       </div>
     </div>

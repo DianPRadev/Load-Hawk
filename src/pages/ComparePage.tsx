@@ -3,118 +3,36 @@ import { useNavigate } from "react-router-dom";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { PageMeta } from "@/components/PageMeta";
 
-type CellValue = true | false | string;
-
-interface FeatureRow {
-  feature: string;
-  loadhawk: CellValue;
-  dat: CellValue;
-  truckstop: CellValue;
-  trucksmarter: CellValue;
-}
-
-const comparisonData: FeatureRow[] = [
+const comparisons = [
   {
-    feature: "Free Plan",
-    loadhawk: true,
-    dat: false,
-    truckstop: false,
-    trucksmarter: true,
+    competitor: "DAT",
+    strengths:
+      "Industry-standard rate data, large broker network, CarrierWatch add-on",
+    difference:
+      "Free plan available, built-in AI negotiation, profit calculator on every load, community broker ratings included",
   },
   {
-    feature: "Starting Price",
-    loadhawk: "$0/mo",
-    dat: "~$45/mo",
-    truckstop: "~$39/mo",
-    trucksmarter: "$0/mo",
+    competitor: "Truckstop",
+    strengths:
+      "Load alerts, Book It Now, rate insights, factoring",
+    difference:
+      "Free to start, AI-powered counter-offer strategies, real net profit tracking, fleet management included",
   },
   {
-    feature: "AI Negotiation",
-    loadhawk: true,
-    dat: false,
-    truckstop: false,
-    trucksmarter: "Basic",
-  },
-  {
-    feature: "Broker Ratings",
-    loadhawk: "Community-rated",
-    dat: "CarrierWatch (add-on)",
-    truckstop: "Basic",
-    trucksmarter: "Limited",
-  },
-  {
-    feature: "Profit Calculator",
-    loadhawk: "Built-in per load",
-    dat: "Separate tool",
-    truckstop: false,
-    trucksmarter: "Basic",
-  },
-  {
-    feature: "Real-time Alerts",
-    loadhawk: true,
-    dat: "Paid",
-    truckstop: "Paid",
-    trucksmarter: true,
-  },
-  {
-    feature: "Fleet Management",
-    loadhawk: "Included",
-    dat: "Separate product",
-    truckstop: "Limited",
-    trucksmarter: false,
-  },
-  {
-    feature: "Mobile Optimized",
-    loadhawk: "Mobile web",
-    dat: "App required",
-    truckstop: "App required",
-    trucksmarter: true,
-  },
-  {
-    feature: "Earnings Tracking",
-    loadhawk: "Full P&L",
-    dat: false,
-    truckstop: false,
-    trucksmarter: "Basic",
-  },
-  {
-    feature: "Saved Searches",
-    loadhawk: "Unlimited",
-    dat: "Limited",
-    truckstop: "Limited",
-    trucksmarter: "Limited",
+    competitor: "TruckSmarter",
+    strengths:
+      "Free load board, fuel savings, AI dispatch",
+    difference:
+      "Deeper AI negotiation with call scripts, community broker trust scores, earnings P&L tracking, fleet tools",
   },
 ];
 
-const whyCards = [
-  {
-    title: "Built for Profit, Not Just Search",
-    description:
-      "LoadHawk shows net profit per load after fuel, tolls, and fees. Competitors show rate only.",
-  },
-  {
-    title: "AI That Negotiates For You",
-    description:
-      "Get counter-offer strategies, call scripts, and broker intelligence before you call. Not just rate data.",
-  },
-  {
-    title: "Free Forever Plan",
-    description:
-      "Unlike DAT and Truckstop, basic access is always free. Pro adds power features at $49/mo.",
-  },
+const differentiators = [
+  "Free forever plan",
+  "AI negotiation assistant",
+  "Net profit per load",
+  "Community broker ratings",
 ];
-
-function CellContent({ value }: { value: CellValue }) {
-  if (value === true) {
-    return <Check className="w-5 h-5 text-[#f5a820] mx-auto" />;
-  }
-  if (value === false) {
-    return <X className="w-5 h-5 text-red-400/70 mx-auto" />;
-  }
-  return (
-    <span className="text-sm text-muted-foreground">{value}</span>
-  );
-}
 
 export default function ComparePage() {
   const navigate = useNavigate();
@@ -125,7 +43,7 @@ export default function ComparePage() {
       <PageMeta title="Compare Load Boards" />
 
       {/* Header */}
-      <div className="max-w-6xl mx-auto px-4 pt-8 pb-4">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-4">
         <button
           onClick={() => navigate("/")}
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
@@ -134,112 +52,93 @@ export default function ComparePage() {
           Back to Home
         </button>
 
-        <div className="text-center mb-16 animate-fade-up">
-          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-gold-text">How LoadHawk Compares</span>
+        <div className="text-center mb-12 sm:mb-16">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4">
+            How LoadHawk compares
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            See how LoadHawk stacks up against the leading load boards on the
-            features that matter most to owner-operators and small fleets.
+            An honest look at how we stack up against the major load boards.
           </p>
         </div>
       </div>
 
-      {/* Comparison Table */}
-      <div className="max-w-6xl mx-auto px-4 pb-20">
-        <div className="glass-panel rounded-2xl overflow-hidden animate-fade-up mb-24">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-sm">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left px-6 py-4 font-semibold text-muted-foreground">
-                    Feature
-                  </th>
-                  <th className="px-6 py-4 font-bold text-center border-x border-[#f5a820]/20 bg-[#f5a820]/5">
-                    <span className="gradient-gold-text font-display text-base">
-                      LoadHawk
-                    </span>
-                  </th>
-                  <th className="px-6 py-4 font-semibold text-center text-muted-foreground">
-                    DAT
-                  </th>
-                  <th className="px-6 py-4 font-semibold text-center text-muted-foreground">
-                    Truckstop
-                  </th>
-                  <th className="px-6 py-4 font-semibold text-center text-muted-foreground">
-                    TruckSmarter
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonData.map((row, i) => (
-                  <tr
-                    key={row.feature}
-                    className={
-                      i < comparisonData.length - 1
-                        ? "border-b border-white/5"
-                        : ""
-                    }
-                  >
-                    <td className="px-6 py-4 font-medium text-foreground">
-                      {row.feature}
-                    </td>
-                    <td className="px-6 py-4 text-center border-x border-[#f5a820]/20 bg-[#f5a820]/5">
-                      <CellContent value={row.loadhawk} />
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <CellContent value={row.dat} />
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <CellContent value={row.truckstop} />
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <CellContent value={row.trucksmarter} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* Competitor Comparison Cards */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
+        <div className="space-y-6 mb-20 sm:mb-24">
+          {comparisons.map((comp) => (
+            <div
+              key={comp.competitor}
+              className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-8"
+            >
+              <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-6">
+                LoadHawk vs {comp.competitor}
+              </h3>
+
+              <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+                {/* Their strengths */}
+                <div>
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                    Their strengths
+                  </p>
+                  <ul className="space-y-2.5">
+                    {comp.strengths.split(", ").map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <Check className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                        <span className="text-muted-foreground text-sm">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Our difference */}
+                <div className="border-t md:border-t-0 md:border-l border-gray-200 dark:border-[#1f1f1f] pt-6 md:pt-0 md:pl-8">
+                  <p className="text-sm font-semibold text-[#f5a820] uppercase tracking-wide mb-3">
+                    Our difference
+                  </p>
+                  <ul className="space-y-2.5">
+                    {comp.difference.split(", ").map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <Check className="w-4 h-4 text-[#f5a820] shrink-0 mt-0.5" />
+                        <span className="text-muted-foreground text-sm">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Why LoadHawk Cards */}
-        <div className="mb-24 animate-fade-up">
-          <h2 className="font-display text-3xl font-bold text-center mb-10">
-            <span className="gradient-gold-text">Why LoadHawk</span>
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {whyCards.map((card) => (
+        {/* Summary Strip */}
+        <div className="py-6 sm:py-8 mb-20 sm:mb-24 bg-gray-50 dark:bg-[#0a0a0a] rounded-2xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0 px-4 sm:px-6">
+            {differentiators.map((point, i) => (
               <div
-                key={card.title}
-                className="glass-panel rounded-2xl p-8 flex flex-col"
+                key={point}
+                className={`flex items-center justify-center gap-2 py-2 font-mono text-xs sm:text-sm text-muted-foreground ${
+                  i < differentiators.length - 1
+                    ? "md:border-r md:border-border/30"
+                    : ""
+                }`}
               >
-                <h3 className="font-display text-xl font-bold text-foreground mb-3">
-                  {card.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {card.description}
-                </p>
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#f5a820] shrink-0" />
+                {point}
               </div>
             ))}
           </div>
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center animate-fade-up">
-          <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-            Ready to switch?
-          </h2>
-          <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Find better loads and keep more profit with LoadHawk.
-            Free to start, no credit card required.
-          </p>
+        <div className="text-center">
           <button
             onClick={() => openAuthModal("signup")}
-            className="py-3 px-8 rounded-xl font-semibold text-sm transition-all gradient-gold text-black hover:opacity-90"
+            className="inline-flex items-center rounded-xl px-10 py-4 text-base font-semibold bg-gradient-to-r from-[#f5a820] to-[#d97706] text-black hover:opacity-90 transition-opacity"
           >
-            Try LoadHawk Free
+            Try LoadHawk free
           </button>
+          <p className="mt-5 text-sm text-muted-foreground">
+            No credit card required
+          </p>
         </div>
       </div>
     </div>
