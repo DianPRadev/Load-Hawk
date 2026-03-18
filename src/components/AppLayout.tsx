@@ -22,7 +22,7 @@ export function AppLayout() {
     <div className="min-h-screen bg-background">
       {/* Mobile hamburger */}
       <button
-        className="fixed top-3 left-3 z-50 md:hidden p-2 glass-panel rounded-xl"
+        className="fixed top-3 left-3 z-50 md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center bg-[var(--surface-elevated,#141414)] border border-[#1f1f1f] rounded-lg"
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle navigation menu"
       >
@@ -47,7 +47,7 @@ export function AppLayout() {
       <TopBar sidebarCollapsed={collapsed} />
 
       <main
-        className={`transition-all duration-300 ease-out px-4 py-5 md:px-8 md:py-6 ${
+        className={`transition-all duration-300 ease-out px-4 py-5 md:px-8 md:py-6 max-w-[1600px] ${
           collapsed ? "md:ml-[68px]" : "md:ml-[248px]"
         }`}
       >

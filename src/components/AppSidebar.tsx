@@ -1,9 +1,8 @@
 import {
-  LayoutDashboard, Search, Package, Bot, DollarSign, Star, Users, Settings, LogOut, LogIn, Crown, PanelLeftClose, PanelLeft,
+  LayoutDashboard, Search, Package, Bot, DollarSign, Star, Users, Settings, LogOut, LogIn, Crown, PanelLeftClose, PanelLeft, Lock,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LoadHawkLogo } from "./LoadHawkLogo";
 import { useAuth } from "@/store/AuthContext";
 import { useAuthModal } from "@/store/AuthModalContext";
 import { useProfile } from "@/hooks/useProfile";
@@ -33,55 +32,69 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 h-screen glass-sidebar flex flex-col z-40 transition-all duration-300 ease-out",
+        "fixed left-0 top-0 h-screen bg-[var(--surface-base,#0a0a0a)] border-r border-[#1f1f1f] flex flex-col z-40 transition-all duration-300 ease-out",
         collapsed ? "w-[68px]" : "w-[248px]"
       )}
     >
       {/* Logo */}
-      <div className="px-4 pt-4 pb-3 flex items-center justify-center">
-        {!collapsed ? (
-          <div className="cursor-pointer" onClick={() => navigate("/dashboard")}><LoadHawkLogo size="lg" /></div>
-        ) : (
-          <div className="cursor-pointer mx-auto" onClick={() => navigate("/dashboard")}>
-            <img src="/loadhawk-logo.png" alt="LoadHawk" className="h-10 object-contain" style={{ objectPosition: "center top" }} />
-          </div>
+      <div
+        className={cn(
+          "px-4 pt-4 pb-3 flex items-center cursor-pointer",
+          collapsed ? "justify-center" : "gap-2.5"
+        )}
+        onClick={() => navigate("/dashboard")}
+      >
+        <img
+          src="/loadhawk-logo.png"
+          alt="LoadHawk"
+          className="h-6 object-contain shrink-0"
+        />
+        {!collapsed && (
+          <span className="font-mono text-[13px] tracking-[0.15em] text-foreground/90 font-medium select-none">
+            LOADHAWK
+          </span>
         )}
       </div>
 
-      <div className="macos-separator mx-3" />
+      <div className="border-t border-[#1f1f1f] mx-3" />
 
       <nav className="flex-1 py-3 px-2 overflow-y-auto space-y-0.5">
         {navItems.map((item) => {
           const active = location.pathname === item.path;
-          // Show auth-required items as dimmed when not logged in
           const locked = item.requiresAuth && !isLoggedIn;
           return (
             <NavLink
               key={item.path}
               to={locked ? "#" : item.path}
-              title={locked ? "Sign in to access" : undefined}
+              title={locked ? "Sign in to access" : collapsed ? item.title : undefined}
               onClick={locked ? (e) => { e.preventDefault(); openAuthModal("login"); } : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-200 relative group",
+                "flex items-center gap-3 px-3 py-2 rounded-md text-[13px] transition-all duration-150 relative group",
+                collapsed && "justify-center px-0",
                 active && !locked
-                  ? "bg-[var(--glass-active)] text-foreground shadow-[var(--glass-active-shadow)]"
+                  ? "text-foreground"
                   : locked
-                  ? "text-muted-foreground/40 hover:text-muted-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-[var(--glass-hover)]"
+                  ? "text-muted-foreground/40 hover:text-muted-foreground/60"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
               )}
             >
+              {/* Active left border accent */}
+              {active && !locked && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-sm bg-[#f5a820]" />
+              )}
               <item.icon
                 size={17}
                 className={cn(
                   "shrink-0 transition-colors",
-                  active && !locked ? "text-primary" : locked ? "text-muted-foreground/40" : "text-muted-foreground group-hover:text-foreground"
+                  active && !locked ? "text-[#f5a820]" : locked ? "text-muted-foreground/40" : "text-muted-foreground group-hover:text-foreground"
                 )}
               />
               {!collapsed && (
                 <>
                   <span className="font-medium">{item.title}</span>
-                  {item.pro && (
-                    <span className="ml-auto text-[9px] font-mono tracking-tight bg-premium/15 text-premium px-1.5 py-0.5 rounded-full">
+                  {locked && <Lock size={12} className="ml-auto text-muted-foreground/40" />}
+                  {item.pro && !locked && (
+                    <span className="ml-auto text-[9px] font-mono tracking-tight bg-[#f5a820]/10 text-[#f5a820] px-1.5 py-0.5 rounded-full">
                       PRO
                     </span>
                   )}
@@ -92,18 +105,18 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         })}
       </nav>
 
-      <div className="macos-separator mx-3" />
+      <div className="border-t border-[#1f1f1f] mx-3" />
 
       {/* User section */}
       <div className="p-3">
         {isLoggedIn ? (
           <>
             {!collapsed && (
-              <div className="mb-3 px-2">
-                <div className="text-[13px] font-medium">{userName}</div>
+              <div className="mb-2 px-2">
+                <div className="text-[13px] font-medium truncate">{userName}</div>
                 {userRole && (
                   <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                    <Crown size={10} className="text-primary" /> {userRole}
+                    <Crown size={10} className="text-[#f5a820]" /> {userRole}
                   </div>
                 )}
               </div>
@@ -111,14 +124,14 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
             <div className="flex items-center justify-between">
               <button
                 onClick={async () => { await signOut(); navigate("/login", { replace: true }); }}
-                className="flex items-center gap-2 text-muted-foreground hover:text-destructive text-[13px] px-2 py-1.5 rounded-lg hover:bg-[var(--glass-hover)] transition-all"
+                className="flex items-center gap-2 text-muted-foreground hover:text-destructive text-[13px] px-2 py-1.5 rounded-md hover:bg-white/[0.03] transition-all"
               >
                 <LogOut size={15} />
                 {!collapsed && "Logout"}
               </button>
               <button
                 onClick={onToggle}
-                className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-[var(--glass-hover)] transition-all"
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-white/[0.03] transition-all"
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 {collapsed ? <PanelLeft size={16} /> : <PanelLeftClose size={16} />}
@@ -129,14 +142,14 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
           <div className="flex items-center justify-between">
             <button
               onClick={() => openAuthModal("login")}
-              className="flex items-center gap-2 text-primary hover:text-primary-highlight text-[13px] px-2 py-1.5 rounded-lg hover:bg-[var(--glass-hover)] transition-all"
+              className="flex items-center gap-2 text-[#f5a820] hover:text-[#f5a820]/80 text-[13px] px-2 py-1.5 rounded-md hover:bg-white/[0.03] transition-all"
             >
               <LogIn size={15} />
               {!collapsed && "Sign In"}
             </button>
             <button
               onClick={onToggle}
-              className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-[var(--glass-hover)] transition-all"
+              className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-white/[0.03] transition-all"
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {collapsed ? <PanelLeft size={16} /> : <PanelLeftClose size={16} />}
