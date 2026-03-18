@@ -58,6 +58,7 @@ export interface UserProfile {
   homeBase: string;
   preferredLanes: string;
   role: string;
+  subscriptionTier: string;
 }
 
 export interface NotificationItem {
@@ -164,6 +165,7 @@ export function mapDbProfile(db: DbProfile): UserProfile {
     homeBase: db.home_base,
     preferredLanes: db.preferred_lanes,
     role: db.role,
+    subscriptionTier: db.subscription_tier || "free",
   };
 }
 

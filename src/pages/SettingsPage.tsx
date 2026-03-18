@@ -16,7 +16,7 @@ export default function SettingsPage() {
   const [upgrading, setUpgrading] = useState(false);
   const [managingBilling, setManagingBilling] = useState(false);
 
-  const isPro = profile?.role === "pro" || false; // TODO: use subscription_tier from profile when exposed
+  const isPro = profile?.subscriptionTier === "pro";
 
   // Show success toast if redirected from Stripe checkout
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { MapPin, Truck, User, DollarSign, Package, Plus, X } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { GoldButton } from "@/components/GoldButton";
+import { PageMeta } from "@/components/PageMeta";
 import { useDrivers, useAddDriver, useUpdateDriverStatus, useRemoveDriver } from "@/hooks/useFleet";
 import type { Driver } from "@/types";
 import { useState } from "react";
@@ -63,6 +64,7 @@ export default function FleetPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-5">
+      <PageMeta title="Fleet Management" />
       <div className="flex items-center justify-between animate-fade-up">
         <h1 className="font-display text-3xl tracking-tight">Fleet Management</h1>
         <GoldButton size="sm" onClick={() => setShowAddForm(true)}>

@@ -5,6 +5,7 @@ import type { LoadStatus } from "@/types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { PageMeta } from "@/components/PageMeta";
 
 const statusColors: Record<string, string> = {
   "In Transit": "bg-info/15 text-info",
@@ -74,6 +75,7 @@ export default function MyLoadsPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <PageMeta title="My Loads" />
       <div className="flex items-center justify-between animate-fade-up">
         <h1 className="font-display text-3xl tracking-tight">My Loads</h1>
         <span className="text-[13px] text-muted-foreground">{bookedLoads.length} load{bookedLoads.length !== 1 ? "s" : ""}</span>

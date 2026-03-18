@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Bot, Send, MapPin, ArrowRight } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
+import { PageMeta } from "@/components/PageMeta";
 import { useAvailableLoads } from "@/hooks/useLoads";
 import { useChatMessages, useCreateChatSession, useSendMessage } from "@/hooks/useChat";
 import { useNegotiations } from "@/hooks/useNegotiations";
@@ -91,6 +92,7 @@ export default function AINegotiatorPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <PageMeta title="AI Negotiator" />
       <h1 className="font-display text-3xl tracking-tight animate-fade-up">
         <Bot className="inline text-primary mr-2" size={26} /> AI Negotiator
       </h1>
