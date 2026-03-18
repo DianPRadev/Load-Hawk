@@ -49,25 +49,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     switch (event.type) {
+      // Checkout completed — user just subscribed
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.metadata?.supabase_user_id;
         if (userId) await updateSubscriptionTier(userId, "pro");
         break;
       }
+
+      // Subscription created or resumed
+      case "customer.subscription.created":
+      case "customer.subscription.resumed": {
+        const sub = event.data.object as Stripe.Subscription;
+        const userId = sub.metadata?.supabase_user_id;
+        if (userId && sub.status === "active") await updateSubscriptionTier(userId, "pro");
+        break;
+      }
+
+      // Subscription updated (upgrade, downgrade, status change)
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.supabase_user_id;
         if (userId) {
-          const tier = sub.status === "active" ? "pro" : "free";
+          const tier = (sub.status === "active" || sub.status === "trialing") ? "pro" : "free";
           await updateSubscriptionTier(userId, tier);
         }
         break;
       }
-      case "customer.subscription.deleted": {
+
+      // Subscription cancelled or paused
+      case "customer.subscription.deleted":
+      case "customer.subscription.paused": {
         const sub = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.supabase_user_id;
         if (userId) await updateSubscriptionTier(userId, "free");
+        break;
+      }
+
+      // Payment succeeded — renewal confirmed
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+        if (invoice.subscription) {
+          const sub = await stripe.subscriptions.retrieve(invoice.subscription as string);
+          const userId = sub.metadata?.supabase_user_id;
+          if (userId) await updateSubscriptionTier(userId, "pro");
+        }
+        break;
+      }
+
+      // Payment failed — flag the account
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        if (invoice.subscription) {
+          const sub = await stripe.subscriptions.retrieve(invoice.subscription as string);
+          const userId = sub.metadata?.supabase_user_id;
+          if (userId && sub.status !== "active") await updateSubscriptionTier(userId, "free");
+        }
         break;
       }
     }
