@@ -188,7 +188,7 @@ export default function SettingsPage() {
               <GoldButton variant="secondary" onClick={handleCopyLink}>Copy Link</GoldButton>
             </div>
             <div className="bg-[var(--glass-highlight)] rounded-lg px-4 py-2.5 inline-block">
-              <p className="text-[11px] text-muted-foreground">Referral tracking is coming soon. Your link has been reserved.</p>
+              <p className="text-[11px] text-muted-foreground">Referral tracking launching soon. Your link has been reserved.</p>
             </div>
           </div>
         )}
