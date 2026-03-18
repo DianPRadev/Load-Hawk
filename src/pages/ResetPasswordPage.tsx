@@ -209,8 +209,8 @@ export default function ResetPasswordPage() {
             </form>
           )}
 
-          <a className="back" onClick={() => navigate("/login")}>
-            {"\u2190"} BACK TO SIGN IN
+          <a className="back" onClick={() => navigate("/")}>
+            {"\u2190"} BACK TO HOME
           </a>
         </div>
       </div>

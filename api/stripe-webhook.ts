@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-04-30.basil" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 const supabase = createClient(
@@ -34,17 +34,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   let event: Stripe.Event;
 
-  if (WEBHOOK_SECRET) {
-    const sig = req.headers["stripe-signature"] as string;
-    try {
-      event = stripe.webhooks.constructEvent(rawBody, sig, WEBHOOK_SECRET);
-    } catch (err) {
-      console.error("Webhook signature verification failed:", err);
-      return res.status(400).send("Webhook signature verification failed");
-    }
-  } else {
-    // No webhook secret configured — parse event directly (dev mode)
-    event = JSON.parse(rawBody.toString()) as Stripe.Event;
+  if (!WEBHOOK_SECRET) {
+    console.error("STRIPE_WEBHOOK_SECRET not configured");
+    return res.status(500).json({ error: "Webhook not configured" });
+  }
+
+  const sig = req.headers["stripe-signature"] as string;
+  try {
+    event = stripe.webhooks.constructEvent(rawBody, sig, WEBHOOK_SECRET);
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err);
+    return res.status(400).send("Webhook signature verification failed");
   }
 
   try {

@@ -54,7 +54,7 @@ const App = () => (
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/login" element={<Navigate to="/" replace />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/terms" element={<TermsPage />} />

@@ -6,5 +6,8 @@ Disallow: /my-loads
 Disallow: /ai-negotiator
 Disallow: /earnings
 Disallow: /fleet
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /dashboard
 
 Sitemap: https://loadhawk.ai/sitemap.xml
