@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/store/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 type Mode = "login" | "signup";
 type RoleId = "driver" | "dispatch" | "carrier";
@@ -347,10 +348,9 @@ export default function LoginPage() {
               <div className="fw"><span className="fic">{"\u{1F4CB}"}</span>
                 <select className={"sel"+(errors.cdl?" err":"")} value={cdl} onChange={e=>setCdl(e.target.value)}>
                   <option value="" disabled>Select your CDL class...</option>
-                  <option value="cdla">CDL-A {"\u00B7"} Tractor-Trailer</option>
-                  <option value="cdlb">CDL-B {"\u00B7"} Straight Truck</option>
-                  <option value="owner">Owner-Operator</option>
-                  <option value="dispatcher">Dispatcher</option>
+                  <option value="Class A">Class A {"\u00B7"} Tractor-Trailer</option>
+                  <option value="Class B">Class B {"\u00B7"} Straight Truck</option>
+                  <option value="Class C">Class C {"\u00B7"} Small Vehicle</option>
                 </select>
               </div>
               {errors.cdl && <div className="em">{"\u26A0"} {errors.cdl}</div>}
@@ -384,7 +384,7 @@ export default function LoginPage() {
               <div className={"cb"+(remember?" on":"")}> {remember?"\u2714":""}</div>
               <span className="cl">{mode==="login"?"REMEMBER ME":"AGREE TO TERMS"}</span>
             </div>
-            {mode==="login" && <span className="fg">FORGOT?</span>}
+            {mode==="login" && <span className="fg" onClick={()=>navigate("/forgot-password")}>FORGOT?</span>}
           </div>
 
           {authError && <div className="em" style={{textAlign:"center",marginBottom:8}}>{"\u26A0"} {authError}</div>}
@@ -403,10 +403,11 @@ export default function LoginPage() {
           <div className="dv"><div className="dl"/><span className="dt">OR CONTINUE WITH</span><div className="dl"/></div>
 
           <div className="sr">
-            <button className="sb" style={{opacity:0.4,cursor:"not-allowed"}} disabled><AppleIcon/><span>Apple</span></button>
-            <button className="sb" style={{opacity:0.4,cursor:"not-allowed"}} disabled><GoogleIcon/><span>Google</span></button>
-            <button className="sb" style={{opacity:0.4,cursor:"not-allowed"}} disabled><MetaIcon/><span>Meta</span></button>
+            <button className="sb" style={{opacity:0.5,cursor:"not-allowed",position:"relative"}} disabled title="Coming soon"><AppleIcon/><span>Apple</span></button>
+            <button className="sb" style={{opacity:0.5,cursor:"not-allowed",position:"relative"}} disabled title="Coming soon"><GoogleIcon/><span>Google</span></button>
+            <button className="sb" style={{opacity:0.5,cursor:"not-allowed",position:"relative"}} disabled title="Coming soon"><MetaIcon/><span>Meta</span></button>
           </div>
+          <div style={{textAlign:"center",marginTop:4}}><span style={{fontFamily:"var(--fm)",fontSize:9,color:"var(--muted)",letterSpacing:1}}>SOCIAL LOGIN COMING SOON</span></div>
         </div>
 
         <div className="ft">
@@ -415,7 +416,7 @@ export default function LoginPage() {
               ? <><span>New here? </span><span className="flk" onClick={()=>setMode("signup")}>Create a free account</span></>
               : <><span>Already have an account? </span><span className="flk" onClick={()=>setMode("login")}>Sign in</span></>
             }
-            <br/><span style={{fontSize:10,opacity:.45}}>By continuing you agree to our <span className="flk">Terms</span> &amp; <span className="flk">Privacy</span></span>
+            <br/><span style={{fontSize:10,opacity:.45}}>By continuing you agree to our <span className="flk" onClick={()=>navigate("/terms")}>Terms</span> &amp; <span className="flk" onClick={()=>navigate("/privacy")}>Privacy</span></span>
           </div>
         </div>
       </div>
