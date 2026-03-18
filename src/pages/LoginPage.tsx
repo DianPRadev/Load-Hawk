@@ -419,14 +419,6 @@ export default function LoginPage() {
             }
           </button>
 
-          <div className="dv"><div className="dl"/><span className="dt">OR CONTINUE WITH</span><div className="dl"/></div>
-
-          <div className="sr">
-            <button className="sb" style={{opacity:0.5,cursor:"not-allowed",position:"relative"}} disabled title="Coming soon"><AppleIcon/><span>Apple</span></button>
-            <button className="sb" style={{opacity:0.5,cursor:"not-allowed",position:"relative"}} disabled title="Coming soon"><GoogleIcon/><span>Google</span></button>
-            <button className="sb" style={{opacity:0.5,cursor:"not-allowed",position:"relative"}} disabled title="Coming soon"><MetaIcon/><span>Meta</span></button>
-          </div>
-          <div style={{textAlign:"center",marginTop:4}}><span style={{fontFamily:"var(--fm)",fontSize:9,color:"var(--muted)",letterSpacing:1}}>SOCIAL LOGIN COMING SOON</span></div>
         </div>
 
         <div className="ft">
