@@ -72,7 +72,7 @@ export default function MyLoadsPage() {
     return (
       <div className="max-w-7xl mx-auto space-y-6">
         <h1 className="font-display text-3xl tracking-tight animate-fade-up">My Loads</h1>
-        <div className="glass-panel rounded-2xl p-12 text-center animate-fade-up" style={{ animationDelay: "100ms" }}>
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-12 text-center animate-fade-up" style={{ animationDelay: "100ms" }}>
           <AlertCircle size={44} className="text-muted-foreground mx-auto mb-4 opacity-50" />
           <h2 className="font-display text-xl mb-2">No Loads Booked Yet</h2>
           <p className="text-muted-foreground text-[13px] mb-6">Browse available freight, compare rates, and book loads. Your booked loads will appear here with status tracking.</p>
@@ -93,7 +93,7 @@ export default function MyLoadsPage() {
         {bookedLoads.map((l, i) => {
           const nextLabel = getNextStatusLabel(l.status);
           return (
-            <div key={l.id} className="glass-panel rounded-2xl p-5 card-hover animate-fade-up" style={{ animationDelay: `${i * 100}ms` }}>
+            <div key={l.id} className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-5 card-hover animate-fade-up" style={{ animationDelay: `${i * 100}ms` }}>
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -130,7 +130,7 @@ export default function MyLoadsPage() {
       {confirmAction && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setConfirmAction(null)}>
           <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
-          <div className="relative glass-panel-heavy rounded-2xl p-6 max-w-sm w-full mx-4 space-y-4 window-chrome" onClick={e => e.stopPropagation()}>
+          <div className="relative bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#1f1f1f] shadow-md rounded-2xl p-6 max-w-sm w-full mx-4 space-y-4" onClick={e => e.stopPropagation()}>
             <h3 className="font-display text-xl">Confirm Status Change</h3>
             <p className="text-[13px] text-muted-foreground">
               Update this load from <span className="font-medium text-foreground">{confirmAction.currentStatus}</span> to <span className="font-medium text-foreground">{confirmAction.nextStatus}</span>?

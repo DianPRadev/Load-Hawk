@@ -19,8 +19,8 @@ export const GoldButton = forwardRef<HTMLButtonElement, GoldButtonProps>(
     };
     const variants = {
       primary: "gradient-gold text-primary-foreground font-bold hover:brightness-110 shadow-[0_2px_8px_hsla(38,91%,54%,0.25)] hover:shadow-[0_4px_16px_hsla(38,91%,54%,0.35)]",
-      secondary: "border border-[var(--glass-input-border)] bg-[var(--glass-input-bg)] text-foreground hover:bg-[var(--glass-active)] backdrop-blur-sm",
-      ghost: "text-muted-foreground hover:text-foreground hover:bg-[var(--glass-hover)]",
+      secondary: "border border-gray-200 dark:border-[#1f1f1f] bg-gray-50 dark:bg-[#0a0a0a] text-foreground hover:bg-gray-100 dark:hover:bg-[#1a1a1a]",
+      ghost: "text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-[#1a1a1a]",
     };
     return (
       <button
