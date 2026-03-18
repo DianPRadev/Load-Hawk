@@ -14,7 +14,12 @@ export function useAvailableLoads(filters?: {
   equipment?: string;
   minRate?: number;
   maxMiles?: number;
+  page?: number;
+  pageSize?: number;
 }) {
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 20;
+
   return useQuery({
     queryKey: ["loads", "available", filters],
     queryFn: async (): Promise<Load[]> => {
@@ -30,9 +35,40 @@ export function useAvailableLoads(filters?: {
       if (filters?.minRate) q = q.gte("rate", filters.minRate);
       if (filters?.maxMiles) q = q.lte("miles", filters.maxMiles);
 
+      q = q.range((page - 1) * pageSize, page * pageSize - 1);
+
       const { data, error } = await q;
       if (error) throw error;
       return (data as DbLoad[]).map(mapDbLoad);
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useAvailableLoadsCount(filters?: {
+  origin?: string;
+  destination?: string;
+  equipment?: string;
+  minRate?: number;
+  maxMiles?: number;
+}) {
+  return useQuery({
+    queryKey: ["loads", "available", "count", filters],
+    queryFn: async (): Promise<number> => {
+      let q = supabase
+        .from("loads")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "available");
+
+      if (filters?.origin) q = q.ilike("origin", `%${filters.origin}%`);
+      if (filters?.destination) q = q.ilike("destination", `%${filters.destination}%`);
+      if (filters?.equipment) q = q.eq("equipment", filters.equipment);
+      if (filters?.minRate) q = q.gte("rate", filters.minRate);
+      if (filters?.maxMiles) q = q.lte("miles", filters.maxMiles);
+
+      const { count, error } = await q;
+      if (error) throw error;
+      return count ?? 0;
     },
     staleTime: 30_000,
   });
