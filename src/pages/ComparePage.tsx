@@ -37,7 +37,7 @@ const comparisonData: FeatureRow[] = [
   },
   {
     feature: "Broker Ratings",
-    loadhawk: "Community-verified",
+    loadhawk: "Community-rated",
     dat: "CarrierWatch (add-on)",
     truckstop: "Basic",
     trucksmarter: "Limited",
@@ -65,7 +65,7 @@ const comparisonData: FeatureRow[] = [
   },
   {
     feature: "Mobile Optimized",
-    loadhawk: "PWA",
+    loadhawk: "Mobile web",
     dat: "App required",
     truckstop: "App required",
     trucksmarter: true,
@@ -231,8 +231,8 @@ export default function ComparePage() {
             Ready to switch?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Join thousands of owner-operators who are finding better loads and
-            keeping more profit with LoadHawk.
+            Find better loads and keep more profit with LoadHawk.
+            Free to start, no credit card required.
           </p>
           <button
             onClick={() => openAuthModal("signup")}

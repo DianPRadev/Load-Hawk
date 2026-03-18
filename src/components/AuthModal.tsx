@@ -213,7 +213,7 @@ export function AuthModal() {
 
   return (
     <div className="lh-modal">
-      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <style>{css}</style>
 
       {/* Backdrop */}
       <div

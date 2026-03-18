@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="lh-forgot">
-      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <style>{css}</style>
       <div className="shell">
         <button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme">{theme === "dark" ? "\u2600\uFE0F" : "\uD83C\uDF19"}</button>
         <div className="bgl">

@@ -2,6 +2,7 @@ import { MapPin, ArrowRight, Clock, Truck } from "lucide-react";
 import { GoldButton } from "./GoldButton";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/store/AuthContext";
+import { useAuthModal } from "@/store/AuthModalContext";
 import { useBookLoad, useBookedLoads } from "@/hooks/useLoads";
 import type { Load } from "@/types";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ interface LoadCardProps extends Load {
 
 export function LoadCard({ id, origin, destination, miles, weight, rate, ratePerMile, broker, equipment, postedAgo, delay = 0, showNegotiate = true }: LoadCardProps) {
   const { user } = useAuth();
+  const { openAuthModal } = useAuthModal();
   const { data: bookedLoads = [] } = useBookedLoads();
   const bookMutation = useBookLoad();
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ export function LoadCard({ id, origin, destination, miles, weight, rate, ratePer
 
   const handleBook = () => {
     if (!user) {
-      navigate("/login");
+      openAuthModal("login");
       return;
     }
     bookMutation.mutate(id, {
@@ -37,7 +39,7 @@ export function LoadCard({ id, origin, destination, miles, weight, rate, ratePer
 
   const handleNegotiate = () => {
     if (!user) {
-      navigate("/login");
+      openAuthModal("login");
       return;
     }
     navigate("/ai-negotiator", { state: { loadId: id } });

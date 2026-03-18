@@ -5,8 +5,18 @@ import { TopBar } from "./TopBar";
 import { Menu, X } from "lucide-react";
 
 export function AppLayout() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    try { return localStorage.getItem("lh-sidebar-collapsed") === "true"; } catch { return false; }
+  });
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleToggleCollapse = () => {
+    setCollapsed(prev => {
+      const next = !prev;
+      try { localStorage.setItem("lh-sidebar-collapsed", String(next)); } catch { /* localStorage unavailable */ }
+      return next;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -21,7 +31,7 @@ export function AppLayout() {
 
       {/* Sidebar - desktop */}
       <div className="hidden md:block">
-        <AppSidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+        <AppSidebar collapsed={collapsed} onToggle={handleToggleCollapse} />
       </div>
 
       {/* Mobile sidebar overlay */}

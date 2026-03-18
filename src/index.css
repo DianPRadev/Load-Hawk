@@ -270,6 +270,10 @@
     border-color: hsla(var(--ring), 0.4);
     box-shadow: 0 0 0 3px hsla(var(--ring), 0.08);
   }
+  .glass-input:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 1px;
+  }
 
   /* ---- macOS window chrome ---- */
   .window-chrome {

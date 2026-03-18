@@ -22,9 +22,9 @@ export function StatCard({ label, value, change, positive, icon, delay = 0 }: St
       </div>
       <div className="font-display text-3xl text-primary tracking-tight">{value}</div>
       {change && (
-        <div className={cn("flex items-center gap-1 mt-2 text-[11px] font-mono", positive ? "text-success" : "text-destructive")}>
-          {positive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
-          {change} vs last week
+        <div className={cn("flex items-center gap-1 mt-2 text-[11px] font-mono", positive ? "text-success" : "text-muted-foreground")}>
+          {positive && <TrendingUp size={11} />}
+          {change}
         </div>
       )}
     </div>

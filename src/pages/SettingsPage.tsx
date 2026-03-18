@@ -42,7 +42,7 @@ export default function SettingsPage() {
         toast.error(data.error || "Failed to start checkout");
       }
     } catch {
-      toast.error("Failed to connect to billing service");
+      toast.error("Request timed out. Please try again.");
     }
     setUpgrading(false);
   };
@@ -125,6 +125,10 @@ export default function SettingsPage() {
     const label = notifLabelMap[key] || key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
     updateNotifSettings.mutate(updated, {
       onSuccess: () => toast.success(`${label}: ${updated[key] ? "enabled" : "disabled"}`),
+      onError: () => {
+        setLocalNotifSettings(localNotifSettings); // revert
+        toast.error(`Failed to update ${label}`);
+      },
     });
   };
 
@@ -218,7 +222,7 @@ export default function SettingsPage() {
                   <li>Priority load alerts</li>
                   <li>Saved searches and lane watchlists</li>
                   <li>Fleet management tools</li>
-                  <li>CSV/PDF export</li>
+                  <li>CSV export</li>
                   <li>Dedicated support</li>
                 </ul>
               </div>

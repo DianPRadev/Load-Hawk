@@ -13,7 +13,7 @@ const freeFeatures = [
   "Broker ratings & reviews",
   "Book loads",
   "Basic earnings tracking",
-  "3 AI negotiations per day",
+  "AI negotiation (limited)",
 ];
 
 const proFeatures = [
@@ -23,7 +23,7 @@ const proFeatures = [
   "Priority load alerts",
   "Saved searches & lane watchlists",
   "Fleet management tools",
-  "CSV/PDF export",
+  "CSV export",
   "Dedicated support",
 ];
 

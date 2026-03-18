@@ -116,7 +116,7 @@ export default function DashboardPage() {
         ) : (
           <>
             <StatCard label="Available Loads" value={String(availableLoads.length)} change={`${availableLoads.length} posted`} positive={availableLoads.length > 0} icon={<Package size={16} />} delay={100} />
-            <StatCard label="Verified Brokers" value={String(brokers.length)} change="rated & reviewed" positive icon={<Star size={16} />} delay={200} />
+            <StatCard label="Rated Brokers" value={String(brokers.length)} change="rated & reviewed" positive icon={<Star size={16} />} delay={200} />
             <StatCard label="Avg Rate/Mile" value={availableLoads.length > 0 ? `$${(availableLoads.reduce((s, l) => s + l.ratePerMile, 0) / availableLoads.length).toFixed(2)}` : "—"} icon={<TrendingUp size={16} />} delay={300} />
             <StatCard label="Top Lane" value={availableLoads.length > 0 ? `${availableLoads[0].origin.split(",")[0]}` : "—"} icon={<MapPin size={16} />} delay={400} />
           </>
@@ -145,7 +145,7 @@ export default function DashboardPage() {
             {!isLoggedIn ? (
               <div className="space-y-3 text-[13px]">
                 <div className="flex items-start gap-3"><span className="text-primary">$</span><span className="text-muted-foreground">See true profit per load — not just rate</span></div>
-                <div className="flex items-start gap-3"><span className="text-primary">★</span><span className="text-muted-foreground">Verified broker ratings with payment history</span></div>
+                <div className="flex items-start gap-3"><span className="text-primary">★</span><span className="text-muted-foreground">Community broker ratings and reviews</span></div>
                 <div className="flex items-start gap-3"><span className="text-primary">⚡</span><span className="text-muted-foreground">AI-powered negotiation assistant</span></div>
                 <div className="flex items-start gap-3"><span className="text-primary">📊</span><span className="text-muted-foreground">Track earnings, miles, and performance</span></div>
               </div>

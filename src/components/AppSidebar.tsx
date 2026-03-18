@@ -5,6 +5,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LoadHawkLogo } from "./LoadHawkLogo";
 import { useAuth } from "@/store/AuthContext";
+import { useAuthModal } from "@/store/AuthModalContext";
 import { useProfile } from "@/hooks/useProfile";
 
 const navItems = [
@@ -22,6 +23,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
+  const { openAuthModal } = useAuthModal();
   const { data: dbProfile } = useProfile();
 
   const isLoggedIn = !!user;
@@ -36,12 +38,12 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
       )}
     >
       {/* Logo */}
-      <div className="px-4 pt-4 pb-3 flex items-center">
+      <div className="px-4 pt-4 pb-3 flex items-center justify-center">
         {!collapsed ? (
-          <div className="cursor-pointer" onClick={() => navigate("/dashboard")}><LoadHawkLogo size="md" /></div>
+          <div className="cursor-pointer" onClick={() => navigate("/dashboard")}><LoadHawkLogo size="lg" /></div>
         ) : (
           <div className="cursor-pointer mx-auto" onClick={() => navigate("/dashboard")}>
-            <img src="/loadhawk-logo.png" alt="LoadHawk" className="w-9 h-9 rounded-lg object-contain" />
+            <img src="/loadhawk-logo.png" alt="LoadHawk" className="h-10 object-contain" style={{ objectPosition: "center top" }} />
           </div>
         )}
       </div>
@@ -56,7 +58,8 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
           return (
             <NavLink
               key={item.path}
-              to={locked ? "/login" : item.path}
+              to={locked ? "#" : item.path}
+              onClick={locked ? (e) => { e.preventDefault(); openAuthModal("login"); } : undefined}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-200 relative group",
                 active && !locked
@@ -124,7 +127,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         ) : (
           <div className="flex items-center justify-between">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => openAuthModal("login")}
               className="flex items-center gap-2 text-primary hover:text-primary-highlight text-[13px] px-2 py-1.5 rounded-lg hover:bg-[var(--glass-hover)] transition-all"
             >
               <LogIn size={15} />

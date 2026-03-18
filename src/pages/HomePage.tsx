@@ -34,7 +34,7 @@ const FEATURES = [
     icon: Star,
     title: "Broker Ratings",
     description:
-      "Verified reviews, payment history, and trust scores on every broker.",
+      "Community reviews, payment history, and trust scores on every broker.",
   },
   {
     icon: DollarSign,
@@ -83,7 +83,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground scroll-smooth">
-      <PageMeta title="AI-Powered Freight Operating System" description="Find verified loads, negotiate smarter rates, and track real profit. The freight OS for owner-operators, dispatchers, and small fleets." />
+      <PageMeta title="AI-Powered Freight Operating System" description="Find loads, negotiate smarter rates, and track real profit. The freight OS for owner-operators, dispatchers, and small fleets." />
       {/* ── Navigation ── */}
       <nav className="sticky top-0 z-50 glass-panel border-b border-border/40">
         <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
@@ -147,7 +147,7 @@ export default function HomePage() {
             <span className="gradient-gold-text">Operating System</span>
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Find verified loads, negotiate smarter rates, track real profit, and
+            Find loads, negotiate smarter rates, track real profit, and
             grow your business — all in one platform.
           </p>
 

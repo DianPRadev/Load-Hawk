@@ -41,7 +41,7 @@ const guides: Guide[] = [
       "Ask for references from other carriers who've hauled for them",
       "Check if they have a surety bond or trust fund (required $75K minimum)",
       "Watch for red flags: pressure to book immediately, rates far above market, new MC numbers",
-      "Use LoadHawk's broker ratings to see verified community reviews",
+      "Use LoadHawk's broker ratings to see community reviews and scores",
       "Consider factoring for new broker relationships to reduce payment risk",
     ],
   },
