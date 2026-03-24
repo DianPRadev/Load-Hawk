@@ -548,7 +548,7 @@
      ═══════════════════════════════════════════ */
   .animate-fade-up {
     animation: fadeUp 350ms var(--ease-out) forwards;
-    animation-fill-mode: backwards;
+    animation-fill-mode: both;
     opacity: 0;
   }
   .gold-glow {
