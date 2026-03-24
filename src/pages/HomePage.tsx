@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthModal } from "@/store/AuthModalContext";
+import { useAuth } from "@/store/AuthContext";
 import { useTheme } from "next-themes";
 import { PageMeta } from "@/components/PageMeta";
 import {
@@ -80,9 +81,15 @@ const ROLE_PATHS = [
 
 export default function HomePage() {
   const { openAuthModal } = useAuthModal();
+  const { user } = useAuth();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Redirect to dashboard after login
+  useEffect(() => {
+    if (user) navigate("/dashboard");
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-background text-foreground scroll-smooth">
