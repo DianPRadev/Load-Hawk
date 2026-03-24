@@ -22,7 +22,7 @@ export function AppLayout() {
     <div className="min-h-screen bg-background">
       {/* Mobile hamburger */}
       <button
-        className="fixed top-3 left-3 z-50 md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center bg-[var(--surface-elevated,#141414)] border border-[#1f1f1f] rounded-lg"
+        className="fixed top-3 left-3 z-50 md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-lg"
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle navigation menu"
       >

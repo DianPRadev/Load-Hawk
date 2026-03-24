@@ -32,7 +32,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 h-screen bg-[var(--surface-base,#0a0a0a)] border-r border-[#1f1f1f] flex flex-col z-40 transition-all duration-300 ease-out",
+        "fixed left-0 top-0 h-screen bg-gray-50 dark:bg-[#0a0a0a] border-r border-gray-200 dark:border-[#1f1f1f] flex flex-col z-40 transition-all duration-300 ease-out",
         collapsed ? "w-[68px]" : "w-[248px]"
       )}
     >
@@ -56,7 +56,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         )}
       </div>
 
-      <div className="border-t border-[#1f1f1f] mx-3" />
+      <div className="border-t border-gray-200 dark:border-[#1f1f1f] mx-3" />
 
       <nav className="flex-1 py-3 px-2 overflow-y-auto space-y-0.5">
         {navItems.map((item) => {
@@ -75,7 +75,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
                   ? "text-foreground"
                   : locked
                   ? "text-muted-foreground/40 hover:text-muted-foreground/60"
-                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
               )}
             >
               {/* Active left border accent */}
@@ -105,7 +105,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         })}
       </nav>
 
-      <div className="border-t border-[#1f1f1f] mx-3" />
+      <div className="border-t border-gray-200 dark:border-[#1f1f1f] mx-3" />
 
       {/* User section */}
       <div className="p-3">
@@ -124,14 +124,14 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
             <div className="flex items-center justify-between">
               <button
                 onClick={async () => { await signOut(); navigate("/login", { replace: true }); }}
-                className="flex items-center gap-2 text-muted-foreground hover:text-destructive text-[13px] px-2 py-1.5 rounded-md hover:bg-white/[0.03] transition-all"
+                className="flex items-center gap-2 text-muted-foreground hover:text-destructive text-[13px] px-2 py-1.5 rounded-md hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all"
               >
                 <LogOut size={15} />
                 {!collapsed && "Logout"}
               </button>
               <button
                 onClick={onToggle}
-                className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-white/[0.03] transition-all"
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all"
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 {collapsed ? <PanelLeft size={16} /> : <PanelLeftClose size={16} />}
@@ -142,14 +142,14 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
           <div className="flex items-center justify-between">
             <button
               onClick={() => openAuthModal("login")}
-              className="flex items-center gap-2 text-[#f5a820] hover:text-[#f5a820]/80 text-[13px] px-2 py-1.5 rounded-md hover:bg-white/[0.03] transition-all"
+              className="flex items-center gap-2 text-[#f5a820] hover:text-[#f5a820]/80 text-[13px] px-2 py-1.5 rounded-md hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all"
             >
               <LogIn size={15} />
               {!collapsed && "Sign In"}
             </button>
             <button
               onClick={onToggle}
-              className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-white/[0.03] transition-all"
+              className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all"
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {collapsed ? <PanelLeft size={16} /> : <PanelLeftClose size={16} />}
