@@ -47,10 +47,10 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         <img
           src="/loadhawk-logo.png"
           alt="LoadHawk"
-          className="h-6 object-contain shrink-0"
+          className="h-8 object-contain shrink-0"
         />
         {!collapsed && (
-          <span className="font-mono text-[13px] tracking-[0.15em] text-foreground/90 font-medium select-none">
+          <span className="font-display text-[15px] tracking-[0.08em] text-foreground font-semibold select-none">
             LOADHAWK
           </span>
         )}
