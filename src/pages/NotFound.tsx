@@ -1,18 +1,14 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
+import { PageMeta } from "@/components/PageMeta";
 
 const NotFound = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-  }, [location.pathname]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <PageMeta title="Page Not Found" />
       <div className="text-center bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-12 max-w-md w-full animate-fade-up">
         <div className="w-16 h-16 rounded-full gradient-gold flex items-center justify-center mx-auto mb-6">
           <MapPin size={28} className="text-primary-foreground" />

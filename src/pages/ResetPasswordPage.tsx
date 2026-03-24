@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
+import { PageMeta } from "@/components/PageMeta";
 
 const LOGO = "/loadhawk-logo.png";
 
@@ -40,7 +41,7 @@ export default function ResetPasswordPage() {
       setApiError(error.message);
     } else {
       setSuccess(true);
-      setTimeout(() => navigate("/login", { replace: true }), 3000);
+      setTimeout(() => navigate("/", { replace: true }), 3000);
     }
   }
 
@@ -52,6 +53,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <PageMeta title="Reset Password" />
       {/* Theme toggle */}
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

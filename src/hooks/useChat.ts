@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { authFetch } from "@/lib/api";
 import { useAuth } from "@/store/AuthContext";
+import { toast } from "sonner";
 import type { ChatMessage, Load } from "@/types";
 
 export function useChatMessages(sessionId: string | null) {
@@ -102,6 +103,9 @@ export function useSendMessage() {
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ["chat", "messages", vars.sessionId] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to send message. Please try again.");
     },
   });
 }

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
 import { PageMeta } from "@/components/PageMeta";
 import { authFetch } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -152,7 +153,7 @@ export default function SettingsPage() {
   };
 
   const handleCopyLink = () => {
-    const link = `loadhawk.com/ref/${(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}`;
+    const link = `loadhawk.ai/ref/${(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}`;
     navigator.clipboard.writeText(link).then(() => {
       toast.success("Referral link copied to clipboard!");
     }).catch(() => {
@@ -185,14 +186,15 @@ export default function SettingsPage() {
       <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 animate-fade-up" style={{ animationDelay: "200ms" }}>
         {tab === "profile" && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <fieldset disabled={updateProfile.isPending} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="name" className="text-[11px] text-muted-foreground mb-1.5 block">Full Name</label>
                 <input id="name" value={formData.name} onChange={e => handleInputChange("name", e.target.value)} className={inputClass} />
               </div>
               <div>
                 <label htmlFor="email" className="text-[11px] text-muted-foreground mb-1.5 block">Email</label>
-                <input id="email" type="email" value={formData.email} onChange={e => handleInputChange("email", e.target.value)} className={inputClass} />
+                <input id="email" type="email" value={formData.email} readOnly className={`${inputClass} opacity-60 cursor-not-allowed`} />
+                <p className="text-[10px] text-muted-foreground mt-1">Contact support@loadhawk.ai to change your email</p>
               </div>
               <div>
                 <label htmlFor="phone" className="text-[11px] text-muted-foreground mb-1.5 block">Phone</label>
@@ -215,8 +217,8 @@ export default function SettingsPage() {
                 <label htmlFor="lanes" className="text-[11px] text-muted-foreground mb-1.5 block">Preferred Lanes</label>
                 <input id="lanes" value={formData.preferredLanes} onChange={e => handleInputChange("preferredLanes", e.target.value)} className={inputClass} />
               </div>
-            </div>
-            <GoldButton onClick={handleSaveProfile} loading={updateProfile.isPending} loadingText="Saving...">Save Changes</GoldButton>
+            </fieldset>
+            <GoldButton onClick={handleSaveProfile} loading={updateProfile.isPending} loadingText="Saving..." disabled={updateProfile.isPending}>Save Changes</GoldButton>
           </div>
         )}
 
@@ -275,7 +277,7 @@ export default function SettingsPage() {
             <h3 className="font-display text-2xl">Refer & Earn</h3>
             <p className="text-muted-foreground text-[13px]">Earn $25 for every trucker who signs up with your link</p>
             <div className="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] rounded-xl px-4 py-3 font-mono text-[13px] text-primary inline-block">
-              loadhawk.com/ref/{(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}
+              loadhawk.ai/ref/{(profile?.name || "user").replace(/\s/g, "-").toUpperCase()}
             </div>
             <div className="flex items-center justify-center gap-3">
               <GoldButton variant="secondary" onClick={handleCopyLink}>Copy Link</GoldButton>
@@ -285,6 +287,38 @@ export default function SettingsPage() {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-6">
+        <h3 className="font-display text-lg mb-1">Data & Privacy</h3>
+        <p className="text-sm text-muted-foreground mb-4">Manage your personal data in accordance with GDPR and CCPA.</p>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={async () => {
+              const { data } = await supabase.from("profiles").select("*").eq("id", user?.id).single();
+              const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url; a.download = "loadhawk-data-export.json"; a.click();
+              URL.revokeObjectURL(url);
+              toast.success("Data exported successfully");
+            }}
+            className="px-4 py-2 text-sm border border-gray-200 dark:border-[#1f1f1f] rounded-lg hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors"
+          >
+            Export My Data
+          </button>
+          <button
+            onClick={async () => {
+              if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
+              if (!confirm("This will permanently delete all your data including loads, earnings, and settings. Continue?")) return;
+              await supabase.auth.signOut();
+              toast.success("Account deletion requested. Contact support@loadhawk.ai to complete the process.");
+            }}
+            className="px-4 py-2 text-sm border border-red-300 dark:border-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+          >
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
   );

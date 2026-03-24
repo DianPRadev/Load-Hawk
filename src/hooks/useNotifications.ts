@@ -26,7 +26,7 @@ export function useNotifications() {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [user, qc]);
+  }, [user?.id]);
 
   return useQuery({
     queryKey: ["notifications", user?.id],

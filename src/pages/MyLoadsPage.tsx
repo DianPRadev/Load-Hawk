@@ -11,6 +11,7 @@ const statusColors: Record<string, string> = {
   "In Transit": "bg-info/15 text-info",
   "Picked Up": "bg-primary/15 text-primary",
   "Delivered": "bg-success/15 text-success",
+  "Cancelled": "bg-destructive/15 text-destructive",
 };
 
 const STATUS_FLOW: LoadStatus[] = ["Picked Up", "In Transit", "Delivered"];
@@ -117,8 +118,22 @@ export default function MyLoadsPage() {
                       {nextLabel}
                     </GoldButton>
                   )}
+                  {l.status === "Picked Up" && (
+                    <GoldButton size="sm" variant="secondary" onClick={() => {
+                      if (!confirm("Are you sure you want to cancel this load?")) return;
+                      updateStatus.mutate(
+                        { bookedLoadId: l.id, loadId: l.id, newStatus: "Cancelled" },
+                        { onSuccess: () => toast.success("Load cancelled") }
+                      );
+                    }} loading={updateStatus.isPending}>
+                      Cancel
+                    </GoldButton>
+                  )}
                   {l.status === "Delivered" && (
                     <GoldButton size="sm" variant="secondary" disabled>Completed</GoldButton>
+                  )}
+                  {l.status === "Cancelled" && (
+                    <GoldButton size="sm" variant="secondary" disabled>Cancelled</GoldButton>
                   )}
                 </div>
               </div>

@@ -61,10 +61,14 @@ export function useEarningsChart(period: "weekly" | "monthly" | "yearly") {
       if (error) throw error;
       if (!data || data.length === 0) return [];
 
+      const now = new Date();
+
       if (period === "weekly") {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const filtered = data.filter((bl: { delivered_at: string | null }) => bl.delivered_at && new Date(bl.delivered_at) >= weekAgo);
         const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
         const buckets = days.map((day) => ({ day, earnings: 0 }));
-        data.forEach((bl: { delivered_at: string | null; load: { rate: number } | null }) => {
+        filtered.forEach((bl: { delivered_at: string | null; load: { rate: number } | null }) => {
           if (!bl.delivered_at || !bl.load) return;
           const d = new Date(bl.delivered_at).getDay();
           const idx = d === 0 ? 6 : d - 1; // Mon=0
@@ -74,9 +78,11 @@ export function useEarningsChart(period: "weekly" | "monthly" | "yearly") {
       }
 
       if (period === "monthly") {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const filtered = data.filter((bl: { delivered_at: string | null }) => bl.delivered_at && new Date(bl.delivered_at) >= monthAgo);
         const weeks = ["W1", "W2", "W3", "W4"];
         const buckets = weeks.map((week) => ({ week, earnings: 0 }));
-        data.forEach((bl: { delivered_at: string | null; load: { rate: number } | null }) => {
+        filtered.forEach((bl: { delivered_at: string | null; load: { rate: number } | null }) => {
           if (!bl.delivered_at || !bl.load) return;
           const dayOfMonth = new Date(bl.delivered_at).getDate();
           const weekIdx = Math.min(Math.floor((dayOfMonth - 1) / 7), 3);
@@ -86,9 +92,11 @@ export function useEarningsChart(period: "weekly" | "monthly" | "yearly") {
       }
 
       // yearly
+      const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      const filtered = data.filter((bl: { delivered_at: string | null }) => bl.delivered_at && new Date(bl.delivered_at) >= yearAgo);
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const buckets = months.map((month) => ({ month, earnings: 0 }));
-      data.forEach((bl: { delivered_at: string | null; load: { rate: number } | null }) => {
+      filtered.forEach((bl: { delivered_at: string | null; load: { rate: number } | null }) => {
         if (!bl.delivered_at || !bl.load) return;
         const m = new Date(bl.delivered_at).getMonth();
         buckets[m].earnings += bl.load.rate;

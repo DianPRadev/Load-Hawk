@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +11,7 @@ interface StatCardProps {
   delay?: number;
 }
 
-export function StatCard({ label, value, change, positive, icon, delay = 0 }: StatCardProps) {
+export const StatCard = memo(function StatCard({ label, value, change, positive, icon, delay = 0 }: StatCardProps) {
   return (
     <div
       className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-5 card-hover shadow-sm animate-fade-up"
@@ -29,4 +30,4 @@ export function StatCard({ label, value, change, positive, icon, delay = 0 }: St
       )}
     </div>
   );
-}
+});

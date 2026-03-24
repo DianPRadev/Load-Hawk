@@ -19,7 +19,6 @@ export default function EarningsPage() {
   const hasRealData = deliveredCount > 0;
 
   // Cost estimates — national averages (diesel ~$3.89/gal at 6.5 MPG = ~$0.60/mi; tolls avg ~3.3% of gross)
-  // TODO: Make configurable per-user in Settings when cost profile fields are added
   const FUEL_COST_PER_MILE = 0.60;
   const TOLLS_FEE_RATE = 0.033;
   const fuelCosts = Math.round(totalMiles * FUEL_COST_PER_MILE);

@@ -123,10 +123,11 @@ export function AuthModal() {
   function validate() {
     const e: Record<string, string> = {};
     if (mode === "signup" && !name.trim()) e.name = "Full name required";
-    if (!email.includes("@") || !email.includes(".")) e.email = "Enter a valid email";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Enter a valid email";
     if (password.length < 6) e.password = "Min 6 characters";
     if (mode === "signup" && password !== confirm) e.confirm = "Passwords don't match";
     if (mode === "signup" && !cdl) e.cdl = "Select your CDL class";
+    if (mode === "signup" && !remember) e.terms = "You must agree to the Terms of Service";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -367,6 +368,7 @@ export function AuthModal() {
                   className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-1 z-[2] transition-colors"
                   onClick={() => setShowPass(!showPass)}
                   type="button"
+                  aria-label={showPass ? "Hide password" : "Show password"}
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -404,6 +406,7 @@ export function AuthModal() {
                     className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-1 z-[2] transition-colors"
                     onClick={() => setShowConf(!showConf)}
                     type="button"
+                    aria-label={showConf ? "Hide password" : "Show password"}
                   >
                     {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -435,6 +438,11 @@ export function AuthModal() {
                   {mode === "login" ? "REMEMBER ME" : "AGREE TO TERMS"}
                 </span>
               </div>
+              {errors.terms && (
+                <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                  {"\u26A0"} {errors.terms}
+                </div>
+              )}
               {mode === "login" && (
                 <span
                   className="font-mono text-[11px] font-bold text-[#f5a820] cursor-pointer opacity-80 hover:opacity-100 transition-opacity"

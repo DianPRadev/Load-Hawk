@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Sun, Moon, Mail, CheckCircle } from "lucide-react";
+import { PageMeta } from "@/components/PageMeta";
 
 const LOGO = "/loadhawk-logo.png";
 
@@ -19,7 +20,7 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setError("");
 
-    if (!email.includes("@") || !email.includes(".")) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError("Enter a valid email address");
       return;
     }
@@ -39,6 +40,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <PageMeta title="Forgot Password" />
       {/* Theme toggle */}
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

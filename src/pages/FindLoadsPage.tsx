@@ -16,14 +16,28 @@ export default function FindLoadsPage() {
   const { user } = useAuth();
   const { openAuthModal } = useAuthModal();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [aiHighlight, setAiHighlight] = useState(false);
   const [origin, setOrigin] = useState(searchParams.get("q") || "");
   const [destination, setDestination] = useState("");
   const [equipment, setEquipment] = useState("");
   const [minRate, setMinRate] = useState("");
   const [maxDH, setMaxDH] = useState("");
-  const [page, setPage] = useState(1);
+
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const setPage = (p: number | ((prev: number) => number)) => {
+    const resolved = typeof p === "function" ? p(page) : p;
+    const params = new URLSearchParams(searchParams);
+    if (resolved <= 1) params.delete("page");
+    else params.set("page", String(resolved));
+    setSearchParams(params);
+  };
+
+  // Re-read origin from URL when searchParams change
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) setOrigin(q);
+  }, [searchParams]);
 
   // Saved search state
   const [showSaveForm, setShowSaveForm] = useState(false);
@@ -37,7 +51,11 @@ export default function FindLoadsPage() {
   const toggleAlertsMutation = useToggleSearchAlerts();
 
   // Reset page when filters change
-  useEffect(() => { setPage(1); }, [origin, destination, equipment, minRate, maxDH, aiHighlight]);
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    params.delete("page");
+    setSearchParams(params);
+  }, [origin, destination, equipment, minRate, maxDH, aiHighlight]);
 
   const filterParams = {
     origin: origin || undefined,
@@ -310,7 +328,7 @@ export default function FindLoadsPage() {
                           ) : (
                             <>
                               <GoldButton size="sm" onClick={() => handleBook(l.id)}>Book</GoldButton>
-                              <GoldButton size="sm" variant="secondary" onClick={() => { if (!user) { navigate("/login"); return; } navigate("/ai-negotiator", { state: { loadId: l.id } }); }}>Negotiate</GoldButton>
+                              <GoldButton size="sm" variant="secondary" onClick={() => { if (!user) { openAuthModal("login"); return; } navigate("/ai-negotiator", { state: { loadId: l.id } }); }}>Negotiate</GoldButton>
                             </>
                           )}
                         </div>

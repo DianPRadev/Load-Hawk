@@ -177,7 +177,7 @@ export default function DashboardPage() {
               </div>
             ) : earningsData.length > 0 ? (
               <>
-                <ResponsiveContainer width="100%" height={180}>
+                <div aria-label="Weekly earnings chart"><ResponsiveContainer width="100%" height={180}>
                   <BarChart data={earningsData}>
                     <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
                     <YAxis hide />
@@ -189,7 +189,7 @@ export default function DashboardPage() {
                     />
                     <Bar dataKey="earnings" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
                   </BarChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer></div>
                 <div className="flex justify-between text-[11px] mt-2">
                   <span className="text-muted-foreground">Total</span>
                   <span className="font-mono text-primary">${weeklyTotal.toLocaleString()}</span>

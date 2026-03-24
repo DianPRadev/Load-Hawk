@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { MapPin, ArrowRight, Clock, Truck } from "lucide-react";
 import { GoldButton } from "./GoldButton";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +13,7 @@ interface LoadCardProps extends Load {
   showNegotiate?: boolean;
 }
 
-export function LoadCard({ id, origin, destination, miles, weight, rate, ratePerMile, broker, equipment, postedAgo, delay = 0, showNegotiate = true }: LoadCardProps) {
+export const LoadCard = memo(function LoadCard({ id, origin, destination, miles, weight, rate, ratePerMile, broker, equipment, postedAgo, delay = 0, showNegotiate = true }: LoadCardProps) {
   const { user } = useAuth();
   const { openAuthModal } = useAuthModal();
   const { data: bookedLoads = [] } = useBookedLoads();
@@ -85,4 +86,4 @@ export function LoadCard({ id, origin, destination, miles, weight, rate, ratePer
       </div>
     </div>
   );
-}
+});

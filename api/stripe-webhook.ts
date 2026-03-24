@@ -10,6 +10,23 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
 
+/**
+ * Idempotency: track processed event IDs to prevent duplicate processing.
+ * In a production system, use a database table. This in-memory set handles
+ * duplicates within a single serverless instance lifetime.
+ */
+const processedEvents = new Set<string>();
+const MAX_PROCESSED_CACHE = 1000;
+
+function markProcessed(eventId: string) {
+  processedEvents.add(eventId);
+  // Prevent unbounded growth
+  if (processedEvents.size > MAX_PROCESSED_CACHE) {
+    const first = processedEvents.values().next().value;
+    if (first) processedEvents.delete(first);
+  }
+}
+
 async function updateSubscriptionTier(userId: string, tier: string) {
   const { error } = await supabase
     .from("profiles")
@@ -47,9 +64,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).send("Webhook signature verification failed");
   }
 
+  // Idempotency check — skip already-processed events
+  if (processedEvents.has(event.id)) {
+    return res.status(200).json({ received: true, deduplicated: true });
+  }
+
   try {
     switch (event.type) {
-      // Checkout completed — user just subscribed
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.metadata?.supabase_user_id;
@@ -57,7 +78,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
       }
 
-      // Subscription created or resumed
       case "customer.subscription.created":
       case "customer.subscription.resumed": {
         const sub = event.data.object as Stripe.Subscription;
@@ -66,7 +86,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
       }
 
-      // Subscription updated (upgrade, downgrade, status change)
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.supabase_user_id;
@@ -77,7 +96,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
       }
 
-      // Subscription cancelled or paused
       case "customer.subscription.deleted":
       case "customer.subscription.paused": {
         const sub = event.data.object as Stripe.Subscription;
@@ -86,7 +104,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
       }
 
-      // Payment succeeded — renewal confirmed
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
         if (invoice.subscription) {
@@ -97,7 +114,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
       }
 
-      // Payment failed — flag the account
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
         if (invoice.subscription) {
@@ -108,6 +124,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
       }
     }
+
+    // Mark as processed after successful handling
+    markProcessed(event.id);
   } catch (err) {
     console.error("Webhook handler error:", err);
   }
