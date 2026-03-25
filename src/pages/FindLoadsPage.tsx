@@ -161,7 +161,7 @@ export default function FindLoadsPage() {
                 <span>{l.origin}</span>
                 <span className="text-muted-foreground">&rarr;</span>
                 <span>{l.destination}</span>
-                <span className="font-mono text-[#f5a820] text-[11px] ml-1">${l.ratePerMile.toFixed(2)}/mi</span>
+                <span className="font-mono text-muted-foreground text-xs ml-1">${l.ratePerMile.toFixed(2)}/mi</span>
               </div>
             ))}
           </div>
@@ -231,7 +231,7 @@ export default function FindLoadsPage() {
                 <div
                   key={s.id}
                   onClick={() => handleApplySavedSearch(s)}
-                  className="group flex items-center gap-1.5 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#1f1f1f] rounded-full px-3 py-1.5 text-[12px] cursor-pointer hover:border-[#f5a820]/40 transition-colors"
+                  className="group flex items-center gap-1.5 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#1f1f1f] rounded-full px-3 py-1.5 text-sm cursor-pointer hover:border-[#f5a820]/40 transition-colors"
                 >
                   <span className="font-display">{s.name}</span>
                   {(s.origin || s.destination) && (
@@ -263,7 +263,7 @@ export default function FindLoadsPage() {
         </div>
       )}
 
-      <div className="text-[12px] text-muted-foreground font-mono">
+      <div className="text-sm text-muted-foreground font-mono">
         Showing {Math.min((page - 1) * PAGE_SIZE + 1, totalCount)}&ndash;{Math.min(page * PAGE_SIZE, totalCount)} of {totalCount} loads{aiHighlight && " -- sorted by best $/mile"}
       </div>
 
@@ -296,19 +296,19 @@ export default function FindLoadsPage() {
       {/* Desktop table layout */}
       <div className="hidden md:block bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl overflow-hidden animate-fade-up" style={{ animationDelay: "200ms" }}>
         <div className="overflow-x-auto">
-          <table className="w-full text-[13px]">
+          <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200 dark:border-[#1f1f1f]">
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Origin</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Destination</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase hidden xl:table-cell">Miles</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Rate</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">$/Mile</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Equipment</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Broker</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase hidden lg:table-cell">Rating</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase hidden xl:table-cell">Posted</th>
-                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Action</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase">Origin</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase">Destination</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase hidden xl:table-cell">Miles</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase">Rate</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase">$/Mile</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase">Equipment</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase">Broker</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase hidden lg:table-cell">Rating</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase hidden xl:table-cell">Posted</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-xs uppercase">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -321,13 +321,13 @@ export default function FindLoadsPage() {
                     <tr key={l.id} className={`border-b border-gray-100 dark:border-[#1a1a1a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors ${aiHighlight && l.ratePerMile > 4 ? "bg-[#f5a820]/[0.03]" : ""}`}>
                       <td className="px-4 py-3">{l.origin}</td>
                       <td className="px-4 py-3">{l.destination}</td>
-                      <td className="px-4 py-3 font-mono text-[12px] hidden xl:table-cell">{l.miles}</td>
-                      <td className="px-4 py-3 font-mono text-lg text-[#f5a820] font-semibold">${l.rate.toLocaleString()}</td>
-                      <td className="px-4 py-3 font-mono text-[12px] text-success">${l.ratePerMile.toFixed(2)}</td>
-                      <td className="px-4 py-3"><span className="bg-gray-100 dark:bg-[#1f1f1f] text-[10px] px-2 py-0.5 rounded-full">{l.equipment}</span></td>
+                      <td className="px-4 py-3 font-mono text-sm hidden xl:table-cell">{l.miles}</td>
+                      <td className="px-4 py-3 font-mono text-base text-foreground font-semibold">${l.rate.toLocaleString()}</td>
+                      <td className="px-4 py-3 font-mono text-sm text-muted-foreground">${l.ratePerMile.toFixed(2)}</td>
+                      <td className="px-4 py-3"><span className="bg-gray-100 dark:bg-[#1f1f1f] text-xs px-2.5 py-1 rounded-full">{l.equipment}</span></td>
                       <td className="px-4 py-3">{l.broker}</td>
-                      <td className="px-4 py-3 font-mono text-[12px] hidden lg:table-cell">{l.brokerRating}</td>
-                      <td className="px-4 py-3 text-muted-foreground text-[12px] hidden xl:table-cell">{l.postedAgo}</td>
+                      <td className="px-4 py-3 font-mono text-sm hidden lg:table-cell">{l.brokerRating}</td>
+                      <td className="px-4 py-3 text-muted-foreground text-sm hidden xl:table-cell">{l.postedAgo}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1.5">
                           {booked ? (
