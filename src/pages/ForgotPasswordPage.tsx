@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
         <h1 className="font-display text-2xl font-bold text-center mb-2">
           Reset Password
         </h1>
-        <p className="font-mono text-[11px] text-gray-400 dark:text-gray-500 text-center mb-6 leading-relaxed">
+        <p className="font-mono text-[13px] text-gray-400 dark:text-gray-500 text-center mb-6 leading-relaxed">
           Enter the email address associated with your account and we will send
           you a link to reset your password.
         </p>
@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block font-mono text-[9.5px] font-bold tracking-[2.5px] text-gray-400 dark:text-gray-500 mb-1.5">
+              <label className="block font-mono text-[12px] font-bold tracking-[2px] text-gray-400 dark:text-gray-500 mb-1.5">
                 EMAIL
               </label>
               <div className="relative flex items-center">
@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
                 />
               </div>
               {error && (
-                <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
                   {"\u26A0"} {error}
                 </div>
               )}

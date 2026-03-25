@@ -11,7 +11,7 @@ interface GoldButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const GoldButton = forwardRef<HTMLButtonElement, GoldButtonProps>(
   ({ className, variant = "primary", loading, loadingText, size = "md", children, disabled, ...props }, ref) => {
-    const base = "font-display tracking-normal rounded-full transition-all duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none min-w-[120px]";
+    const base = "font-display tracking-normal rounded-full transition-all duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none min-w-[120px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
     const sizes = {
       sm: "px-4 py-1.5 text-[12px]",
       md: "px-6 py-2.5 text-sm",
@@ -19,8 +19,8 @@ export const GoldButton = forwardRef<HTMLButtonElement, GoldButtonProps>(
     };
     const variants = {
       primary: "gradient-gold text-primary-foreground font-bold hover:brightness-110 shadow-[0_2px_8px_hsla(38,91%,54%,0.25)] hover:shadow-[0_4px_16px_hsla(38,91%,54%,0.35)]",
-      secondary: "border border-gray-200 dark:border-[#1f1f1f] bg-gray-50 dark:bg-[#0a0a0a] text-foreground hover:bg-gray-100 dark:hover:bg-[#1a1a1a]",
-      ghost: "text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-[#1a1a1a]",
+      secondary: "border border-border bg-muted text-foreground hover:bg-accent",
+      ghost: "text-muted-foreground hover:text-foreground hover:bg-accent",
     };
     return (
       <button

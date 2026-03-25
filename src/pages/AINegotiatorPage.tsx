@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, MapPin, ArrowRight } from "lucide-react";
+import { Bot, Send, MapPin, ArrowRight, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { GoldButton } from "@/components/GoldButton";
 import { PageMeta } from "@/components/PageMeta";
 import { useAvailableLoads } from "@/hooks/useLoads";
@@ -26,6 +26,7 @@ export default function AINegotiatorPage() {
   const [selectedLoadId, setSelectedLoadId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(true);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
 
@@ -120,8 +121,72 @@ export default function AINegotiatorPage() {
         <Bot className="inline text-primary mr-2" size={26} /> AI Negotiator
       </h1>
 
+      {/* Mobile load selector - always visible above chat on small screens */}
+      <div className="lg:hidden">
+        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-4 animate-fade-up" style={{ animationDelay: "100ms" }}>
+          <h3 className="font-display text-base mb-3">Select a Load</h3>
+          <select value={selectedLoadId || ""} onChange={e => handleLoadChange(e.target.value || null)} aria-label="Select a load to negotiate" className="w-full bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-3 py-2 text-[13px] focus:outline-none">
+            <option value="">Choose a load...</option>
+            {availableLoads.map(l => (
+              <option key={l.id} value={l.id}>{l.origin} → {l.destination} — ${l.rate.toLocaleString()} (${l.ratePerMile.toFixed(2)}/mi)</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Mobile collapsible load details */}
+        {selectedLoad && (
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm mt-3 animate-fade-up">
+            <button
+              onClick={() => setDetailsOpen(!detailsOpen)}
+              className="w-full flex items-center justify-between px-4 py-3 text-[13px]"
+              aria-expanded={detailsOpen}
+              aria-controls="mobile-load-details"
+            >
+              <div className="flex items-center gap-2">
+                <MapPin size={13} className="text-primary" />
+                <span className="font-medium">{selectedLoad.origin}</span>
+                <ArrowRight size={11} className="text-muted-foreground" />
+                <span className="font-medium">{selectedLoad.destination}</span>
+                <span className="text-muted-foreground mx-1">|</span>
+                <span className="font-mono text-primary">${selectedLoad.ratePerMile.toFixed(2)}/mi</span>
+              </div>
+              {detailsOpen ? <ChevronUp size={16} className="text-muted-foreground" /> : <ChevronDown size={16} className="text-muted-foreground" />}
+            </button>
+            {detailsOpen && (
+              <div id="mobile-load-details" className="px-4 pb-4 space-y-3 text-[13px] border-t border-gray-200 dark:border-[#1f1f1f] pt-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div><span className="text-muted-foreground">Miles:</span> <span className="font-mono">{selectedLoad.miles}</span></div>
+                  <div><span className="text-muted-foreground">Weight:</span> <span className="font-mono">{selectedLoad.weight}</span></div>
+                  <div><span className="text-muted-foreground">Equipment:</span> {selectedLoad.equipment}</div>
+                  <div><span className="text-muted-foreground">Broker:</span> {selectedLoad.broker}</div>
+                </div>
+                <div className="border-t border-gray-200 dark:border-[#1f1f1f] my-3" />
+                <div className="space-y-2">
+                  <div className="flex justify-between"><span className="text-muted-foreground">Current Rate</span><span className="font-mono text-primary">${selectedLoad.rate.toLocaleString()} (${selectedLoad.ratePerMile.toFixed(2)}/mi)</span></div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Market Average</span>
+                    <span className="flex items-center gap-1">
+                      <span className="font-mono text-info">${(selectedLoad.ratePerMile * 0.93).toFixed(2)}/mi</span>
+                      <Info size={14} className="text-muted-foreground cursor-help" title="Estimated at 93% of current rate. Based on general market data — verify with your broker." />
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Recommended Counter</span>
+                    <span className="flex items-center gap-1">
+                      <span className="font-mono text-primary font-bold">${(selectedLoad.ratePerMile * 1.08).toFixed(2)}/mi</span>
+                      <Info size={14} className="text-muted-foreground cursor-help" title="Suggested at 108% of current rate. This is an AI estimate — always confirm with your broker directly." />
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground mt-1">Based on 8% above current offer</div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-        <div className="lg:col-span-2 space-y-4">
+        <div className="hidden lg:block lg:col-span-2 space-y-4">
           <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-5 animate-fade-up" style={{ animationDelay: "100ms" }}>
             <h3 className="font-display text-base mb-4">Select a Load</h3>
             <select value={selectedLoadId || ""} onChange={e => handleLoadChange(e.target.value || null)} aria-label="Select a load to negotiate" className="w-full bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-3 py-2 text-[13px] focus:outline-none">
@@ -151,8 +216,20 @@ export default function AINegotiatorPage() {
                 <div className="border-t border-gray-200 dark:border-[#1f1f1f] my-3" />
                 <div className="space-y-2">
                   <div className="flex justify-between"><span className="text-muted-foreground">Current Rate</span><span className="font-mono text-primary">${selectedLoad.rate.toLocaleString()} (${selectedLoad.ratePerMile.toFixed(2)}/mi)</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Market Average</span><span className="font-mono text-info">${(selectedLoad.ratePerMile * 0.93).toFixed(2)}/mi</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Recommended Counter</span><span className="font-mono text-primary font-bold">${(selectedLoad.ratePerMile * 1.08).toFixed(2)}/mi</span></div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Market Average</span>
+                    <span className="flex items-center gap-1">
+                      <span className="font-mono text-info">${(selectedLoad.ratePerMile * 0.93).toFixed(2)}/mi</span>
+                      <Info size={14} className="text-muted-foreground cursor-help" title="Estimated at 93% of current rate. Based on general market data — verify with your broker." />
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Recommended Counter</span>
+                    <span className="flex items-center gap-1">
+                      <span className="font-mono text-primary font-bold">${(selectedLoad.ratePerMile * 1.08).toFixed(2)}/mi</span>
+                      <Info size={14} className="text-muted-foreground cursor-help" title="Suggested at 108% of current rate. This is an AI estimate — always confirm with your broker directly." />
+                    </span>
+                  </div>
                   <div className="text-[10px] text-muted-foreground mt-1">Based on 8% above current offer</div>
                 </div>
               </div>
@@ -186,7 +263,7 @@ export default function AINegotiatorPage() {
         </div>
 
         {/* Chat */}
-        <div className="lg:col-span-3 bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm flex flex-col h-[calc(100vh-12rem)] sm:h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
+        <div className="col-span-1 lg:col-span-3 bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm flex flex-col h-[calc(100vh-12rem)] sm:h-[600px] animate-fade-up" style={{ animationDelay: "150ms" }}>
           <div className="p-4">
             {profile && profile.subscriptionTier !== "pro" && (
               <div className="text-[12px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/30 rounded-lg px-3 py-2 mb-3">
@@ -203,7 +280,10 @@ export default function AINegotiatorPage() {
               <div className="text-center py-8 space-y-3">
                 <Bot size={32} className="text-primary/30 mx-auto" />
                 <div className="text-muted-foreground text-[13px]">Select a load and start chatting to get AI-powered negotiation advice.</div>
-                <div className="text-[11px] text-muted-foreground/60 bg-gray-50 dark:bg-[#0c0c0c] rounded-lg px-3 py-2 inline-block">AI responses are generated suggestions — always verify rates with your broker</div>
+                <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-3 inline-flex items-start gap-2 text-left max-w-md mx-auto">
+                  <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
+                  <span className="text-[11px] text-muted-foreground">AI responses are generated suggestions — always verify rates with your broker</span>
+                </div>
               </div>
             )}
             {chatMessages.map((msg, i) => (

@@ -33,7 +33,7 @@ function RolePicker({ onConfirm }: { onConfirm: (role: RoleId) => void }) {
         <h2 className="font-display text-3xl tracking-wide text-center mb-1">
           ONE MORE THING
         </h2>
-        <p className="font-mono text-[10px] font-bold tracking-[2.5px] text-gray-400 dark:text-gray-500 text-center mb-5">
+        <p className="font-mono text-[12px] font-bold tracking-[2px] text-gray-400 dark:text-gray-500 text-center mb-5">
           HOW WILL YOU USE LOADHAWK?
         </p>
 
@@ -55,7 +55,7 @@ function RolePicker({ onConfirm }: { onConfirm: (role: RoleId) => void }) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-[15px] font-bold">{r.name}</div>
-                <div className="font-mono text-[10px] text-gray-400 dark:text-gray-500 tracking-wide">
+                <div className="font-mono text-[12px] text-gray-400 dark:text-gray-500 tracking-wide">
                   {r.desc}
                 </div>
               </div>
@@ -95,6 +95,7 @@ export function AuthModal() {
   const [loading, setLoading] = useState(false);
   const [showRole, setShowRole] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [signupStep, setSignupStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -110,6 +111,7 @@ export function AuthModal() {
       setAuthError("");
       setErrors({});
       setPendingConfirmation(false);
+      setSignupStep(1);
     }
   }, [isOpen, defaultMode]);
 
@@ -120,20 +122,53 @@ export function AuthModal() {
     }
   }, [user, isOpen, showRole, closeAuthModal]);
 
-  function validate() {
+  function validateStep1() {
     const e: Record<string, string> = {};
-    if (mode === "signup" && !name.trim()) e.name = "Full name required";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Enter a valid email";
     if (password.length < 6) e.password = "Min 6 characters";
     if (mode === "signup" && password !== confirm) e.confirm = "Passwords don't match";
-    if (mode === "signup" && !cdl) e.cdl = "Select your CDL class";
-    if (mode === "signup" && !remember) e.terms = "You must agree to the Terms of Service";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
+  function validateStep2() {
+    const e: Record<string, string> = {};
+    if (!name.trim()) e.name = "Full name required";
+    if (!cdl) e.cdl = "Select your CDL class";
+    if (!remember) e.terms = "You must agree to the Terms of Service";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
+
+  function validate() {
+    if (mode === "login") {
+      return validateStep1();
+    }
+    // For signup, validate both steps (used on final submit)
+    const e: Record<string, string> = {};
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Enter a valid email";
+    if (password.length < 6) e.password = "Min 6 characters";
+    if (password !== confirm) e.confirm = "Passwords don't match";
+    if (!name.trim()) e.name = "Full name required";
+    if (!cdl) e.cdl = "Select your CDL class";
+    if (!remember) e.terms = "You must agree to the Terms of Service";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
+
+  function handleSignupContinue() {
+    if (!validateStep1()) return;
+    setSignupStep(2);
+    setErrors({});
+  }
+
   async function submit() {
-    if (!validate()) return;
+    if (mode === "signup" && signupStep === 1) {
+      handleSignupContinue();
+      return;
+    }
+    if (mode === "signup" && !validateStep2()) return;
+    if (mode === "login" && !validateStep1()) return;
     setLoading(true);
     setAuthError("");
     setPendingConfirmation(false);
@@ -176,7 +211,7 @@ export function AuthModal() {
     "w-full bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] rounded-lg pl-10 pr-3 py-3 text-sm font-medium text-foreground focus:border-[#f5a820] focus:outline-none focus:ring-1 focus:ring-[#f5a820]/20 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600 focus-visible:outline-2 focus-visible:outline-[#f5a820] focus-visible:outline-offset-1";
   const inputError = "border-red-500 focus:ring-red-500/20";
   const labelClass =
-    "block font-mono text-[9.5px] font-bold tracking-[2.5px] text-gray-400 dark:text-gray-500 mb-1.5";
+    "block font-mono text-[12px] font-bold tracking-[2px] text-gray-400 dark:text-gray-500 mb-1.5";
 
   return (
     <>
@@ -208,7 +243,7 @@ export function AuthModal() {
                 alt="LoadHawk"
                 className="h-14 object-contain mb-2"
               />
-              <div className="font-mono text-[10px] tracking-[4px] text-gray-400 dark:text-gray-500 uppercase text-center">
+              <div className="font-mono text-[11px] tracking-[3px] text-gray-400 dark:text-gray-500 uppercase text-center">
                 <span className="text-[#f5a820]">Book Smarter.</span>
                 &nbsp; Earn More. &nbsp;
                 <span className="text-[#f5a820]">Move Fast.</span>
@@ -226,6 +261,7 @@ export function AuthModal() {
                 onClick={() => {
                   setMode("login");
                   setErrors({});
+                  setSignupStep(1);
                 }}
               >
                 SIGN IN
@@ -239,207 +275,238 @@ export function AuthModal() {
                 onClick={() => {
                   setMode("signup");
                   setErrors({});
+                  setSignupStep(1);
                 }}
               >
                 JOIN FREE
               </button>
             </div>
 
-            {/* Full Name (signup only) */}
+            {/* Step indicator (signup only) */}
             {mode === "signup" && (
-              <div className="mb-3">
-                <label className={labelClass}>FULL NAME</label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
-                    <User size={16} />
-                  </span>
-                  <input
-                    className={`${inputBase} ${errors.name ? inputError : ""}`}
-                    placeholder="Marcus Davis"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                {errors.name && (
-                  <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
-                    {"\u26A0"} {errors.name}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Email */}
-            <div className="mb-3">
-              <label className={labelClass}>EMAIL</label>
-              <div className="relative flex items-center">
-                <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
-                  <Mail size={16} />
+              <div className="text-center mb-3">
+                <span className="font-mono text-[11px] tracking-[2px] text-gray-400 dark:text-gray-500">
+                  STEP {signupStep} OF 2
                 </span>
-                <input
-                  className={`${inputBase} ${errors.email ? inputError : ""}`}
-                  placeholder="driver@loadhawk.io"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              {errors.email && (
-                <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
-                  {"\u26A0"} {errors.email}
-                </div>
-              )}
-            </div>
-
-            {/* Phone (signup only) */}
-            {mode === "signup" && (
-              <div className="mb-3">
-                <label className={labelClass}>PHONE</label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
-                    <Phone size={16} />
-                  </span>
-                  <input
-                    className={inputBase}
-                    placeholder="+1 (555) 000-0000"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
+                <div className="flex gap-1.5 justify-center mt-1.5">
+                  <div className={`h-1 rounded-full transition-all ${signupStep >= 1 ? "w-8 bg-[#f5a820]" : "w-8 bg-gray-200 dark:bg-[#333]"}`} />
+                  <div className={`h-1 rounded-full transition-all ${signupStep >= 2 ? "w-8 bg-[#f5a820]" : "w-8 bg-gray-200 dark:bg-[#333]"}`} />
                 </div>
               </div>
             )}
 
-            {/* CDL Class (signup only) */}
-            {mode === "signup" && (
-              <div className="mb-3">
-                <label className={labelClass}>CDL CLASS</label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
-                    <FileText size={16} />
-                  </span>
-                  <select
-                    className={`${inputBase} cursor-pointer appearance-none ${
-                      errors.cdl ? inputError : ""
-                    }`}
-                    value={cdl}
-                    onChange={(e) => setCdl(e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select your CDL class...
-                    </option>
-                    <option value="Class A">
-                      Class A {"\u00B7"} Tractor-Trailer
-                    </option>
-                    <option value="Class B">
-                      Class B {"\u00B7"} Straight Truck
-                    </option>
-                    <option value="Class C">
-                      Class C {"\u00B7"} Small Vehicle
-                    </option>
-                  </select>
-                </div>
-                {errors.cdl && (
-                  <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
-                    {"\u26A0"} {errors.cdl}
-                  </div>
-                )}
-              </div>
+            {/* Back link (signup step 2 only) */}
+            {mode === "signup" && signupStep === 2 && (
+              <button
+                className="font-mono text-[11px] font-bold text-[#f5a820] cursor-pointer opacity-80 hover:opacity-100 transition-opacity bg-transparent border-none mb-3 p-0"
+                onClick={() => { setSignupStep(1); setErrors({}); }}
+                type="button"
+              >
+                {"\u2190"} Back
+              </button>
             )}
 
-            {/* Password */}
-            <div className="mb-3">
-              <label className={labelClass}>PASSWORD</label>
-              <div className="relative flex items-center">
-                <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
-                  <Lock size={16} />
-                </span>
-                <input
-                  className={`${inputBase} pr-10 ${
-                    errors.password ? inputError : ""
-                  }`}
-                  placeholder={
-                    mode === "signup" ? "Min 6 characters" : "Your password"
-                  }
-                  type={showPass ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-1 z-[2] transition-colors"
-                  onClick={() => setShowPass(!showPass)}
-                  type="button"
-                  aria-label={showPass ? "Hide password" : "Show password"}
-                >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-              {mode === "signup" && (
-                <div className="font-mono text-[9px] text-gray-400 dark:text-gray-600 mt-1 pl-0.5">
-                  Minimum 6 characters
+            {/* ===== SIGNUP STEP 2: Name, Phone, CDL ===== */}
+            {mode === "signup" && signupStep === 2 && (
+              <>
+                {/* Full Name */}
+                <div className="mb-3">
+                  <label className={labelClass}>FULL NAME</label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
+                      <User size={16} />
+                    </span>
+                    <input
+                      className={`${inputBase} ${errors.name ? inputError : ""}`}
+                      placeholder="Marcus Davis"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  {errors.name && (
+                    <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                      {"\u26A0"} {errors.name}
+                    </div>
+                  )}
                 </div>
-              )}
-              {errors.password && (
-                <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
-                  {"\u26A0"} {errors.password}
-                </div>
-              )}
-            </div>
 
-            {/* Confirm Password (signup only) */}
-            {mode === "signup" && (
-              <div className="mb-3">
-                <label className={labelClass}>CONFIRM PASSWORD</label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
-                    <Lock size={16} />
-                  </span>
-                  <input
-                    className={`${inputBase} pr-10 ${
-                      errors.confirm ? inputError : ""
-                    }`}
-                    placeholder="Repeat password"
-                    type={showConf ? "text" : "password"}
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                  />
-                  <button
-                    className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-1 z-[2] transition-colors"
-                    onClick={() => setShowConf(!showConf)}
-                    type="button"
-                    aria-label={showConf ? "Hide password" : "Show password"}
-                  >
-                    {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+                {/* Phone */}
+                <div className="mb-3">
+                  <label className={labelClass}>PHONE</label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
+                      <Phone size={16} />
+                    </span>
+                    <input
+                      className={inputBase}
+                      placeholder="+1 (555) 000-0000"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
                 </div>
-                {errors.confirm && (
-                  <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
-                    {"\u26A0"} {errors.confirm}
+
+                {/* CDL Class */}
+                <div className="mb-3">
+                  <label className={labelClass}>CDL CLASS</label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
+                      <FileText size={16} />
+                    </span>
+                    <select
+                      className={`${inputBase} cursor-pointer appearance-none ${
+                        errors.cdl ? inputError : ""
+                      }`}
+                      value={cdl}
+                      onChange={(e) => setCdl(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        Select your CDL class...
+                      </option>
+                      <option value="Class A">
+                        Class A {"\u00B7"} Tractor-Trailer
+                      </option>
+                      <option value="Class B">
+                        Class B {"\u00B7"} Straight Truck
+                      </option>
+                      <option value="Class C">
+                        Class C {"\u00B7"} Small Vehicle
+                      </option>
+                    </select>
+                  </div>
+                  {errors.cdl && (
+                    <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                      {"\u26A0"} {errors.cdl}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* ===== LOGIN or SIGNUP STEP 1: Email, Password, Confirm ===== */}
+            {(mode === "login" || (mode === "signup" && signupStep === 1)) && (
+              <>
+                {/* Email */}
+                <div className="mb-3">
+                  <label className={labelClass}>EMAIL</label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
+                      <Mail size={16} />
+                    </span>
+                    <input
+                      className={`${inputBase} ${errors.email ? inputError : ""}`}
+                      placeholder="driver@loadhawk.io"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  {errors.email && (
+                    <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                      {"\u26A0"} {errors.email}
+                    </div>
+                  )}
+                </div>
+
+                {/* Password */}
+                <div className="mb-3">
+                  <label className={labelClass}>PASSWORD</label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
+                      <Lock size={16} />
+                    </span>
+                    <input
+                      className={`${inputBase} pr-10 ${
+                        errors.password ? inputError : ""
+                      }`}
+                      placeholder={
+                        mode === "signup" ? "Min 6 characters" : "Your password"
+                      }
+                      type={showPass ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                      className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
+                      onClick={() => setShowPass(!showPass)}
+                      type="button"
+                      aria-label={showPass ? "Hide password" : "Show password"}
+                    >
+                      {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                  {mode === "signup" && (
+                    <div className="font-mono text-[11px] text-gray-400 dark:text-gray-600 mt-1 pl-0.5">
+                      Minimum 6 characters
+                    </div>
+                  )}
+                  {errors.password && (
+                    <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                      {"\u26A0"} {errors.password}
+                    </div>
+                  )}
+                </div>
+
+                {/* Confirm Password (signup step 1 only) */}
+                {mode === "signup" && (
+                  <div className="mb-3">
+                    <label className={labelClass}>CONFIRM PASSWORD</label>
+                    <div className="relative flex items-center">
+                      <span className="absolute left-3 pointer-events-none z-[2] opacity-45 flex items-center">
+                        <Lock size={16} />
+                      </span>
+                      <input
+                        className={`${inputBase} pr-10 ${
+                          errors.confirm ? inputError : ""
+                        }`}
+                        placeholder="Repeat password"
+                        type={showConf ? "text" : "password"}
+                        value={confirm}
+                        onChange={(e) => setConfirm(e.target.value)}
+                      />
+                      <button
+                        className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
+                        onClick={() => setShowConf(!showConf)}
+                        type="button"
+                        aria-label={showConf ? "Hide password" : "Show password"}
+                      >
+                        {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                    {errors.confirm && (
+                      <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                        {"\u26A0"} {errors.confirm}
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+              </>
             )}
 
             {/* Remember / Terms + Forgot */}
             <div className="flex justify-between items-center mb-4">
-              <div
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => setRemember(!remember)}
-              >
+              {(mode === "login" || (mode === "signup" && signupStep === 2)) && (
                 <div
-                  className={`w-[18px] h-[18px] rounded-[5px] shrink-0 border flex items-center justify-center text-xs transition-all ${
-                    remember
-                      ? "bg-[#d97706] border-[#d97706] text-black font-black"
-                      : "bg-gray-50 dark:bg-[#0a0a0a] border-gray-300 dark:border-[#333]"
-                  }`}
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => setRemember(!remember)}
                 >
-                  {remember ? "\u2714" : ""}
+                  <div
+                    className={`w-[22px] h-[22px] rounded-[5px] shrink-0 border flex items-center justify-center text-xs transition-all ${
+                      remember
+                        ? "bg-[#d97706] border-[#d97706] text-black font-black"
+                        : "bg-gray-50 dark:bg-[#0a0a0a] border-gray-300 dark:border-[#333]"
+                    }`}
+                  >
+                    {remember ? "\u2714" : ""}
+                  </div>
+                  <span className="font-mono text-[11px] font-semibold text-gray-400 dark:text-gray-500">
+                    {mode === "login" ? "REMEMBER ME" : "AGREE TO TERMS"}
+                  </span>
                 </div>
-                <span className="font-mono text-[11px] font-semibold text-gray-400 dark:text-gray-500">
-                  {mode === "login" ? "REMEMBER ME" : "AGREE TO TERMS"}
-                </span>
-              </div>
+              )}
               {errors.terms && (
-                <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
                   {"\u26A0"} {errors.terms}
                 </div>
               )}
@@ -472,7 +539,7 @@ export function AuthModal() {
 
             {/* Auth error */}
             {authError && (
-              <div className="font-mono text-[10px] text-red-500 text-center mb-2 flex items-center justify-center gap-1">
+              <div className="font-mono text-[11px] text-red-500 text-center mb-2 flex items-center justify-center gap-1">
                 {"\u26A0"} {authError}
               </div>
             )}
@@ -484,7 +551,7 @@ export function AuthModal() {
                 <div className="text-[13px] font-semibold text-[#f5a820] mb-1">
                   Check your email
                 </div>
-                <div className="text-[11px] text-gray-400 dark:text-gray-500">
+                <div className="text-[12px] text-gray-400 dark:text-gray-500">
                   We sent a confirmation link to{" "}
                   <strong className="text-gray-300 dark:text-gray-300">
                     {email}
@@ -509,6 +576,8 @@ export function AuthModal() {
                 </>
               ) : mode === "login" ? (
                 "\u26A1  SIGN INTO LOADHAWK"
+              ) : signupStep === 1 ? (
+                "CONTINUE \u2192"
               ) : (
                 "\u{1F680}  CREATE MY ACCOUNT"
               )}

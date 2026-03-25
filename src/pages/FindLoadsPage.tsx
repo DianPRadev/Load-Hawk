@@ -251,7 +251,7 @@ export default function FindLoadsPage() {
                   </button>
                   <button
                     onClick={(e) => handleDeleteSearch(e, s.id)}
-                    className="text-muted-foreground hover:text-red-400 transition-colors opacity-60 sm:opacity-0 sm:group-hover:opacity-100"
+                    className="text-muted-foreground hover:text-red-400 transition-colors opacity-60 hover:opacity-100"
                     title="Delete saved search"
                   >
                     <X size={12} />
@@ -299,9 +299,16 @@ export default function FindLoadsPage() {
           <table className="w-full text-[13px]">
             <thead>
               <tr className="border-b border-gray-200 dark:border-[#1f1f1f]">
-                {["Origin", "Destination", "Miles", "Rate", "$/Mile", "Equipment", "Broker", "Rating", "Posted", "Action"].map(h => (
-                  <th key={h} scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">{h}</th>
-                ))}
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Origin</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Destination</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase hidden xl:table-cell">Miles</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Rate</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">$/Mile</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Equipment</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Broker</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase hidden lg:table-cell">Rating</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase hidden xl:table-cell">Posted</th>
+                <th scope="col" className="text-left px-4 py-3 font-display text-muted-foreground tracking-tight text-[11px] uppercase">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -314,13 +321,13 @@ export default function FindLoadsPage() {
                     <tr key={l.id} className={`border-b border-gray-100 dark:border-[#1a1a1a] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors ${aiHighlight && l.ratePerMile > 4 ? "bg-[#f5a820]/[0.03]" : ""}`}>
                       <td className="px-4 py-3">{l.origin}</td>
                       <td className="px-4 py-3">{l.destination}</td>
-                      <td className="px-4 py-3 font-mono text-[12px]">{l.miles}</td>
+                      <td className="px-4 py-3 font-mono text-[12px] hidden xl:table-cell">{l.miles}</td>
                       <td className="px-4 py-3 font-mono text-lg text-[#f5a820] font-semibold">${l.rate.toLocaleString()}</td>
                       <td className="px-4 py-3 font-mono text-[12px] text-success">${l.ratePerMile.toFixed(2)}</td>
                       <td className="px-4 py-3"><span className="bg-gray-100 dark:bg-[#1f1f1f] text-[10px] px-2 py-0.5 rounded-full">{l.equipment}</span></td>
                       <td className="px-4 py-3">{l.broker}</td>
-                      <td className="px-4 py-3 font-mono text-[12px]">{l.brokerRating}</td>
-                      <td className="px-4 py-3 text-muted-foreground text-[12px]">{l.postedAgo}</td>
+                      <td className="px-4 py-3 font-mono text-[12px] hidden lg:table-cell">{l.brokerRating}</td>
+                      <td className="px-4 py-3 text-muted-foreground text-[12px] hidden xl:table-cell">{l.postedAgo}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1.5">
                           {booked ? (

@@ -32,31 +32,30 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 h-screen bg-gray-50 dark:bg-[#0a0a0a] border-r border-gray-200 dark:border-[#1f1f1f] flex flex-col z-40 transition-all duration-300 ease-out",
+        "fixed left-0 top-0 h-screen bg-muted border-r border-border flex flex-col z-40 transition-all duration-300 ease-out",
         collapsed ? "w-[68px]" : "w-[248px]"
       )}
     >
       {/* Logo */}
       <div
         className={cn(
-          "px-4 pt-4 pb-3 flex items-center cursor-pointer",
-          collapsed ? "justify-center" : "gap-2.5"
+          "flex items-center justify-center cursor-pointer",
+          collapsed ? "px-1 py-2" : "px-2 pt-2 pb-1"
         )}
         onClick={() => navigate("/dashboard")}
       >
         <img
           src="/loadhawk-logo.png"
           alt="LoadHawk"
-          className="h-8 object-contain shrink-0"
+          className={cn(
+            "object-contain",
+            collapsed ? "h-10 w-10" : "w-[85%] max-h-[90px]"
+          )}
+          style={collapsed ? undefined : { margin: "-12px 0" }}
         />
-        {!collapsed && (
-          <span className="font-display text-[15px] tracking-[0.08em] text-foreground font-semibold select-none">
-            LOADHAWK
-          </span>
-        )}
       </div>
 
-      <div className="border-t border-gray-200 dark:border-[#1f1f1f] mx-3" />
+      <div className="border-t border-border mx-3" />
 
       <nav className="flex-1 py-3 px-2 overflow-y-auto space-y-0.5">
         {navItems.map((item) => {
@@ -80,13 +79,13 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
             >
               {/* Active left border accent */}
               {active && !locked && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-sm bg-[#f5a820]" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-sm bg-primary" />
               )}
               <item.icon
                 size={17}
                 className={cn(
                   "shrink-0 transition-colors",
-                  active && !locked ? "text-[#f5a820]" : locked ? "text-muted-foreground/40" : "text-muted-foreground group-hover:text-foreground"
+                  active && !locked ? "text-primary" : locked ? "text-muted-foreground/40" : "text-muted-foreground group-hover:text-foreground"
                 )}
               />
               {!collapsed && (
@@ -94,7 +93,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
                   <span className="font-medium">{item.title}</span>
                   {locked && <Lock size={12} className="ml-auto text-muted-foreground/40" />}
                   {item.pro && !locked && (
-                    <span className="ml-auto text-[9px] font-mono tracking-tight bg-[#f5a820]/10 text-[#f5a820] px-1.5 py-0.5 rounded-full" title="Included with LoadHawk Pro ($49/mo)">
+                    <span className="ml-auto text-[9px] font-mono tracking-tight bg-primary/10 text-primary px-1.5 py-0.5 rounded-full" title="Included with LoadHawk Pro ($49/mo)">
                       PRO
                     </span>
                   )}
@@ -105,7 +104,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         })}
       </nav>
 
-      <div className="border-t border-gray-200 dark:border-[#1f1f1f] mx-3" />
+      <div className="border-t border-border mx-3" />
 
       {/* User section */}
       <div className="p-3">
@@ -116,7 +115,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
                 <div className="text-[13px] font-medium truncate">{userName}</div>
                 {userRole && (
                   <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                    <Crown size={10} className="text-[#f5a820]" /> {userRole}
+                    <Crown size={10} className="text-primary" /> {userRole}
                   </div>
                 )}
               </div>
@@ -142,7 +141,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
           <div className="flex items-center justify-between">
             <button
               onClick={() => openAuthModal("login")}
-              className="flex items-center gap-2 text-[#f5a820] hover:text-[#f5a820]/80 text-[13px] px-2 py-1.5 rounded-md hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all"
+              className="flex items-center gap-2 text-primary hover:text-primary/80 text-[13px] px-2 py-1.5 rounded-md hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all"
             >
               <LogIn size={15} />
               {!collapsed && "Sign In"}

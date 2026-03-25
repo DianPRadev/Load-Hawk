@@ -121,42 +121,75 @@ export default function FleetPage() {
       {drivers.length === 0 ? (
         <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-12 text-center text-muted-foreground text-[13px]">No drivers yet. Add your first driver above.</div>
       ) : (
-        <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm overflow-hidden animate-fade-up" style={{ animationDelay: "600ms" }}>
-          <div className="overflow-x-auto">
-          <table className="w-full text-[13px] min-w-[600px]">
-            <thead>
-              <tr className="border-b border-gray-200 dark:border-[#1f1f1f]">
-                {["Driver", "Status", "Current Route", "Monthly Earnings", "Actions"].map(h => (
-                  <th key={h} scope="col" className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {drivers.map((d) => (
-                <tr key={d.id} className="border-b border-gray-200 dark:border-[#1f1f1f] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors">
-                  <td className="px-4 py-3 font-medium">{d.name}</td>
-                  <td className="px-4 py-3">
-                    {editingDriver === d.id ? (
-                      <select value={d.status} onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])} className="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-2 py-1 text-[12px] focus:outline-none">
-                        <option value="Available">Available</option>
-                        <option value="On Load">On Load</option>
-                        <option value="Off Duty">Off Duty</option>
-                      </select>
-                    ) : (
-                      <button onClick={() => setEditingDriver(d.id)} className={`pill-badge text-[11px] cursor-pointer hover:opacity-80 ${statusColors[d.status]}`}>{d.status}</button>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">{d.route}</td>
-                  <td className="px-4 py-3 font-mono text-[12px] text-primary">${d.earnings.toLocaleString()}</td>
-                  <td className="px-4 py-3">
-                    <GoldButton size="sm" variant="ghost" onClick={() => setConfirmRemove({ id: d.id, name: d.name })}><X size={13} /></GoldButton>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <>
+          {/* Mobile card view */}
+          <div className="md:hidden space-y-3 animate-fade-up" style={{ animationDelay: "600ms" }}>
+            {drivers.map((d) => (
+              <div key={d.id} className="bg-card border border-border rounded-2xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-base">{d.name}</div>
+                  <div className="font-mono text-[13px] text-primary">${d.earnings.toLocaleString()}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`pill-badge text-[11px] ${statusColors[d.status]}`}>{d.status}</span>
+                  {d.route !== "—" && (
+                    <span className="text-[12px] text-muted-foreground">{d.route}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 pt-1 border-t border-border">
+                  <select
+                    value={d.status}
+                    onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])}
+                    className="flex-1 bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-2 py-1.5 text-[12px] focus:outline-none"
+                  >
+                    <option value="Available">Available</option>
+                    <option value="On Load">On Load</option>
+                    <option value="Off Duty">Off Duty</option>
+                  </select>
+                  <GoldButton size="sm" variant="ghost" onClick={() => setConfirmRemove({ id: d.id, name: d.name })}><X size={13} /></GoldButton>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+
+          {/* Desktop table view */}
+          <div className="hidden md:block bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm overflow-hidden animate-fade-up" style={{ animationDelay: "600ms" }}>
+            <div className="overflow-x-auto">
+            <table className="w-full text-[13px] min-w-[600px]">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-[#1f1f1f]">
+                  {["Driver", "Status", "Current Route", "Monthly Earnings", "Actions"].map(h => (
+                    <th key={h} scope="col" className="text-left px-4 py-3 font-display text-primary/80 tracking-tight text-[11px]">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {drivers.map((d) => (
+                  <tr key={d.id} className="border-b border-gray-200 dark:border-[#1f1f1f] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors">
+                    <td className="px-4 py-3 font-medium">{d.name}</td>
+                    <td className="px-4 py-3">
+                      {editingDriver === d.id ? (
+                        <select value={d.status} onChange={e => handleStatusChange(d.id, e.target.value as Driver["status"])} className="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-lg px-2 py-1 text-[12px] focus:outline-none">
+                          <option value="Available">Available</option>
+                          <option value="On Load">On Load</option>
+                          <option value="Off Duty">Off Duty</option>
+                        </select>
+                      ) : (
+                        <button onClick={() => setEditingDriver(d.id)} className={`pill-badge text-[11px] cursor-pointer hover:opacity-80 ${statusColors[d.status]}`}>{d.status}</button>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{d.route}</td>
+                    <td className="px-4 py-3 font-mono text-[12px] text-primary">${d.earnings.toLocaleString()}</td>
+                    <td className="px-4 py-3">
+                      <GoldButton size="sm" variant="ghost" onClick={() => setConfirmRemove({ id: d.id, name: d.name })}><X size={13} /></GoldButton>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </>
       )}
 
       {confirmRemove && (

@@ -21,6 +21,7 @@ export default function MyLoadsPage() {
   const updateStatus = useUpdateLoadStatus();
   const navigate = useNavigate();
   const [confirmAction, setConfirmAction] = useState<{ loadId: string; currentStatus: LoadStatus; nextStatus: LoadStatus } | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<{ bookedLoadId: string; loadId: string } | null>(null);
 
   useEffect(() => {
     if (!confirmAction) return;
@@ -119,13 +120,7 @@ export default function MyLoadsPage() {
                     </GoldButton>
                   )}
                   {l.status === "Picked Up" && (
-                    <GoldButton size="sm" variant="secondary" onClick={() => {
-                      if (!confirm("Are you sure you want to cancel this load?")) return;
-                      updateStatus.mutate(
-                        { bookedLoadId: l.id, loadId: l.id, newStatus: "Cancelled" },
-                        { onSuccess: () => toast.success("Load cancelled") }
-                      );
-                    }} loading={updateStatus.isPending}>
+                    <GoldButton size="sm" variant="secondary" onClick={() => setCancelTarget({ bookedLoadId: l.id, loadId: l.id })} loading={updateStatus.isPending}>
                       Cancel
                     </GoldButton>
                   )}
@@ -154,6 +149,43 @@ export default function MyLoadsPage() {
             <div className="flex gap-2 justify-end pt-1">
               <GoldButton variant="secondary" onClick={() => setConfirmAction(null)}>Cancel</GoldButton>
               <GoldButton onClick={confirmStatusChange} loading={updateStatus.isPending}>Confirm</GoldButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {cancelTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setCancelTarget(null)}>
+          <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
+          <div className="relative bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#1f1f1f] shadow-md rounded-2xl p-6 max-w-sm w-full mx-4 space-y-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                <AlertCircle size={20} className="text-destructive" />
+              </div>
+              <h3 className="font-display text-xl">Cancel This Load?</h3>
+            </div>
+            <p className="text-[13px] text-muted-foreground">
+              This action cannot be undone. The load will be marked as cancelled and removed from your active loads.
+            </p>
+            <div className="flex gap-2 justify-end pt-1">
+              <GoldButton variant="secondary" onClick={() => setCancelTarget(null)}>Keep Load</GoldButton>
+              <GoldButton
+                variant="primary"
+                onClick={() => {
+                  updateStatus.mutate(
+                    { bookedLoadId: cancelTarget.bookedLoadId, loadId: cancelTarget.loadId, newStatus: "Cancelled" },
+                    {
+                      onSuccess: () => {
+                        toast.success("Load cancelled");
+                        setCancelTarget(null);
+                      },
+                    }
+                  );
+                }}
+                loading={updateStatus.isPending}
+              >
+                Cancel Load
+              </GoldButton>
             </div>
           </div>
         </div>

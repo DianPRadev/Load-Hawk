@@ -66,6 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check if email confirmation is required
     // If session is null but user exists, email confirmation is pending
     if (data.user && !data.session) {
+      // Persist terms acceptance even before confirmation
+      await supabase.from("profiles").upsert({
+        id: data.user.id,
+        phone: meta.phone || "",
+        cdl_class: meta.cdl_class || "",
+        accepted_terms_at: new Date().toISOString(),
+      }, { onConflict: "id" });
       return { error: null, needsConfirmation: true };
     }
 
@@ -76,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.from("profiles").update({
         phone: meta.phone || "",
         cdl_class: meta.cdl_class || "",
+        accepted_terms_at: new Date().toISOString(),
       }).eq("id", data.user.id);
     }
 

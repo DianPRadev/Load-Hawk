@@ -28,17 +28,22 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-background px-4">
-          <div className="text-center bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-12 max-w-md w-full">
+          <div className="text-center bg-card border border-border rounded-2xl shadow-sm p-12 max-w-md w-full">
             <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
               <AlertTriangle size={28} className="text-destructive" />
             </div>
             <h1 className="font-display text-2xl mb-3">Something went wrong</h1>
             <p className="text-muted-foreground text-[14px] mb-6">
-              An unexpected error occurred. Try refreshing the page.
+              An unexpected error occurred. Try again or return to the home page.
             </p>
-            <GoldButton onClick={() => { this.setState({ hasError: false }); window.location.href = "/"; }}>
-              Back to Home
-            </GoldButton>
+            <div className="flex gap-3 justify-center">
+              <GoldButton variant="secondary" onClick={() => this.setState({ hasError: false })}>
+                Try Again
+              </GoldButton>
+              <GoldButton onClick={() => window.location.replace("/")}>
+                Back to Home
+              </GoldButton>
+            </div>
           </div>
         </div>
       );

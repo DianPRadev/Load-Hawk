@@ -60,7 +60,7 @@ const ROLE_PATHS = [
   {
     title: "Dispatcher",
     tagline: "Manage loads at scale",
-    color: "border-blue-500",
+    color: "border-primary/60",
     bullets: [
       "Search and assign loads across drivers",
       "Track multiple shipments in real time",
@@ -70,7 +70,7 @@ const ROLE_PATHS = [
   {
     title: "Fleet Manager",
     tagline: "See the full picture",
-    color: "border-green-500",
+    color: "border-primary/40",
     bullets: [
       "Monitor utilization and margins per truck",
       "Export settlement-ready financial reports",

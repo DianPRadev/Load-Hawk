@@ -3,6 +3,7 @@ import { describe, it, expect } from "vitest";
 // Test the sanitize logic inline since we can't import server modules
 function sanitize(input: unknown, maxLength = 500): string {
   if (typeof input !== "string") return "";
+  // eslint-disable-next-line no-control-regex
   return input.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "").trim().slice(0, maxLength);
 }
 

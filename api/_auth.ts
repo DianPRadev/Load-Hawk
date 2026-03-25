@@ -1,7 +1,7 @@
 import type { VercelRequest } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
+export const supabaseAdmin = createClient(
   process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "",
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || ""
 );
@@ -38,7 +38,7 @@ export async function verifyAuth(req: VercelRequest): Promise<{ id: string; emai
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
 
   const token = authHeader.replace("Bearer ", "");
-  const { data, error } = await supabase.auth.getUser(token);
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
   if (error || !data.user) return null;
 
   return { id: data.user.id, email: data.user.email || "" };
@@ -94,6 +94,7 @@ export function getRateLimitKey(req: VercelRequest, user: { id: string } | null)
  */
 export function sanitize(input: unknown, maxLength = 500): string {
   if (typeof input !== "string") return "";
-  // Remove control characters except newlines and tabs
+  // Remove control characters except newlines (\n=0x0A) and tabs (\t=0x09)
+  // eslint-disable-next-line no-control-regex
   return input.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "").trim().slice(0, maxLength);
 }

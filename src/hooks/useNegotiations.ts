@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/AuthContext";
 import type { NegotiationRecord } from "@/types";
+import { toast } from "sonner";
 
 export function useNegotiations() {
   const { user } = useAuth();
@@ -49,6 +50,9 @@ export function useAddNegotiation() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["negotiations"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to save negotiation");
     },
   });
 }

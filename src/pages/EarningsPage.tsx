@@ -102,15 +102,17 @@ export default function EarningsPage() {
 
       <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 animate-fade-up" style={{ animationDelay: "200ms" }}>
         {chartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey={dataKey} axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, fontFamily: "Geist Mono", fontSize: 11 }} />
-              <Line type="monotone" dataKey="earnings" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ fill: "hsl(var(--primary))", r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
+          <div role="img" aria-label={`Earnings chart showing ${view} revenue over time`}>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey={dataKey} axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} tickFormatter={(v) => `$${v.toLocaleString()}`} />
+                <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, fontFamily: "Geist Mono", fontSize: 11 }} />
+                <Line type="monotone" dataKey="earnings" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ fill: "hsl(var(--primary))", r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : (
           <div className="text-center text-muted-foreground text-[13px] py-16">Deliver loads to see earnings charts</div>
         )}

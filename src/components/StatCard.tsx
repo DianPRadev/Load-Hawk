@@ -14,7 +14,7 @@ interface StatCardProps {
 export const StatCard = memo(function StatCard({ label, value, change, positive, icon, delay = 0 }: StatCardProps) {
   return (
     <div
-      className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-5 card-hover shadow-sm animate-fade-up"
+      className="bg-card border border-border rounded-2xl p-5 card-hover shadow-sm animate-fade-up"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-center justify-between mb-3">

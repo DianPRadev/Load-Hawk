@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
     "w-full bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] rounded-lg pl-10 pr-10 py-3 text-sm font-medium text-foreground focus:border-[#f5a820] focus:outline-none focus:ring-1 focus:ring-[#f5a820]/20 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600 focus-visible:outline-2 focus-visible:outline-[#f5a820] focus-visible:outline-offset-1";
   const inputError = "border-red-500 focus:ring-red-500/20";
   const labelClass =
-    "block font-mono text-[9.5px] font-bold tracking-[2.5px] text-gray-400 dark:text-gray-500 mb-1.5";
+    "block font-mono text-[12px] font-bold tracking-[2px] text-gray-400 dark:text-gray-500 mb-1.5";
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -73,7 +73,7 @@ export default function ResetPasswordPage() {
         <h1 className="font-display text-2xl font-bold text-center mb-2">
           Set New Password
         </h1>
-        <p className="font-mono text-[11px] text-gray-400 dark:text-gray-500 text-center mb-6 leading-relaxed">
+        <p className="font-mono text-[13px] text-gray-400 dark:text-gray-500 text-center mb-6 leading-relaxed">
           Choose a strong password for your LoadHawk account.
         </p>
 
@@ -106,7 +106,7 @@ export default function ResetPasswordPage() {
                   autoFocus
                 />
                 <button
-                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-1 z-[2] transition-colors"
+                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
                   onClick={() => setShowPass(!showPass)}
                   type="button"
                 >
@@ -114,7 +114,7 @@ export default function ResetPasswordPage() {
                 </button>
               </div>
               {errors.password && (
-                <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
                   {"\u26A0"} {errors.password}
                 </div>
               )}
@@ -135,7 +135,7 @@ export default function ResetPasswordPage() {
                   onChange={(e) => setConfirm(e.target.value)}
                 />
                 <button
-                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-1 z-[2] transition-colors"
+                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
                   onClick={() => setShowConf(!showConf)}
                   type="button"
                 >
@@ -143,7 +143,7 @@ export default function ResetPasswordPage() {
                 </button>
               </div>
               {errors.confirm && (
-                <div className="font-mono text-[10px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
+                <div className="font-mono text-[11px] text-red-500 mt-1 pl-0.5 flex items-center gap-1">
                   {"\u26A0"} {errors.confirm}
                 </div>
               )}
@@ -151,7 +151,7 @@ export default function ResetPasswordPage() {
 
             {/* API error */}
             {apiError && (
-              <div className="font-mono text-[10px] text-red-500 text-center mb-2 flex items-center justify-center gap-1">
+              <div className="font-mono text-[11px] text-red-500 text-center mb-2 flex items-center justify-center gap-1">
                 {"\u26A0"} {apiError}
               </div>
             )}

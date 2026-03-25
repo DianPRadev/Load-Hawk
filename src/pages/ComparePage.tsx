@@ -83,7 +83,7 @@ export default function ComparePage() {
                   <ul className="space-y-2.5">
                     {comp.strengths.split(", ").map((item) => (
                       <li key={item} className="flex items-start gap-3">
-                        <Check className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                        <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                         <span className="text-muted-foreground text-sm">{item}</span>
                       </li>
                     ))}

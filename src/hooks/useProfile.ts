@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/AuthContext";
 import type { DbProfile, UserProfile } from "@/types";
 import { mapDbProfile } from "@/types";
+import { toast } from "sonner";
 
 export function useProfile() {
   const { user } = useAuth();
@@ -49,6 +50,9 @@ export function useUpdateProfile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update profile");
     },
   });
 }

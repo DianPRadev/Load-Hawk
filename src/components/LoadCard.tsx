@@ -48,7 +48,7 @@ export const LoadCard = memo(function LoadCard({ id, origin, destination, miles,
 
   return (
     <div
-      className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-5 card-hover shadow-sm animate-fade-up"
+      className="bg-card border border-border rounded-2xl p-5 card-hover shadow-sm animate-fade-up"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">

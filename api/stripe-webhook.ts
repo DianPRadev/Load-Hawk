@@ -11,20 +11,22 @@ const supabase = createClient(
 );
 
 /**
- * Idempotency: track processed event IDs to prevent duplicate processing.
- * In a production system, use a database table. This in-memory set handles
- * duplicates within a single serverless instance lifetime.
+ * Persistent idempotency via Supabase.
+ * Checks if an event was already processed; if not, marks it.
+ * Returns true if the event is new and should be processed.
  */
-const processedEvents = new Set<string>();
-const MAX_PROCESSED_CACHE = 1000;
+async function claimEvent(eventId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from("stripe_webhook_events")
+    .insert({ event_id: eventId });
 
-function markProcessed(eventId: string) {
-  processedEvents.add(eventId);
-  // Prevent unbounded growth
-  if (processedEvents.size > MAX_PROCESSED_CACHE) {
-    const first = processedEvents.values().next().value;
-    if (first) processedEvents.delete(first);
+  if (error) {
+    // Unique constraint violation = already processed
+    if (error.code === "23505") return false;
+    // Other errors: log but process anyway (fail open)
+    console.error("Idempotency check error:", error);
   }
+  return true;
 }
 
 async function updateSubscriptionTier(userId: string, tier: string) {
@@ -42,7 +44,6 @@ export const config = {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") return res.status(405).end();
 
-  // Read raw body for signature verification
   const chunks: Buffer[] = [];
   for await (const chunk of req) {
     chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
@@ -64,8 +65,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).send("Webhook signature verification failed");
   }
 
-  // Idempotency check — skip already-processed events
-  if (processedEvents.has(event.id)) {
+  // Persistent idempotency check
+  const isNew = await claimEvent(event.id);
+  if (!isNew) {
     return res.status(200).json({ received: true, deduplicated: true });
   }
 
@@ -124,9 +126,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         break;
       }
     }
-
-    // Mark as processed after successful handling
-    markProcessed(event.id);
   } catch (err) {
     console.error("Webhook handler error:", err);
   }

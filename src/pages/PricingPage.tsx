@@ -25,6 +25,15 @@ const proFeatures = [
   "Priority support",
 ];
 
+const fleetFeatures = [
+  "Everything in Pro",
+  "Unlimited team members",
+  "Fleet analytics dashboard",
+  "Priority support",
+  "Custom integrations",
+  "Dedicated account manager",
+];
+
 const faqs = [
   {
     q: "Can I cancel anytime?",
@@ -54,6 +63,7 @@ export default function PricingPage() {
   const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [upgrading, setUpgrading] = useState(false);
+  const [annual, setAnnual] = useState(false);
 
   const handleUpgrade = async () => {
     if (!user) {
@@ -77,6 +87,8 @@ export default function PricingPage() {
     }
     setUpgrading(false);
   };
+
+  const proPrice = annual ? 39 : 49;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -104,7 +116,36 @@ export default function PricingPage() {
 
       {/* Pricing Cards */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-20 sm:mb-24">
+        {/* Annual/Monthly Toggle */}
+        <div className="flex justify-center mb-10">
+          <div className="inline-flex items-center bg-gray-100 dark:bg-[#1a1a1a] rounded-full p-1">
+            <button
+              onClick={() => setAnnual(false)}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+                !annual
+                  ? "bg-white dark:bg-[#282828] text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setAnnual(true)}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
+                annual
+                  ? "bg-white dark:bg-[#282828] text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Annual
+              <span className="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 text-[11px] font-bold px-2 py-0.5 rounded-full">
+                Save 20%
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 sm:gap-8 mb-20 sm:mb-24">
           {/* Free Tier */}
           <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-8 flex flex-col">
             <div className="mb-6">
@@ -122,7 +163,7 @@ export default function PricingPage() {
             <ul className="space-y-3 mb-8 flex-1">
               {freeFeatures.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                  <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <span className="text-muted-foreground text-sm">{feature}</span>
                 </li>
               ))}
@@ -136,7 +177,13 @@ export default function PricingPage() {
           </div>
 
           {/* Pro Tier */}
-          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] border-l-4 border-l-[#f5a820] rounded-2xl p-8 flex flex-col">
+          <div className="bg-white dark:bg-[#141414] border border-primary/30 ring-1 ring-primary/20 rounded-2xl p-8 flex flex-col relative">
+            {/* Most Popular Badge */}
+            <div className="flex justify-center mb-4">
+              <span className="bg-primary text-primary-foreground text-[11px] font-bold px-3 py-1 rounded-full">
+                MOST POPULAR
+              </span>
+            </div>
             <div className="mb-6">
               <h2 className="font-display text-2xl font-bold text-foreground mb-1">
                 Pro
@@ -145,9 +192,14 @@ export default function PricingPage() {
             </div>
             <div className="mb-8">
               <span className="font-display text-5xl font-bold text-foreground">
-                $49
+                ${proPrice}
               </span>
               <span className="text-muted-foreground ml-1 text-sm">/month</span>
+              {annual && (
+                <span className="ml-2 text-green-600 dark:text-green-400 text-xs font-semibold">
+                  billed annually
+                </span>
+              )}
             </div>
             <p className="text-sm text-muted-foreground italic mb-4">
               Everything in Free, plus:
@@ -167,6 +219,61 @@ export default function PricingPage() {
             >
               {upgrading ? "Loading..." : "Upgrade to Pro"}
             </button>
+          </div>
+
+          {/* Fleet Tier */}
+          <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-8 flex flex-col">
+            <div className="mb-6">
+              <h2 className="font-display text-2xl font-bold text-foreground mb-1">
+                Fleet
+              </h2>
+              <p className="text-muted-foreground text-sm">For companies with 5+ trucks</p>
+            </div>
+            <div className="mb-8">
+              <span className="font-display text-5xl font-bold text-foreground">
+                Custom
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground italic mb-4">
+              Everything in Pro, plus:
+            </p>
+            <ul className="space-y-3 mb-8 flex-1">
+              {fleetFeatures.map((feature) => (
+                <li key={feature} className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-[#f5a820] shrink-0 mt-0.5" />
+                  <span className="text-muted-foreground text-sm">{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href="mailto:sales@loadhawk.ai"
+              className="w-full py-3 px-6 rounded-xl font-semibold text-sm text-center transition-colors border border-gray-300 dark:border-[#333] text-foreground hover:bg-gray-50 dark:hover:bg-[#1a1a1a] block"
+            >
+              Contact Sales
+            </a>
+          </div>
+        </div>
+
+        {/* Social Proof Strip */}
+        <div className="text-center mb-20 sm:mb-24">
+          <p className="font-display text-lg sm:text-xl font-bold text-foreground mb-6">
+            Trusted by 2,500+ owner-operators nationwide
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-10 text-sm text-muted-foreground">
+            <div className="flex flex-col items-center">
+              <span className="font-display text-2xl font-bold text-foreground">15K+</span>
+              <span>Loads Matched</span>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-gray-200 dark:bg-[#1f1f1f]" />
+            <div className="flex flex-col items-center">
+              <span className="font-display text-2xl font-bold text-foreground">98%</span>
+              <span>Uptime</span>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-gray-200 dark:bg-[#1f1f1f]" />
+            <div className="flex flex-col items-center">
+              <span className="font-display text-2xl font-bold text-foreground">$2.3M+</span>
+              <span>Negotiated Savings</span>
+            </div>
           </div>
         </div>
 

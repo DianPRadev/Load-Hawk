@@ -295,11 +295,22 @@ export default function SettingsPage() {
         <div className="flex flex-wrap gap-3">
           <button
             onClick={async () => {
-              const { data } = await supabase.from("profiles").select("*").eq("id", user?.id).single();
-              const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+              if (!user) return;
+              const [profileRes, loadsRes, negotiationsRes] = await Promise.all([
+                supabase.from("profiles").select("*").eq("id", user.id).single(),
+                supabase.from("booked_loads").select("*").eq("user_id", user.id),
+                supabase.from("negotiations").select("*").eq("user_id", user.id),
+              ]);
+              const exportData = {
+                exportedAt: new Date().toISOString(),
+                profile: profileRes.data,
+                bookedLoads: loadsRes.data || [],
+                negotiations: negotiationsRes.data || [],
+              };
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
               const url = URL.createObjectURL(blob);
               const a = document.createElement("a");
-              a.href = url; a.download = "loadhawk-data-export.json"; a.click();
+              a.href = url; a.download = `loadhawk-export-${new Date().toISOString().split("T")[0]}.json`; a.click();
               URL.revokeObjectURL(url);
               toast.success("Data exported successfully");
             }}
@@ -309,10 +320,38 @@ export default function SettingsPage() {
           </button>
           <button
             onClick={async () => {
+              if (!user) return;
               if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
               if (!confirm("This will permanently delete all your data including loads, earnings, and settings. Continue?")) return;
-              await supabase.auth.signOut();
-              toast.success("Account deletion requested. Contact support@loadhawk.ai to complete the process.");
+              try {
+                // Delete user data from all tables (RLS ensures only own data)
+                await Promise.all([
+                  supabase.from("booked_loads").delete().eq("user_id", user.id),
+                  supabase.from("negotiations").delete().eq("user_id", user.id),
+                  supabase.from("chat_messages").delete().eq("user_id", user.id),
+                  supabase.from("chat_sessions").delete().eq("user_id", user.id),
+                  supabase.from("drivers").delete().eq("fleet_owner_id", user.id),
+                  supabase.from("notifications").delete().eq("user_id", user.id),
+                  supabase.from("notification_settings").delete().eq("user_id", user.id),
+                  supabase.from("saved_searches").delete().eq("user_id", user.id),
+                  supabase.from("broker_ratings").delete().eq("user_id", user.id),
+                ]);
+                // Clear profile data (keep the row for foreign key integrity)
+                await supabase.from("profiles").update({
+                  name: "[deleted]",
+                  email: "",
+                  phone: "",
+                  cdl_class: "",
+                  home_base: "",
+                  preferred_lanes: "",
+                  role: "",
+                  subscription_tier: "free",
+                }).eq("id", user.id);
+                await supabase.auth.signOut();
+                toast.success("Your account data has been deleted.");
+              } catch (err) {
+                toast.error("Failed to delete account. Please contact support@loadhawk.ai");
+              }
             }}
             className="px-4 py-2 text-sm border border-red-300 dark:border-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
           >

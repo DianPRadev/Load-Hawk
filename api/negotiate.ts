@@ -1,9 +1,11 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyAuth, rateLimit, sanitize, getRateLimitKey } from "./_auth";
+import { verifyAuth, rateLimit, sanitize, getRateLimitKey, supabaseAdmin } from "./_auth";
 
 const HF_API_KEY = process.env.HF_API_KEY;
 const MODEL = process.env.AI_MODEL || "deepseek-ai/DeepSeek-V3";
 const API_URL = process.env.AI_API_URL || "https://router.huggingface.co/together/v1/chat/completions";
+
+const FREE_DAILY_LIMIT = 5;
 
 if (!HF_API_KEY) console.error("MISSING ENV: HF_API_KEY");
 
@@ -42,9 +44,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const user = await verifyAuth(req);
   if (!user) return res.status(401).json({ error: "Authentication required" });
 
-  // Rate limit by user ID (not IP — Vercel shares IPs)
+  // Rate limit by user ID (burst protection)
   const rateLimitKey = getRateLimitKey(req, user);
   if (!rateLimit(rateLimitKey, 10, 60_000)) return res.status(429).json({ error: "Too many requests. Please wait a moment." });
+
+  // Pro-tier enforcement: check subscription + daily quota for free users
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("subscription_tier")
+    .eq("id", user.id)
+    .single();
+
+  const tier = profile?.subscription_tier || "free";
+
+  if (tier !== "pro") {
+    // Count today's AI messages for this user
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const { count, error: countError } = await supabaseAdmin
+      .from("chat_messages")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("role", "user")
+      .gte("created_at", todayStart.toISOString());
+
+    if (countError) {
+      console.error("Daily quota check failed:", countError);
+      // Fail open — allow the request but log the error
+    } else if ((count || 0) >= FREE_DAILY_LIMIT) {
+      return res.status(403).json({
+        error: `Free plan limit reached (${FREE_DAILY_LIMIT}/day). Upgrade to Pro for unlimited AI negotiations.`,
+        upgrade: true,
+      });
+    }
+  }
 
   if (!HF_API_KEY) return res.status(500).json({ error: "AI service not configured" });
 
@@ -79,7 +113,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  // Load context is appended as a separate system message, not user-editable
+  // Load context as separate system message — not user-editable
   const systemMessages = [
     { role: "system" as const, content: SYSTEM_PROMPT },
   ];

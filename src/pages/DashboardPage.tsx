@@ -8,8 +8,10 @@ import { useAvailableLoads, useBookedLoads } from "@/hooks/useLoads";
 import { useBrokers } from "@/hooks/useBrokers";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEarningsSummary } from "@/hooks/useEarnings";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { PageMeta } from "@/components/PageMeta";
+import { CheckCircle2, Circle, X } from "lucide-react";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -53,6 +55,10 @@ export default function DashboardPage() {
   );
 
   const hotLoads = availableLoads.slice(0, 5);
+
+  const [checklistDismissed, setChecklistDismissed] = useState(false);
+  const isNewUser = isLoggedIn && bookedLoads.length === 0 && !earnings?.totalEarnings;
+  const profileComplete = !!(dbProfile?.name && dbProfile?.phone);
 
   const recentActivity = useMemo(() => {
     if (notifications.length > 0) {
@@ -125,18 +131,46 @@ export default function DashboardPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {isNewUser && !checklistDismissed && (
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 animate-fade-up relative">
+          <button onClick={() => setChecklistDismissed(true)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors bg-transparent border-none cursor-pointer p-1" aria-label="Dismiss">
+            <X size={16} />
+          </button>
+          <h2 className="font-display text-lg mb-1">Welcome to LoadHawk!</h2>
+          <p className="text-[13px] text-muted-foreground mb-4">Complete these steps to get started.</p>
+          <div className="space-y-2.5">
+            <Link to="/settings" className="flex items-center gap-3 text-[13px] no-underline text-foreground hover:text-primary transition-colors">
+              {profileComplete ? <CheckCircle2 size={18} className="text-success shrink-0" /> : <Circle size={18} className="text-muted-foreground shrink-0" />}
+              <span className={profileComplete ? "line-through text-muted-foreground" : ""}>Complete your profile</span>
+            </Link>
+            <Link to="/find-loads" className="flex items-center gap-3 text-[13px] no-underline text-foreground hover:text-primary transition-colors">
+              <Circle size={18} className="text-muted-foreground shrink-0" />
+              <span>Search for your first load</span>
+            </Link>
+            <Link to="/find-loads" className="flex items-center gap-3 text-[13px] no-underline text-foreground hover:text-primary transition-colors">
+              <Circle size={18} className="text-muted-foreground shrink-0" />
+              <span>Book your first load</span>
+            </Link>
+            <Link to="/ai-negotiator" className="flex items-center gap-3 text-[13px] no-underline text-foreground hover:text-primary transition-colors">
+              <Circle size={18} className="text-muted-foreground shrink-0" />
+              <span>Try the AI Negotiator</span>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4">
         {isLoggedIn ? (
           <>
-            <StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : undefined} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} />
-            <StatCard label="Active Loads" value={String(activeLoadCount)} change={activeLoadCount > 0 ? `${activeLoadCount} active` : undefined} positive={activeLoadCount > 0} icon={<Package size={16} />} delay={200} />
-            <StatCard label="Miles This Week" value={totalMilesThisWeek.toLocaleString()} icon={<MapPin size={16} />} delay={300} />
-            <StatCard label="Avg Rate/Mile" value={avgRatePerMile > 0 ? `$${avgRatePerMile.toFixed(2)}` : "\u2014"} icon={<TrendingUp size={16} />} delay={400} />
+            <div className="min-w-[200px] snap-start md:min-w-0"><StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : undefined} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} /></div>
+            <div className="min-w-[200px] snap-start md:min-w-0"><StatCard label="Active Loads" value={String(activeLoadCount)} change={activeLoadCount > 0 ? `${activeLoadCount} active` : undefined} positive={activeLoadCount > 0} icon={<Package size={16} />} delay={200} /></div>
+            <div className="min-w-[200px] snap-start md:min-w-0"><StatCard label="Miles This Week" value={totalMilesThisWeek.toLocaleString()} icon={<MapPin size={16} />} delay={300} /></div>
+            <div className="min-w-[200px] snap-start md:min-w-0"><StatCard label="Avg Rate/Mile" value={avgRatePerMile > 0 ? `$${avgRatePerMile.toFixed(2)}` : "\u2014"} icon={<TrendingUp size={16} />} delay={400} /></div>
           </>
         ) : (
           <>
-            <StatCard label="Available Loads" value={String(availableLoads.length)} change={`${availableLoads.length} posted`} positive={availableLoads.length > 0} icon={<Package size={16} />} delay={100} />
-            <StatCard label="Rated Brokers" value={String(brokers.length)} change="rated & reviewed" positive icon={<Star size={16} />} delay={200} />
+            <div className="min-w-[200px] snap-start md:min-w-0"><StatCard label="Available Loads" value={String(availableLoads.length)} change={`${availableLoads.length} posted`} positive={availableLoads.length > 0} icon={<Package size={16} />} delay={100} /></div>
+            <div className="min-w-[200px] snap-start md:min-w-0"><StatCard label="Rated Brokers" value={String(brokers.length)} change="rated & reviewed" positive icon={<Star size={16} />} delay={200} /></div>
             <StatCard label="Avg Rate/Mile" value={availableLoads.length > 0 ? `$${(availableLoads.reduce((s, l) => s + l.ratePerMile, 0) / availableLoads.length).toFixed(2)}` : "\u2014"} icon={<TrendingUp size={16} />} delay={300} />
             <StatCard label="Top Lane" value={availableLoads.length > 0 ? `${availableLoads[0].origin.split(",")[0]}` : "\u2014"} icon={<MapPin size={16} />} delay={400} />
           </>

@@ -50,15 +50,19 @@ export function useAddDriver() {
 }
 
 export function useUpdateDriverStatus() {
+  const { user } = useAuth();
   const qc = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: Driver["status"] }) => {
-      const { error } = await supabase
+      if (!user) throw new Error("Not authenticated");
+      const { error, count } = await supabase
         .from("drivers")
         .update({ status })
-        .eq("id", id);
+        .eq("id", id)
+        .eq("fleet_owner_id", user.id);
       if (error) throw error;
+      if (count === 0) throw new Error("Driver not found or you don't have permission");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["drivers"] });
@@ -70,12 +74,19 @@ export function useUpdateDriverStatus() {
 }
 
 export function useRemoveDriver() {
+  const { user } = useAuth();
   const qc = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("drivers").delete().eq("id", id);
+      if (!user) throw new Error("Not authenticated");
+      const { error, count } = await supabase
+        .from("drivers")
+        .delete()
+        .eq("id", id)
+        .eq("fleet_owner_id", user.id);
       if (error) throw error;
+      if (count === 0) throw new Error("Driver not found or you don't have permission");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["drivers"] });
