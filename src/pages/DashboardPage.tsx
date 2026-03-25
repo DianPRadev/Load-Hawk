@@ -211,7 +211,7 @@ export default function DashboardPage() {
               </div>
             ) : earningsData.length > 0 ? (
               <>
-                <div aria-label="Weekly earnings chart"><ResponsiveContainer width="100%" height={180}>
+                <div role="img" aria-label="Weekly earnings chart"><ResponsiveContainer width="100%" height={180}>
                   <BarChart data={earningsData}>
                     <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#777", fontSize: 11 }} />
                     <YAxis hide />
