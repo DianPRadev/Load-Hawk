@@ -105,6 +105,8 @@ export default function HomePage() {
             <img
               src="/loadhawk-logo.png"
               alt="LoadHawk"
+              width={28}
+              height={28}
               className="h-7 w-auto"
             />
             <span className="font-display text-lg font-semibold">
@@ -236,6 +238,7 @@ export default function HomePage() {
         )}
       </nav>
 
+      <main>
       {/* ── Hero ── */}
       <section className="relative overflow-hidden py-12 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
         {/* Radial gold glow */}
@@ -394,6 +397,7 @@ export default function HomePage() {
           </p>
         </div>
       </section>
+      </main>
 
       {/* ── Footer ── */}
       <footer className="border-t border-border/40 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
@@ -405,6 +409,8 @@ export default function HomePage() {
                 <img
                   src="/loadhawk-logo.png"
                   alt="LoadHawk"
+                  width={28}
+                  height={28}
                   className="h-7 w-auto"
                 />
                 <span className="font-display text-lg font-semibold">
@@ -418,7 +424,7 @@ export default function HomePage() {
 
             {/* Product */}
             <div>
-              <h4 className="text-sm font-semibold mb-4">Product</h4>
+              <p className="font-semibold text-sm mb-4">Product</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link
@@ -457,7 +463,7 @@ export default function HomePage() {
 
             {/* Company */}
             <div>
-              <h4 className="text-sm font-semibold mb-4">Company</h4>
+              <p className="font-semibold text-sm mb-4">Company</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link
@@ -488,7 +494,7 @@ export default function HomePage() {
 
             {/* Legal */}
             <div>
-              <h4 className="text-sm font-semibold mb-4">Legal</h4>
+              <p className="font-semibold text-sm mb-4">Legal</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link

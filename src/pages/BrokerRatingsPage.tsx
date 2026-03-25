@@ -98,7 +98,7 @@ export default function BrokerRatingsPage() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 {/* Left: name + MC + badges */}
                 <div className="sm:w-1/3">
-                  <h3 className="font-display text-lg font-bold tracking-tight">{b.name}</h3>
+                  <h2 className="font-display text-lg font-bold tracking-tight">{b.name}</h2>
                   <span className="font-mono text-[11px] text-muted-foreground block mt-0.5">MC# {b.mc}</span>
                   {b.badges.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
@@ -125,7 +125,7 @@ export default function BrokerRatingsPage() {
                   {/* Rating */}
                   <div className="text-center">
                     <span className="font-mono text-2xl font-bold text-amber-500 leading-none">{b.rating}</span>
-                    <div className="flex items-center gap-0.5 mt-1 justify-center" aria-label={`Rating: ${b.rating} out of 5`}>
+                    <div className="flex items-center gap-0.5 mt-1 justify-center" role="img" aria-label={`Rating: ${b.rating} out of 5`}>
                       {Array.from({ length: 5 }).map((_, s) => (
                         <Star key={s} size={12} className={s < Math.round(b.rating) ? "text-amber-500 fill-amber-500" : "text-muted-foreground/30"} />
                       ))}
@@ -187,7 +187,7 @@ export default function BrokerRatingsPage() {
                   {b.userRatings.map((r, ri) => (
                     <div key={ri} className="text-[12px] bg-gray-50 dark:bg-[#0c0c0c] border border-gray-100 dark:border-[#1a1a1a] rounded-lg p-3 flex justify-between items-start">
                       <div>
-                        <div className="flex gap-0.5 mb-1" aria-label={`Rating: ${r.rating} out of 5`}>
+                        <div className="flex gap-0.5 mb-1" role="img" aria-label={`Rating: ${r.rating} out of 5`}>
                           {Array.from({ length: 5 }).map((_, s) => (
                             <Star key={s} size={10} className={s < r.rating ? "text-amber-500 fill-amber-500" : "text-muted-foreground/30"} />
                           ))}
@@ -212,7 +212,7 @@ export default function BrokerRatingsPage() {
             className="relative bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-6 max-w-md w-full mx-4 space-y-4 shadow-xl"
             onClick={e => e.stopPropagation()}
           >
-            <h3 className="font-display text-xl mb-2">Rate Broker</h3>
+            <h2 className="font-display text-xl mb-2">Rate Broker</h2>
             <p className="text-[13px] text-muted-foreground">
               {ratingModal !== "pick" ? brokers.find(b => b.id === ratingModal)?.name : "Select a broker below"}
             </p>

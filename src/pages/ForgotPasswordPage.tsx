@@ -39,12 +39,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <main className="min-h-screen bg-background flex items-center justify-center p-4">
       <PageMeta title="Forgot Password" />
       {/* Theme toggle */}
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="fixed top-4 right-4 z-50 w-9 h-9 rounded-full border border-gray-200 dark:border-[#1f1f1f] bg-white dark:bg-[#141414] text-gray-400 dark:text-gray-500 hover:border-[#f5a820] hover:text-[#f5a820] cursor-pointer flex items-center justify-center transition-all shadow-sm hover:scale-110"
+        className="fixed top-4 right-4 z-50 w-9 h-9 rounded-full border border-gray-200 dark:border-[#1f1f1f] bg-white dark:bg-[#141414] text-gray-500 dark:text-gray-400 hover:border-[#f5a820] hover:text-[#f5a820] cursor-pointer flex items-center justify-center transition-all shadow-sm hover:scale-110"
         aria-label="Toggle theme"
       >
         {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
         <h1 className="font-display text-2xl font-bold text-center mb-2">
           Reset Password
         </h1>
-        <p className="font-mono text-[13px] text-gray-400 dark:text-gray-500 text-center mb-6 leading-relaxed">
+        <p className="font-mono text-[13px] text-gray-500 dark:text-gray-400 text-center mb-6 leading-relaxed">
           Enter the email address associated with your account and we will send
           you a link to reset your password.
         </p>
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
             <div className="text-sm font-bold text-[#f5a820] font-mono mb-1.5">
               Reset link sent
             </div>
-            <div className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+            <div className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               We sent a password reset link to{" "}
               <strong className="text-foreground">{email}</strong>. Check your
               inbox and follow the instructions to reset your password.
@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block font-mono text-[12px] font-bold tracking-[2px] text-gray-400 dark:text-gray-500 mb-1.5">
+              <label className="block font-mono text-[12px] font-bold tracking-[2px] text-gray-500 dark:text-gray-400 mb-1.5">
                 EMAIL
               </label>
               <div className="relative flex items-center">
@@ -132,6 +132,6 @@ export default function ForgotPasswordPage() {
           {"\u2190"} BACK TO HOME
         </button>
       </div>
-    </div>
+    </main>
   );
 }

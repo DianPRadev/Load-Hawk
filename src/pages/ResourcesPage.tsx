@@ -92,6 +92,7 @@ export default function ResourcesPage() {
         description="Guides, tips, and tools to help owner-operators and small fleets earn more per mile."
       />
 
+      <main>
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
         <button
@@ -190,6 +191,7 @@ export default function ResourcesPage() {
           </button>
         </div>
       </div>
+      </main>
     </div>
   );
 }

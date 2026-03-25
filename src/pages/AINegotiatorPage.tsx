@@ -326,7 +326,7 @@ export default function AINegotiatorPage() {
             <input value={message} onChange={e => setMessage(e.target.value)} onKeyDown={handleKeyDown} placeholder={selectedLoad ? `Ask about ${selectedLoad.origin} → ${selectedLoad.destination}...` : "Select a load or ask about market trends..."} aria-label="Chat message input" className="flex-1 bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] focus:border-[#f5a820] focus:ring-1 focus:ring-[#f5a820]/20 rounded-full px-4 py-2 text-[13px] focus:outline-none" />
             <GoldButton size="sm" onClick={handleSend} disabled={!message.trim() || sendMsg.isPending} aria-label="Send message" className="!rounded-full !px-3"><Send size={14} /></GoldButton>
           </div>
-          <div className="text-center text-[10px] text-muted-foreground/40 pb-2">Press Enter to send</div>
+          <div className="text-center text-[10px] text-muted-foreground/60 pb-2">Press Enter to send</div>
         </div>
       </div>
     </div>

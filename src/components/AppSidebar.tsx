@@ -47,6 +47,8 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         <img
           src="/loadhawk-logo.png"
           alt="LoadHawk"
+          width={collapsed ? 40 : 200}
+          height={collapsed ? 40 : 90}
           className={cn(
             "object-contain",
             collapsed ? "h-10 w-10" : "w-[85%] max-h-[90px]"
@@ -73,7 +75,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
                 active && !locked
                   ? "text-foreground"
                   : locked
-                  ? "text-muted-foreground/40 hover:text-muted-foreground/60"
+                  ? "text-muted-foreground/60 hover:text-muted-foreground/60"
                   : "text-muted-foreground hover:text-foreground hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
               )}
             >
@@ -85,13 +87,13 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
                 size={17}
                 className={cn(
                   "shrink-0 transition-colors",
-                  active && !locked ? "text-primary" : locked ? "text-muted-foreground/40" : "text-muted-foreground group-hover:text-foreground"
+                  active && !locked ? "text-primary" : locked ? "text-muted-foreground/60" : "text-muted-foreground group-hover:text-foreground"
                 )}
               />
               {!collapsed && (
                 <>
                   <span className="font-medium">{item.title}</span>
-                  {locked && <Lock size={12} className="ml-auto text-muted-foreground/40" />}
+                  {locked && <Lock size={12} className="ml-auto text-muted-foreground/60" />}
                   {item.pro && !locked && (
                     <span className="ml-auto text-[9px] font-mono tracking-tight bg-primary/10 text-primary px-1.5 py-0.5 rounded-full" title="Included with LoadHawk Pro ($49/mo)">
                       PRO
