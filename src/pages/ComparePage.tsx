@@ -42,6 +42,7 @@ export default function ComparePage() {
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta title="Compare Load Boards" />
 
+      <main>
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-4">
         <button
@@ -70,9 +71,9 @@ export default function ComparePage() {
               key={comp.competitor}
               className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl p-8"
             >
-              <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-6">
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-6">
                 LoadHawk vs {comp.competitor}
-              </h3>
+              </h2>
 
               <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
                 {/* Their strengths */}
@@ -141,6 +142,7 @@ export default function ComparePage() {
           </p>
         </div>
       </div>
+      </main>
     </div>
   );
 }

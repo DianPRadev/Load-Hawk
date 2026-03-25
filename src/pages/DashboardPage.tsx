@@ -88,7 +88,7 @@ export default function DashboardPage() {
     return (
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="h-10 w-64 bg-[var(--glass-hover)] rounded-lg animate-pulse" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-h-[100px]">
           {[1,2,3,4].map(i => (
             <div key={i} className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 h-24 animate-pulse">
               <div className="h-3 w-20 bg-[var(--glass-hover)] rounded mb-3" />
@@ -96,7 +96,7 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[400px]">
           <div className="lg:col-span-2 space-y-3">
             {[1,2,3].map(i => (
               <div key={i} className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-xl p-5 h-28 animate-pulse">
@@ -159,7 +159,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4">
+      <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 min-h-[100px]">
         {isLoggedIn ? (
           <>
             <div className="min-w-[200px] snap-start md:min-w-0"><StatCard label="Today's Earnings" value={`$${todaysEarnings.toLocaleString()}`} change={todaysEarnings > 0 ? "+today" : undefined} positive={todaysEarnings > 0} icon={<DollarSign size={16} />} delay={100} /></div>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[400px]">
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center gap-3">
             <h2 className="font-display text-2xl tracking-tight">Available Loads</h2>

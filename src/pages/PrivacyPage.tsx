@@ -149,7 +149,7 @@ To submit a CCPA request, email privacy@loadhawk.ai with the subject line "CCPA 
   return (
     <div className="min-h-screen bg-background">
       <PageMeta title="Privacy Policy" />
-      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+      <main className="max-w-3xl mx-auto px-4 py-10 space-y-6">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-2"
@@ -186,7 +186,7 @@ To submit a CCPA request, email privacy@loadhawk.ai with the subject line "CCPA 
         <div className="text-center text-muted-foreground text-xs pb-8 animate-fade-up" style={{ animationDelay: "200ms" }}>
           LoadHawk -- loadhawk.ai -- privacy@loadhawk.ai
         </div>
-      </div>
+      </main>
     </div>
   );
 }

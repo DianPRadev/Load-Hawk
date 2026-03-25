@@ -49,15 +49,15 @@ export default function ResetPasswordPage() {
     "w-full bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#1f1f1f] rounded-lg pl-10 pr-10 py-3 text-sm font-medium text-foreground focus:border-[#f5a820] focus:outline-none focus:ring-1 focus:ring-[#f5a820]/20 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600 focus-visible:outline-2 focus-visible:outline-[#f5a820] focus-visible:outline-offset-1";
   const inputError = "border-red-500 focus:ring-red-500/20";
   const labelClass =
-    "block font-mono text-[12px] font-bold tracking-[2px] text-gray-400 dark:text-gray-500 mb-1.5";
+    "block font-mono text-[12px] font-bold tracking-[2px] text-gray-500 dark:text-gray-400 mb-1.5";
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <main className="min-h-screen bg-background flex items-center justify-center p-4">
       <PageMeta title="Reset Password" />
       {/* Theme toggle */}
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="fixed top-4 right-4 z-50 w-9 h-9 rounded-full border border-gray-200 dark:border-[#1f1f1f] bg-white dark:bg-[#141414] text-gray-400 dark:text-gray-500 hover:border-[#f5a820] hover:text-[#f5a820] cursor-pointer flex items-center justify-center transition-all shadow-sm hover:scale-110"
+        className="fixed top-4 right-4 z-50 w-9 h-9 rounded-full border border-gray-200 dark:border-[#1f1f1f] bg-white dark:bg-[#141414] text-gray-500 dark:text-gray-400 hover:border-[#f5a820] hover:text-[#f5a820] cursor-pointer flex items-center justify-center transition-all shadow-sm hover:scale-110"
         aria-label="Toggle theme"
       >
         {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -73,7 +73,7 @@ export default function ResetPasswordPage() {
         <h1 className="font-display text-2xl font-bold text-center mb-2">
           Set New Password
         </h1>
-        <p className="font-mono text-[13px] text-gray-400 dark:text-gray-500 text-center mb-6 leading-relaxed">
+        <p className="font-mono text-[13px] text-gray-500 dark:text-gray-400 text-center mb-6 leading-relaxed">
           Choose a strong password for your LoadHawk account.
         </p>
 
@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
             <div className="text-sm font-bold text-[#f5a820] font-mono mb-1.5">
               Password updated
             </div>
-            <div className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+            <div className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               Your password has been changed successfully. Redirecting you to
               sign in...
             </div>
@@ -106,9 +106,10 @@ export default function ResetPasswordPage() {
                   autoFocus
                 />
                 <button
-                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
+                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-500 dark:text-gray-400 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
                   onClick={() => setShowPass(!showPass)}
                   type="button"
+                  aria-label="Toggle password visibility"
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -135,9 +136,10 @@ export default function ResetPasswordPage() {
                   onChange={(e) => setConfirm(e.target.value)}
                 />
                 <button
-                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-400 dark:text-gray-500 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
+                  className="absolute right-3 bg-transparent border-none cursor-pointer text-gray-500 dark:text-gray-400 hover:text-[#f5a820] p-2.5 z-[2] transition-colors"
                   onClick={() => setShowConf(!showConf)}
                   type="button"
+                  aria-label="Toggle password visibility"
                 >
                   {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -181,6 +183,6 @@ export default function ResetPasswordPage() {
           {"\u2190"} BACK TO HOME
         </button>
       </div>
-    </div>
+    </main>
   );
 }
