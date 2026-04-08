@@ -16,7 +16,7 @@ export default function TermsPage() {
     },
     {
       title: "3. Description of Service",
-      content: `LoadHawk is a freight load board and management platform designed for owner-operators, small fleet carriers, and dispatchers operating within the United States. The Service provides tools for discovering and booking freight loads, managing shipments, tracking earnings, rating freight brokers, and utilizing AI-powered negotiation assistance. LoadHawk acts solely as a technology platform connecting carriers with available freight. LoadHawk is not a freight broker, freight forwarder, or motor carrier, and does not assume responsibility for the transportation of any goods.`
+      content: `LoadHawk is a freight operations and management platform designed for owner-operators, small fleet carriers, and dispatchers operating within the United States. The Service provides tools for discovering, evaluating, and managing freight opportunities, tracking earnings, rating freight brokers, and utilizing AI-powered negotiation assistance. LoadHawk acts solely as a technology platform that helps carriers work with freight opportunities from connected sources and their own workflow activity. LoadHawk is not a freight broker, freight forwarder, motor carrier, or public freight marketplace, and does not assume responsibility for the transportation of any goods.`
     },
     {
       title: "4. Load Booking and Freight Transactions",
@@ -99,7 +99,7 @@ export default function TermsPage() {
         <div className="animate-fade-up">
           <h1 className="font-display text-4xl tracking-tight mb-2">Terms of Service</h1>
           <p className="text-muted-foreground text-sm">
-            Last updated: March 18, 2026
+            Last updated: April 8, 2026
           </p>
         </div>
 

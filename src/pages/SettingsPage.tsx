@@ -227,7 +227,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0c0c0c] rounded-xl border border-primary/15">
               <div>
                 <div className="font-display text-xl tracking-tight">{isPro ? "Pro Plan" : "Free Plan"}</div>
-                <p className="text-[13px] text-muted-foreground">{isPro ? "Full access to all LoadHawk features" : "Basic load board access"}</p>
+                <p className="text-[13px] text-muted-foreground">{isPro ? "Full access to all LoadHawk features" : "Basic freight workflow access"}</p>
               </div>
               {isPro ? (
                 <GoldButton variant="secondary" onClick={handleManageBilling} loading={managingBilling} loadingText="Loading...">Manage Billing</GoldButton>

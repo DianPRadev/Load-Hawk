@@ -21,7 +21,7 @@ const comparisons = [
   {
     competitor: "TruckSmarter",
     strengths:
-      "Free load board, fuel savings, AI dispatch",
+      "Free freight search, fuel savings, AI dispatch",
     difference:
       "Deeper AI negotiation with call scripts, community broker trust scores, earnings P&L tracking, fleet tools",
   },
@@ -40,7 +40,7 @@ export default function ComparePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PageMeta title="Compare Load Boards" />
+      <PageMeta title="Compare Freight Software" />
 
       <main>
       {/* Header */}
@@ -58,7 +58,13 @@ export default function ComparePage() {
             How LoadHawk compares
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            An honest look at how we stack up against the major load boards.
+            An honest look at how LoadHawk fits alongside major freight
+            platforms and load sources.
+          </p>
+          <p className="text-muted-foreground text-sm max-w-2xl mx-auto mt-4">
+            LoadHawk is a carrier workflow platform focused on search,
+            analysis, negotiation, and operations management rather than
+            operating a public freight marketplace.
           </p>
         </div>
       </div>

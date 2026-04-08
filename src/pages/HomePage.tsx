@@ -261,7 +261,7 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            The load board built for owner-operators who care about their bottom
+            The freight workflow platform for owner-operators who care about
             line. Search, analyze, negotiate, book, and track — all in one
             place.
           </p>
