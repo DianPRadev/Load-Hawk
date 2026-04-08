@@ -3,7 +3,7 @@ import { test, expect } from "../playwright-fixture";
 const publicRoutes = [
   { route: "/", title: /AI-Powered Freight Operating System \| LoadHawk/, heading: /Find loads\. Know your profit\./i },
   { route: "/pricing", title: /Pricing \| LoadHawk/, heading: /Simple, honest pricing/i },
-  { route: "/compare", title: /Compare Load Boards \| LoadHawk/, heading: /How LoadHawk compares/i },
+  { route: "/compare", title: /Compare Freight Software \| LoadHawk/, heading: /How LoadHawk compares/i },
   { route: "/resources", title: /Freight Resources \| LoadHawk/, heading: /Freight Resources/i },
   { route: "/terms", title: /Terms of Service \| LoadHawk/, heading: /Terms of Service/i },
   { route: "/privacy", title: /Privacy Policy \| LoadHawk/, heading: /Privacy Policy/i },

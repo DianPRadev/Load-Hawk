@@ -8,7 +8,7 @@ export default function PrivacyPage() {
   const sections = [
     {
       title: "1. Introduction",
-      content: `LoadHawk ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our freight load board and management platform at loadhawk.ai, including our website, mobile applications, and related services (collectively, the "Service"). By using the Service, you consent to the data practices described in this policy. If you do not agree with this Privacy Policy, please do not use the Service.`
+      content: `LoadHawk ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our freight operations and management platform at loadhawk.ai, including our website, mobile applications, and related services (collectively, the "Service"). By using the Service, you consent to the data practices described in this policy. If you do not agree with this Privacy Policy, please do not use the Service.`
     },
     {
       title: "2. Information We Collect",
@@ -32,7 +32,7 @@ Transaction Data: We collect information about your subscription purchases, paym
       title: "3. How We Use Your Information",
       content: `We use the information we collect for the following purposes:
 
-Service Operation: To create and manage your account, provide load board functionality, process load bookings, and deliver the features you request.
+Service Operation: To create and manage your account, provide load discovery and workflow functionality, process load-related activity, and deliver the features you request.
 
 Personalization: To customize your experience, including personalized load recommendations, route suggestions, and market rate analyses based on your preferences and history.
 
@@ -161,14 +161,14 @@ To submit a CCPA request, email privacy@loadhawk.ai with the subject line "CCPA 
         <div className="animate-fade-up">
           <h1 className="font-display text-4xl tracking-tight mb-2">Privacy Policy</h1>
           <p className="text-muted-foreground text-sm">
-            Last updated: March 18, 2026
+            Last updated: April 8, 2026
           </p>
         </div>
 
         <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#1f1f1f] rounded-2xl shadow-sm p-6 sm:p-8 animate-fade-up" style={{ animationDelay: "100ms" }}>
           <p className="text-muted-foreground text-[15px] leading-relaxed mb-6">
             This Privacy Policy describes how LoadHawk collects, uses, and protects your personal information when you use our
-            freight load board and management platform. We are committed to transparency and to safeguarding your data.
+            freight operations and management platform. We are committed to transparency and to safeguarding your data.
           </p>
 
           <div className="space-y-8 max-w-prose">

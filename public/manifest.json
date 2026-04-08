@@ -1,7 +1,7 @@
 {
   "name": "LoadHawk — Freight Operating System",
   "short_name": "LoadHawk",
-  "description": "AI-powered load board for owner-operators, dispatchers, and small fleets.",
+  "description": "AI-powered freight workflow platform for owner-operators, dispatchers, and small fleets.",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0d0d0d",
